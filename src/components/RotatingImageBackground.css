@@ -1,0 +1,20 @@
+.rotating-image-background-images {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+
+.rotating-image-background-images img {
+  display: block;
+  width: inherit;
+  height: inherit;
+  object-fit: cover;
+  position: absolute;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.rotating-image-background-images img.rotating-image-background-image-faded {
+  opacity: 0;
+}
