@@ -1,0 +1,8 @@
+.arene-color {
+  color: var(--arene-color);
+}
+
+.inline-img {
+  height: 1rem;
+  object-fit: contain;
+}
