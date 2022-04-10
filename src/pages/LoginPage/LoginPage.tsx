@@ -9,6 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { isEmail } from "class-validator";
 import { Link } from "react-router-dom";
 import PublicLayout from "../../layouts/PublicLayout/PublicLayout";
 
@@ -17,6 +18,17 @@ function LoginPage() {
     initialValues: {
       dniOrEmail: "",
       password: "",
+    },
+    validate: {
+      dniOrEmail: (value) => {
+        if (!Number.isNaN(Number(value))) {
+          return null;
+        }
+        if (isEmail(value)) {
+          return null;
+        }
+        return "Debe ingresar un numero de DNI sin puntos o un email válido";
+      },
     },
   });
   return (
