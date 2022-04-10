@@ -1,5 +1,4 @@
-import "./App.css";
-import logoSrc from "./assets/images/header-logo.svg";
+import "./Landing.css";
 import phoneSrc from "./assets/images/phone.svg";
 import background1Src from "./assets/images/background1.jpg";
 import background2Src from "./assets/images/background2.jpg";
@@ -8,8 +7,10 @@ import background4Src from "./assets/images/background4.jpg";
 import background5Src from "./assets/images/background5.jpg";
 import background6Src from "./assets/images/background6.jpg";
 import RotatingImageBackground from "./components/RotatingImageBackground";
+import { Button } from "@mantine/core";
+import { Link } from "react-router-dom";
 
-function App() {
+function Landing() {
   return (
     <RotatingImageBackground
       imageSrcs={[
@@ -33,8 +34,9 @@ function App() {
             <div>Reg. Púb. Com. N° 257/06</div>
           </div>
           <div className="app-header-right">
-            <img src={logoSrc} alt="" />
-            <div>"Un mundo pensado para todos"</div>
+            <Link to={"/app"}>
+              <Button size="sm">Ingresar</Button>
+            </Link>
           </div>
         </nav>
         <main></main>
@@ -60,4 +62,4 @@ function App() {
   );
 }
 
-export default App;
+export default Landing;
