@@ -34,7 +34,7 @@ function Landing() {
             <div>Reg. Púb. Com. N° 257/06</div>
           </div>
           <div className="app-header-right">
-            <Link to={"/app"}>
+            <Link to={"/login"}>
               <Button size="sm">Ingresar</Button>
             </Link>
           </div>
