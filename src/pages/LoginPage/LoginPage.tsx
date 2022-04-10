@@ -65,7 +65,13 @@ function LoginPage() {
               required
               {...loginForm.getInputProps("password")}
             ></PasswordInput>
-            <Space h="md"></Space>
+            <Space h="sm"></Space>
+            <Center>
+              <Link to="/">
+                <Text size="xs">¿Olvidó su contraseña?</Text>
+              </Link>
+            </Center>
+            <Space h="sm"></Space>
             <Button fullWidth type="submit">
               Iniciar sesión
             </Button>
@@ -73,7 +79,8 @@ function LoginPage() {
           <Space h="sm"></Space>
           <Center>
             <Text size="xs">
-              ¿No tienes una cuenta? <Link to="/register">Registrate</Link>
+              Si es la primera vez que ingresa{" "}
+              <Link to="/register">¡REGÍSTRESE!</Link>
             </Text>
           </Center>
         </Card>
