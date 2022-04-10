@@ -7,9 +7,6 @@ import background3Src from "./assets/images/background3.jpg";
 import background4Src from "./assets/images/background4.jpg";
 import background5Src from "./assets/images/background5.jpg";
 import background6Src from "./assets/images/background6.jpg";
-import background7Src from "./assets/images/background7.jpg";
-import background8Src from "./assets/images/background8.jpg";
-import background9Src from "./assets/images/background9.jpg";
 import RotatingImageBackground from "./components/RotatingImageBackground";
 
 function App() {
@@ -22,9 +19,6 @@ function App() {
         background4Src,
         background5Src,
         background6Src,
-        background7Src,
-        background8Src,
-        background9Src,
       ]}
       timeout={5000}
     >

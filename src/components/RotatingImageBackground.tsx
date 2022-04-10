@@ -15,17 +15,20 @@ function RotatingImageBackground({
     reversedSrc.map((item) => ({
       src: item,
       faded: false,
+      loaded: false,
     }))
   );
 
+  const allImagesHaveLoaded = useMemo(() => {
+    return images.every((image) => image.loaded);
+  }, [images]);
+
   const rotateImages = useCallback(() => {
-    console.log(images);
     const copyOfImages = [...images];
     const imageIndexToRotate = copyOfImages
       .reverse()
       .findIndex((item) => !item.faded);
     if (imageIndexToRotate !== copyOfImages.length - 1) {
-      console.log(`rotating one image, index: ${imageIndexToRotate}`);
       setImages((oldImages) => {
         const copyOfOldImages = [...oldImages];
         return copyOfOldImages
@@ -42,7 +45,6 @@ function RotatingImageBackground({
           .reverse();
       });
     } else {
-      console.log("rotating all");
       setImages((oldImages) => {
         return oldImages.map((item) => ({
           ...item,
@@ -53,14 +55,16 @@ function RotatingImageBackground({
   }, [images]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      rotateImages();
-    }, timeout);
-
+    let interval: number | undefined;
+    if (allImagesHaveLoaded) {
+      interval = setInterval(() => {
+        rotateImages();
+      }, timeout);
+    }
     return () => {
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
     };
-  }, [timeout, images]);
+  }, [timeout, images, allImagesHaveLoaded]);
 
   return (
     <div className="rotating-image-background">
@@ -72,8 +76,20 @@ function RotatingImageBackground({
               className={
                 item.faded ? "rotating-image-background-image-faded" : ""
               }
+              style={{ visibility: allImagesHaveLoaded ? "visible" : "hidden" }}
               src={item.src}
               alt=""
+              onLoad={() =>
+                setImages((oldImages) =>
+                  oldImages.map((oldImage) => {
+                    const newImage = { ...oldImage };
+                    if (newImage.src === item.src) {
+                      newImage.loaded = true;
+                    }
+                    return newImage;
+                  })
+                )
+              }
             />
           );
         })}
