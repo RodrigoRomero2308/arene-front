@@ -56,7 +56,11 @@ function LoginPage() {
               </Title>
             </Center>
           </Card.Section>
-          <Center>
+          <Center
+            sx={(theme) => ({
+              marginBottom: theme.spacing.sm,
+            })}
+          >
             <Text>Iniciar Sesión</Text>
           </Center>
           <form
