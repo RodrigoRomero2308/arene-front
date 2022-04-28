@@ -1,6 +1,12 @@
 import { StrictMode } from "react";
 import { render } from "react-dom";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import "./variables.css";
 import "normalize.css";
 import "./main.css";
@@ -17,19 +23,27 @@ const mantineTheme: MantineThemeOverride = {
   },
 };
 
+const MainWrapper = () => {
+  return (
+    <MantineProvider theme={mantineTheme}>
+      <Outlet />
+    </MantineProvider>
+  );
+};
+
 render(
   <StrictMode>
-    <MantineProvider theme={mantineTheme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />}></Route>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainWrapper />}>
+          <Route index element={<Landing />} />
           <Route path="app/*" element={<App />}></Route>
           <Route path="login" element={<LoginPage />}></Route>
           <Route path="register" element={<RegisterPage />}></Route>
           <Route path="*" element={<Navigate to={"/"} replace />}></Route>
-        </Routes>
-      </BrowserRouter>
-    </MantineProvider>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </StrictMode>,
   document.getElementById("root")
 );
