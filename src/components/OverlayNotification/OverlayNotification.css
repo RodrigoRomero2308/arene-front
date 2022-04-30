@@ -1,0 +1,8 @@
+.overlayNotification {
+  opacity: 1;
+  transition-property: opacity;
+}
+
+.overlayNotification.overlayNotificationClosed {
+  opacity: 0;
+}

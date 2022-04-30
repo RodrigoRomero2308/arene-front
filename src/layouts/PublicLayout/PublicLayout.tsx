@@ -1,9 +1,6 @@
 import {
   AppShell,
-  Button,
   Center,
-  Footer,
-  Group,
   Header,
   Image,
   Text,
@@ -11,7 +8,7 @@ import {
 } from "@mantine/core";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import logoDark from "../../assets/images/logo-arene-dark.jpeg";
+import logoDark from "@/assets/images/logo-arene-dark.jpeg";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import LayoutWithNav from "../../layouts/LayoutWithNav/LayoutWithNav";
+import LayoutWithNav from "@/layouts/LayoutWithNav/LayoutWithNav";
 
 const App = () => {
   return (

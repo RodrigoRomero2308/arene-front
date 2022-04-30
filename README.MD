@@ -6,3 +6,4 @@ Tecnologias:
 - Vite
 - React Router 6
 - Mantine UI
+- Apollo client

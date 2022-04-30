@@ -11,10 +11,11 @@ import "./variables.css";
 import "normalize.css";
 import "./main.css";
 import { MantineProvider, MantineThemeOverride } from "@mantine/core";
-import Landing from "./Landing";
+import Landing from "./pages/LandingPage/Landing";
 import App from "./pages/App/App";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const mantineTheme: MantineThemeOverride = {
   fontFamily: "Open Sans, sans-serif",
@@ -23,11 +24,23 @@ const mantineTheme: MantineThemeOverride = {
   },
 };
 
+const apolloClient = new ApolloClient({
+  uri: "http://localhost:3003/graphql",
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: "no-cache", // TODO: investigar distintas politicas de caching de la libreria
+    },
+  },
+});
+
 const MainWrapper = () => {
   return (
-    <MantineProvider theme={mantineTheme}>
-      <Outlet />
-    </MantineProvider>
+    <ApolloProvider client={apolloClient}>
+      <MantineProvider theme={mantineTheme}>
+        <Outlet />
+      </MantineProvider>
+    </ApolloProvider>
   );
 };
 

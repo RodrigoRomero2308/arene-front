@@ -10,10 +10,19 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { isEmail } from "class-validator";
-import { Link } from "react-router-dom";
-import PublicLayout from "../../layouts/PublicLayout/PublicLayout";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import PublicLayout from "@/layouts/PublicLayout/PublicLayout";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "@/graphql/mutation/auth.mutation";
+import { useState } from "react";
+import LoginLabelByState from "./LoginLabelByState";
 
 function LoginPage() {
+  const [attemptLogin] = useMutation(LOGIN);
+  const [submitFormLoading, setSubmitFormLoading] = useState(false);
+  const { state } = useLocation();
+  const navigate = useNavigate();
+
   const loginForm = useForm({
     initialValues: {
       dniOrEmail: "",
@@ -31,8 +40,25 @@ function LoginPage() {
       },
     },
   });
+
+  const handleLogin = loginForm.onSubmit(async (values) => {
+    setSubmitFormLoading(true);
+    console.log(values);
+    try {
+      const loginResult = await attemptLogin({
+        variables: values,
+      });
+      console.log(loginResult);
+      if (!loginResult.errors) {
+        navigate("/app");
+      }
+    } catch (error) {}
+    setSubmitFormLoading(true);
+  });
+
   return (
     <PublicLayout>
+      <LoginLabelByState state={state} />
       <Center
         sx={(theme) => ({
           paddingTop: theme.spacing.xl,
@@ -63,11 +89,7 @@ function LoginPage() {
           >
             <Text>Iniciar Sesión</Text>
           </Center>
-          <form
-            onSubmit={loginForm.onSubmit((values) => {
-              console.log(values);
-            })}
-          >
+          <form onSubmit={handleLogin}>
             <TextInput
               label="DNI o email"
               placeholder="Ingrese DNI o email"
@@ -88,7 +110,7 @@ function LoginPage() {
               </Link>
             </Center>
             <Space h="sm"></Space>
-            <Button fullWidth type="submit">
+            <Button loading={submitFormLoading} fullWidth type="submit">
               Iniciar sesión
             </Button>
           </form>
