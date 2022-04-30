@@ -53,7 +53,7 @@ function LoginPage() {
         navigate("/app");
       }
     } catch (error) {}
-    setSubmitFormLoading(true);
+    setSubmitFormLoading(false);
   });
 
   return (

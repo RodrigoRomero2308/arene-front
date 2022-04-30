@@ -57,7 +57,7 @@ function RotatingImageBackground({
   useEffect(() => {
     let interval: number | undefined;
     if (allImagesHaveLoaded) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         rotateImages();
       }, timeout);
     }
