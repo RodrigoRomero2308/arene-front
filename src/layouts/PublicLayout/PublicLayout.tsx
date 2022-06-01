@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import logoDark from "@/assets/images/logo-arene-dark.jpeg";
+import logoArene from "@/assets/images/logo-arene-name.svg";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -36,7 +36,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
             <div style={{ width: "33vw", textAlign: "left" }}>
               <Link to="/">
                 <Image
-                  src={logoDark}
+                  src={logoArene}
                   height={70}
                   fit="contain"
                   style={{ display: "inline-block" }}
