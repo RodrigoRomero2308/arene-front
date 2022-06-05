@@ -1,4 +1,9 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  createHttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import {
   LoadingOverlay,
   MantineProvider,
@@ -20,12 +25,24 @@ const mantineTheme: MantineThemeOverride = {
   },
 };
 
-const apolloClient = new ApolloClient({
+const httpLink = createHttpLink({
+  credentials: "include",
   uri: import.meta.env.VITE_BACKEND_URL,
+});
+
+const apolloClient = new ApolloClient({
+  link: httpLink,
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
       fetchPolicy: "no-cache", // TODO: investigar distintas politicas de caching de la libreria
+    },
+    watchQuery: {
+      nextFetchPolicy: "no-cache",
+      fetchPolicy: "no-cache",
+    },
+    mutate: {
+      fetchPolicy: "no-cache",
     },
   },
 });

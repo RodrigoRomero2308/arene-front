@@ -197,9 +197,6 @@ function RegisterPage() {
               Si ya tienes una cuenta <Link to="/login">¡INICIA SESIÓN!</Link>
             </Text>
           </Center>
-          <Button fullWidth onClick={handleSuccessfulRegister}>
-            Registrarme
-          </Button>
         </Card>
       </Center>
     </PublicLayout>
