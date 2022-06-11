@@ -109,16 +109,6 @@ function RegisterPage() {
           }}
           shadow="md"
         >
-          <Card.Section>
-            <Center>
-            <Image
-                  src={logoArene}
-                  height={70}
-                  fit="contain"
-                  style={{ padding: 15, display: "inline-block" }}
-                />
-            </Center>
-          </Card.Section>
           <Center
             sx={(theme) => ({
               marginBottom: theme.spacing.sm,

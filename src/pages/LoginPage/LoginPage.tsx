@@ -17,7 +17,6 @@ import { useMutation } from "@apollo/client";
 import { LOGIN } from "@/graphql/mutation/auth.mutation";
 import { useState } from "react";
 import LoginLabelByState from "./LoginLabelByState";
-import logoArene from "@/assets/images/logo-arene-name.svg";
 
 function LoginPage() {
   const [attemptLogin] = useMutation(LOGIN);
@@ -72,16 +71,6 @@ function LoginPage() {
           }}
           shadow="md"
         >
-          <Card.Section>
-            <Center>
-            <Image
-                  src={logoArene}
-                  height={70}
-                  fit="contain"
-                  style={{ padding: 15, display: "inline-block" }}
-                />
-            </Center>
-          </Card.Section>
           <Center
             sx={(theme) => ({
               marginBottom: theme.spacing.sm,
