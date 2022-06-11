@@ -8,6 +8,7 @@ import {
   PasswordInput,
   Button,
   Space,
+  Image
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { isEmail, isNumberString } from "class-validator";
@@ -18,6 +19,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterUserDTO } from "@/models/user.models";
 import { LoginRedirectAction } from "../LoginPage/LoginRedirectActions";
+import logoArene from "@/assets/images/logo-arene-name.svg";
 
 function RegisterPage() {
   const [attemptRegister] = useMutation(REGISTER);
@@ -107,24 +109,12 @@ function RegisterPage() {
           }}
           shadow="md"
         >
-          <Card.Section>
-            <Center>
-              <Title
-                sx={(theme) => ({
-                  padding: `${theme.spacing.sm}px 0`,
-                })}
-                order={1}
-              >
-                AReNe
-              </Title>
-            </Center>
-          </Card.Section>
           <Center
             sx={(theme) => ({
               marginBottom: theme.spacing.sm,
             })}
           >
-            <Text>Registro</Text>
+            <Title>Registro</Title>
           </Center>
           <form onSubmit={handleRegister}>
             <Grid gutter="md">

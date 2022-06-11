@@ -6,6 +6,7 @@ import {
   Space,
   Text,
   TextInput,
+  Image,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -70,24 +71,12 @@ function LoginPage() {
           }}
           shadow="md"
         >
-          <Card.Section>
-            <Center>
-              <Title
-                sx={(theme) => ({
-                  padding: `${theme.spacing.sm}px 0`,
-                })}
-                order={1}
-              >
-                AReNe
-              </Title>
-            </Center>
-          </Card.Section>
           <Center
             sx={(theme) => ({
               marginBottom: theme.spacing.sm,
             })}
           >
-            <Text>Iniciar Sesión</Text>
+            <Title>Iniciar Sesión</Title>
           </Center>
           <form onSubmit={handleLogin}>
             <TextInput

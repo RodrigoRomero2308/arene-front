@@ -1,12 +1,12 @@
 .rotating-image-background-images {
-  position: absolute;
-  z-index: -1;
+  position: fixed;
   width: 100%;
   height: 100%;
 }
 
 .rotating-image-background-images img {
   display: block;
+  top: 0;
   width: inherit;
   height: inherit;
   object-fit: cover;
