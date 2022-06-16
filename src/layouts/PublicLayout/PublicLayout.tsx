@@ -6,12 +6,14 @@ import {
   Header,
   Image,
   Text,
+  ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
 import { ReactNode } from "react";
 import { Link, useMatch } from "react-router-dom";
 import logoArene from "@/assets/images/logo-arene-name.svg";
 import phoneSrc from "@/assets/images/phone.svg";
+import { PhoneCall } from "tabler-icons-react";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -24,7 +26,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
             theme.colorScheme === "dark"
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
-          padding: isLanding? "0": "none"
+          padding: isLanding ? "0" : "none",
         },
       }}
       fixed
@@ -42,8 +44,9 @@ function PublicLayout({ children }: { children: ReactNode }) {
               <Link to="/">
                 <Image
                   src={logoArene}
-                  height={70}
+                  height={60}
                   fit="contain"
+                  pt={5}
                   style={{ display: "inline-block" }}
                 />
               </Link>
@@ -128,20 +131,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 className="footer-phone"
                 style={{ display: "flex", alignItems: "center" }}
               >
-                <img
-                  className="inline-img"
-                  src={phoneSrc}
-                  alt=""
-                  style={{ marginRight: "0.25rem" }}
-                ></img>
-                <span>( 03442 ) - 15519170</span>
+                <PhoneCall size={20} />
+                <span> (03442) - 15519170</span>
               </div>
               <div>Horario de Atención de Lun. a Vier. 09 a 17 hs.</div>
             </div>
             <div className="footer-right" style={{ textAlign: "right" }}>
-              <div>
-                El Portal de AReNe - Concepción del Uruguay - Entre Ríos
-              </div>
               <div>Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor</div>
               <div>
                 &copy; 2022 - Políticas de Privacidad - Términos y Condiciones -
