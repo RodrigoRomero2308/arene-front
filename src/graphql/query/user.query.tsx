@@ -7,3 +7,18 @@ export const GET_USERS = gql`
     }
   }
 `;
+
+export const AUTHENTICATE = gql`
+  query authenticate {
+    authenticate {
+      id
+      email
+      firstname
+      lastname
+      phone
+      permissions {
+        code
+      }
+    }
+  }
+`;
