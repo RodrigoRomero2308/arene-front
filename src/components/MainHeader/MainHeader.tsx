@@ -1,7 +1,7 @@
 import appContext from "@/context/AppContext/AppContext";
 import { LOGOUT } from "@/graphql/mutation/auth.mutation";
 import { useMutation } from "@apollo/client";
-import { Menu, Text, UnstyledButton } from "@mantine/core";
+import { Divider, Menu, Text, UnstyledButton } from "@mantine/core";
 import { MouseEventHandler, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logout } from "tabler-icons-react";
@@ -33,10 +33,16 @@ const MainHeader = () => {
           flex: 1,
           minWidth: 0,
           fontWeight: "bold",
+          fontSize: "1.5rem",
         }}
       >
         Arene
       </span>
+      <Divider
+        sx={{ height: "auto", marginRight: "0.75rem" }}
+        size="xs"
+        orientation="vertical"
+      />
       <div style={{ flex: 0 }}>
         <Menu
           control={

@@ -12,18 +12,35 @@ function UserAvatar() {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
+        textAlign: "right",
       }}
     >
-      <Avatar
-        sx={(theme) => ({
-          marginRight: theme.spacing.xs,
-        })}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          marginBottom: "0.25rem",
+        }}
       >
-        {user.firstname[0]}
-      </Avatar>
-      <span>{user.firstname}</span>
+        <Avatar
+          sx={(theme) => ({
+            marginRight: theme.spacing.xs,
+          })}
+        >
+          {user.firstname[0]}
+        </Avatar>
+        <span>{user.firstname}</span>
+      </div>
+      {user.email && (
+        <div
+          style={{
+            fontSize: "0.75rem",
+          }}
+        >
+          {user.email}
+        </div>
+      )}
     </div>
   );
 }
