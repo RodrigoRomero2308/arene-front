@@ -10,16 +10,16 @@ import { Alert, LoadingOverlay } from "@mantine/core";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
+  const ProfilePage = lazy(() => import("@/pages/ProfilePage/ProfilePage"));
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
+  const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
   const { appLoading } = useContext(AppContext);
 
   const mainLayout = useMemo(() => {
     return (
-      <LayoutWithNav
-        headerContent={<MainHeader />}
-        navBarContent={"Navegacion"}
-      >
+      <LayoutWithNav headerContent={<MainHeader />} navBarContent={<MainNav />}>
         <Routes>
+          <Route path="/profile" element={<ProfilePage />}></Route>
           <Route path="/" element={<HomePage />}></Route>
         </Routes>
       </LayoutWithNav>
