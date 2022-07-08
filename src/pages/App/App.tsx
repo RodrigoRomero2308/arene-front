@@ -1,6 +1,13 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import LayoutWithNav from "@/layouts/LayoutWithNav/LayoutWithNav";
-import { lazy, useContext, useEffect, useMemo, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import UserContext from "@/context/UserContext/UserContext";
 import AppContext from "@/context/AppContext/AppContext";
 import { IAuthenticatedUser } from "@/interfaces/IAuthenticatedUser";
@@ -18,10 +25,12 @@ const AppInnerComponent = () => {
   const mainLayout = useMemo(() => {
     return (
       <LayoutWithNav headerContent={<MainHeader />} navBarContent={<MainNav />}>
-        <Routes>
-          <Route path="/profile" element={<ProfilePage />}></Route>
-          <Route path="/" element={<HomePage />}></Route>
-        </Routes>
+        <Suspense fallback={<LoadingOverlay visible />}>
+          <Routes>
+            <Route path="/profile" element={<ProfilePage />}></Route>
+            <Route path="/" element={<HomePage />}></Route>
+          </Routes>
+        </Suspense>
       </LayoutWithNav>
     );
   }, []);
