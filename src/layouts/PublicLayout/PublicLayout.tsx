@@ -10,10 +10,11 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { ReactNode } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { Link, Outlet, Route, Routes, useMatch } from "react-router-dom";
 import logoArene from "@/assets/images/logo-arene-name.svg";
 import phoneSrc from "@/assets/images/phone.svg";
-import { PhoneCall } from "tabler-icons-react";
+import { FileX, PhoneCall } from "tabler-icons-react";
+import Landing from "@/pages/LandingPage/Landing";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -41,7 +42,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
             }}
           >
             <div style={{ width: "33vw", textAlign: "left" }}>
-              <Link to="/">
+              <a href="/#bienvenida">
                 <Image
                   src={logoArene}
                   height={60}
@@ -49,7 +50,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   pt={5}
                   style={{ display: "inline-block" }}
                 />
-              </Link>
+              </a>
             </div>
             <div style={{ width: "33vw", textAlign: "center" }}>
               <Text size="xs">Asociacion de Rehabilitación Neurológica</Text>
@@ -58,12 +59,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
             </div>
             <div style={{ width: "33vw" }}>
               <Center style={{ justifyContent: "end" }}>
-                <Link
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  href="/#institucion"
                 >
                   <Text
                     sx={(theme) => ({
@@ -72,13 +73,13 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Institución
                   </Text>
-                </Link>
-                <Link
+                </a>
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  href="/#terapias"
                 >
                   <Text
                     sx={(theme) => ({
@@ -87,13 +88,13 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Terapias
                   </Text>
-                </Link>
+                </a>
                 <Link
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  to="/contacto"
                 >
                   <Text
                     sx={(theme) => ({
@@ -149,6 +150,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
         )
       }
     >
+      <Outlet />
       {children}
     </AppShell>
   );
