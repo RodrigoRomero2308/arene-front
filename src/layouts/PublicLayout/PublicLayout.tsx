@@ -89,12 +89,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
                     Terapias
                   </Text>
                 </a>
-                <Link
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/contacto"
+                  href="/#contacto"
                 >
                   <Text
                     sx={(theme) => ({
@@ -103,7 +103,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Contacto
                   </Text>
-                </Link>
+                </a>
                 {isLanding ? (
                   <Link to={"/login"}>
                     <Button size="sm">Ingresar</Button>
