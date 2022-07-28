@@ -8,7 +8,6 @@ import {
   PasswordInput,
   Button,
   Space,
-  Image
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { isEmail, isNumberString } from "class-validator";
@@ -19,7 +18,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterUserDTO } from "@/models/user.models";
 import { LoginRedirectAction } from "../LoginPage/LoginRedirectActions";
-import logoArene from "@/assets/images/logo-arene-name.svg";
 
 function RegisterPage() {
   const [attemptRegister] = useMutation(REGISTER);
@@ -71,7 +69,6 @@ function RegisterPage() {
 
   const handleRegister = registerForm.onSubmit(async (values) => {
     setSubmitButtonLoading(true);
-    console.log(values);
     const registerInput: RegisterUserDTO = {
       dni: values.dni,
       email: values.email,
@@ -86,7 +83,6 @@ function RegisterPage() {
           input: registerInput,
         },
       });
-      console.log(registerResult);
       if (!registerResult.errors) {
         handleSuccessfulRegister();
       }

@@ -5,3 +5,9 @@ export const LOGIN = gql`
     login(dniOrEmail: $dniOrEmail, password: $password)
   }
 `;
+
+export const LOGOUT = gql`
+  mutation {
+    logout
+  }
+`;

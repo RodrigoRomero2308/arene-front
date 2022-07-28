@@ -44,12 +44,10 @@ function LoginPage() {
 
   const handleLogin = loginForm.onSubmit(async (values) => {
     setSubmitFormLoading(true);
-    console.log(values);
     try {
       const loginResult = await attemptLogin({
         variables: values,
       });
-      console.log(loginResult);
       if (!loginResult.errors) {
         navigate("/app");
       }
