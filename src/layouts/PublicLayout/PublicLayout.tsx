@@ -6,12 +6,15 @@ import {
   Header,
   Image,
   Text,
+  ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
 import { ReactNode } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { Link, Outlet, Route, Routes, useMatch } from "react-router-dom";
 import logoArene from "@/assets/images/logo-arene-name.svg";
 import phoneSrc from "@/assets/images/phone.svg";
+import { FileX, PhoneCall } from "tabler-icons-react";
+import Landing from "@/pages/LandingPage/Landing";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -24,7 +27,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
             theme.colorScheme === "dark"
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
-          padding: isLanding? "0": "none"
+          padding: isLanding ? "0" : "none",
         },
       }}
       fixed
@@ -39,14 +42,15 @@ function PublicLayout({ children }: { children: ReactNode }) {
             }}
           >
             <div style={{ width: "33vw", textAlign: "left" }}>
-              <Link to="/">
+              <a href="/#bienvenida">
                 <Image
                   src={logoArene}
-                  height={70}
+                  height={60}
                   fit="contain"
+                  pt={5}
                   style={{ display: "inline-block" }}
                 />
-              </Link>
+              </a>
             </div>
             <div style={{ width: "33vw", textAlign: "center" }}>
               <Text size="xs">Asociacion de Rehabilitación Neurológica</Text>
@@ -55,12 +59,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
             </div>
             <div style={{ width: "33vw" }}>
               <Center style={{ justifyContent: "end" }}>
-                <Link
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  href="/#institucion"
                 >
                   <Text
                     sx={(theme) => ({
@@ -69,13 +73,13 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Institución
                   </Text>
-                </Link>
-                <Link
+                </a>
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  href="/#terapias"
                 >
                   <Text
                     sx={(theme) => ({
@@ -84,13 +88,13 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Terapias
                   </Text>
-                </Link>
-                <Link
+                </a>
+                <a
                   style={{
                     color: "inherit",
                     textDecoration: "inherit",
                   }}
-                  to="/"
+                  href="/#contacto"
                 >
                   <Text
                     sx={(theme) => ({
@@ -99,7 +103,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   >
                     Contacto
                   </Text>
-                </Link>
+                </a>
                 {isLanding ? (
                   <Link to={"/login"}>
                     <Button size="sm">Ingresar</Button>
@@ -128,20 +132,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 className="footer-phone"
                 style={{ display: "flex", alignItems: "center" }}
               >
-                <img
-                  className="inline-img"
-                  src={phoneSrc}
-                  alt=""
-                  style={{ marginRight: "0.25rem" }}
-                ></img>
-                <span>( 03442 ) - 15519170</span>
+                <PhoneCall size={20} />
+                <span> (03442) - 15519170</span>
               </div>
               <div>Horario de Atención de Lun. a Vier. 09 a 17 hs.</div>
             </div>
             <div className="footer-right" style={{ textAlign: "right" }}>
-              <div>
-                El Portal de AReNe - Concepción del Uruguay - Entre Ríos
-              </div>
               <div>Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor</div>
               <div>
                 &copy; 2022 - Políticas de Privacidad - Términos y Condiciones -
@@ -154,6 +150,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
         )
       }
     >
+      <Outlet />
       {children}
     </AppShell>
   );
