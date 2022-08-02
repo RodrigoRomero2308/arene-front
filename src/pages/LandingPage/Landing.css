@@ -21,6 +21,12 @@ body {
   color: #228be6;
 }
 
+.institucion,
+.terapias,
+.contacto {
+  scroll-margin-top: 70px;
+}
+
 .institucion {
   width: 100%;
   padding-top: 20px;
