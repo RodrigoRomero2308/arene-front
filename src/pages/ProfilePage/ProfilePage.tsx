@@ -1,16 +1,21 @@
 import userContext from "@/context/UserContext/UserContext";
 import { Button, Grid, Space, Text, TextInput, Title } from "@mantine/core";
 import { DateRangePicker } from "@mantine/dates";
-import { Dropzone } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { useContext } from "react";
 import { Upload } from "tabler-icons-react";
 
 function ProfilePage() {
   const { user } = useContext(userContext);
-  const profileForm = useForm({
-    initialValues: {},
+  const profileForm = useForm<{
+    name: string;
+  }>({
+    initialValues: {
+      name: "",
+    },
   });
+
   return (
     <>
       <Title order={4}>Datos personales:</Title>
@@ -39,6 +44,8 @@ function ProfilePage() {
             onDrop={(files) => {
               console.log(files);
             }}
+            accept={IMAGE_MIME_TYPE}
+            multiple={false}
           >
             {() => (
               <div style={{ textAlign: "center" }}>
