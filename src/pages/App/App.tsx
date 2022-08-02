@@ -1,6 +1,13 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import LayoutWithNav from "@/layouts/LayoutWithNav/LayoutWithNav";
-import { lazy, useContext, useEffect, useMemo, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import UserContext from "@/context/UserContext/UserContext";
 import AppContext from "@/context/AppContext/AppContext";
 import { IAuthenticatedUser } from "@/interfaces/IAuthenticatedUser";
@@ -10,18 +17,20 @@ import { Alert, LoadingOverlay } from "@mantine/core";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
+  const ProfilePage = lazy(() => import("@/pages/ProfilePage/ProfilePage"));
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
+  const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
   const { appLoading } = useContext(AppContext);
 
   const mainLayout = useMemo(() => {
     return (
-      <LayoutWithNav
-        headerContent={<MainHeader />}
-        navBarContent={"Navegacion"}
-      >
-        <Routes>
-          <Route path="/" element={<HomePage />}></Route>
-        </Routes>
+      <LayoutWithNav headerContent={<MainHeader />} navBarContent={<MainNav />}>
+        <Suspense fallback={<LoadingOverlay visible />}>
+          <Routes>
+            <Route path="/profile" element={<ProfilePage />}></Route>
+            <Route path="/" element={<HomePage />}></Route>
+          </Routes>
+        </Suspense>
       </LayoutWithNav>
     );
   }, []);
