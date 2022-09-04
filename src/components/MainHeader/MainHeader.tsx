@@ -37,16 +37,17 @@ const MainHeader = () => {
         orientation="vertical"
       />
       <div style={{ flex: 0 }}>
-        <Menu
-          control={
+        <Menu>
+          <Menu.Target>
             <UnstyledButton>
               <UserAvatar />
             </UnstyledButton>
-          }
-        >
-          <Menu.Item rightSection={<Logout />} onClick={handleLogout}>
-            <Text>Cerrar sesión</Text>
-          </Menu.Item>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item rightSection={<Logout />} onClick={handleLogout}>
+              <Text>Cerrar sesión</Text>
+            </Menu.Item>
+          </Menu.Dropdown>
         </Menu>
       </div>
     </div>

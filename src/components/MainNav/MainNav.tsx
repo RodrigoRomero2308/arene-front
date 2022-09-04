@@ -17,7 +17,7 @@ function MainNav() {
     <Navbar.Section
       grow
       component={ScrollArea}
-      sx={(theme) => ({
+      sx={(theme: any) => ({
         padding: theme.spacing.sm,
       })}
     >

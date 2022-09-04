@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Home, UserCircle } from "tabler-icons-react";
+import { AdjustmentsAlt, Home, UserCircle } from "tabler-icons-react";
 
 export interface INavRoute {
   icon: ReactNode;
@@ -20,5 +20,11 @@ export const navRoutes: INavRoute[] = [
     label: "Ver perfil",
     route: "/profile",
     iconColor: "blue",
+  },
+  {
+    icon: <AdjustmentsAlt />,
+    label: "Administración de áreas",
+    route: "/admin/area",
+    iconColor: "red",
   },
 ];
