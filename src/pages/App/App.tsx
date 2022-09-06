@@ -13,13 +13,14 @@ import AppContext from "@/context/AppContext/AppContext";
 import { IAuthenticatedUser } from "@/interfaces/IAuthenticatedUser";
 import { useQuery } from "@apollo/client";
 import { AUTHENTICATE } from "@/graphql/query/user.query";
-import { Alert, LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
   const ProfilePage = lazy(() => import("@/pages/ProfilePage/ProfilePage"));
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
   const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
+  const AreasPage = lazy(() => import("@/pages/Admin/AreasPage/AreasPage"));
   const { appLoading } = useContext(AppContext);
 
   const mainLayout = useMemo(() => {
@@ -28,6 +29,9 @@ const AppInnerComponent = () => {
         <Suspense fallback={<LoadingOverlay visible />}>
           <Routes>
             <Route path="/profile" element={<ProfilePage />}></Route>
+            <Route path="/admin">
+              <Route path="/admin/area" element={<AreasPage />}></Route>
+            </Route>
             <Route path="/" element={<HomePage />}></Route>
           </Routes>
         </Suspense>

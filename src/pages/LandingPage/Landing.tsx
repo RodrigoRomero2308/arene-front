@@ -12,6 +12,7 @@ import {
   Center,
   Container,
   Grid,
+  Group,
   MantineProvider,
   SimpleGrid,
   Space,
@@ -86,6 +87,37 @@ function Landing() {
     }
     setSubmitButtonLoading(false);
   });
+
+  const therapies = [
+    {
+      label: "Terapia Fisiokinesica",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Terapia Ocupacional",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Trabajo Social",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Fonoaudiología",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Psicología",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Enfermería",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+    {
+      label: "Nutrición",
+      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+    },
+  ];
 
   return (
     <MantineProvider
@@ -166,79 +198,20 @@ function Landing() {
             <Title className="terapias-title" order={1}>
               Terapias
             </Title>
-            <Accordion
-              className="terapias-accordion"
-              iconSize={22}
-              icon={
-                <ThemeIcon color="blue" variant="light">
-                  <HeartHandshake size={20} />
-                </ThemeIcon>
-              }
-              disableIconRotation
-            >
-              <Accordion.Item label="Terapia Fisiokinesica">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Terapia Ocupacional">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Trabajo Social">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Fonoaudiología">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Psicología">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Enfermería">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
-              <Accordion.Item label="Nutrición">
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum."
-              </Accordion.Item>
+            <Accordion className="terapias-accordion">
+              {therapies.map((item) => (
+                <Accordion.Item key={item.label} value={item.label}>
+                  <Accordion.Control>
+                    <Group>
+                      <ThemeIcon color="blue" variant="light">
+                        <HeartHandshake size={20} />
+                      </ThemeIcon>
+                      <Text>{item.label}</Text>
+                    </Group>
+                  </Accordion.Control>
+                  <Accordion.Panel>{item.text}</Accordion.Panel>
+                </Accordion.Item>
+              ))}
             </Accordion>
           </div>
           <div className="contacto" id="contacto">
@@ -288,7 +261,9 @@ function Landing() {
                   />
                   <Space h="sm"></Space>
                   <Center>
-                    <Button loading={submitButtonLoading} type="submit">Enviar consulta</Button>
+                    <Button loading={submitButtonLoading} type="submit">
+                      Enviar consulta
+                    </Button>
                   </Center>
                 </form>
               </Container>

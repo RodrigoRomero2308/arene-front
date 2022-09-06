@@ -41,7 +41,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
               height: "100%",
             }}
           >
-            <div style={{ width: "33vw", textAlign: "left" }}>
+            <div style={{ width: "33vw", textAlign: "left", display: "flex" }}>
               <a href="/#bienvenida">
                 <Image
                   src={logoArene}
