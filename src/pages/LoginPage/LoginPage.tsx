@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   Title,
+  Checkbox,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { isEmail } from "class-validator";
@@ -17,6 +18,7 @@ import { useMutation } from "@apollo/client";
 import { LOGIN } from "@/graphql/mutation/auth.mutation";
 import { useState } from "react";
 import LoginLabelByState from "./LoginLabelByState";
+import { LocalStorageKeys } from "@/enums/localStorageKeys";
 
 function LoginPage() {
   const [attemptLogin] = useMutation(LOGIN);
@@ -24,10 +26,18 @@ function LoginPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
+  const localStorageLoginData = localStorage.getItem(
+    LocalStorageKeys.LoginData
+  );
+  const loginData = localStorageLoginData
+    ? JSON.parse(localStorageLoginData)
+    : {};
+
   const loginForm = useForm({
     initialValues: {
-      dniOrEmail: "",
+      dniOrEmail: loginData.dniOrEmail || "",
       password: "",
+      rememberMe: loginData.rememberMe || false,
     },
     validate: {
       dniOrEmail: (value) => {
@@ -46,9 +56,23 @@ function LoginPage() {
     setSubmitFormLoading(true);
     try {
       const loginResult = await attemptLogin({
-        variables: values,
+        variables: {
+          dniOrEmail: values.dniOrEmail,
+          password: values.password,
+        },
       });
       if (!loginResult.errors) {
+        if (values.rememberMe) {
+          localStorage.setItem(
+            LocalStorageKeys.LoginData,
+            JSON.stringify({
+              dniOrEmail: values.dniOrEmail,
+              rememberMe: true,
+            })
+          );
+        } else {
+          localStorage.setItem(LocalStorageKeys.LoginData, JSON.stringify({}));
+        }
         navigate("/app");
       }
     } catch (error) {}
@@ -90,6 +114,13 @@ function LoginPage() {
               required
               {...loginForm.getInputProps("password")}
             ></PasswordInput>
+            <Space h="sm"></Space>
+            <Checkbox
+              label="Recordarme"
+              {...loginForm.getInputProps("rememberMe", {
+                type: "checkbox",
+              })}
+            />
             <Space h="sm"></Space>
             <Center>
               <Link to="/">
