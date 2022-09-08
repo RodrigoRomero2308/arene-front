@@ -9,6 +9,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { navRoutes } from "./NavRoutes";
 
 function MainNav() {
@@ -21,29 +22,42 @@ function MainNav() {
         padding: theme.spacing.sm,
       })}
     >
-      {navRoutes.map((route) => (
-        <div key={route.route}>
-          <UnstyledButton
-            onClick={() => {
-              navigate(`/app${route.route}`);
-            }}
-          >
-            <Group>
-              <ThemeIcon
-                sx={(theme) => ({
-                  borderRadius: theme.defaultRadius,
-                })}
-                color={route.iconColor}
-                variant="light"
-              >
-                {route.icon}
-              </ThemeIcon>
-              <Text>{route.label}</Text>
-            </Group>
-          </UnstyledButton>
-          <Space h="md" />
-        </div>
-      ))}
+      {navRoutes.map((route) => {
+        const innerComponent = (
+          <div key={route.route}>
+            <UnstyledButton
+              onClick={() => {
+                navigate(`/app${route.route}`);
+              }}
+            >
+              <Group>
+                <ThemeIcon
+                  sx={(theme) => ({
+                    borderRadius: theme.defaultRadius,
+                  })}
+                  color={route.iconColor}
+                  variant="light"
+                >
+                  {route.icon}
+                </ThemeIcon>
+                <Text>{route.label}</Text>
+              </Group>
+            </UnstyledButton>
+            <Space h="md" />
+          </div>
+        );
+        if (route.permissionRequired) {
+          return (
+            <WithPermission
+              key={route.route}
+              permissionRequired={route.permissionRequired}
+            >
+              {innerComponent}
+            </WithPermission>
+          );
+        }
+        return innerComponent;
+      })}
     </Navbar.Section>
   );
 }

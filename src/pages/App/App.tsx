@@ -14,6 +14,8 @@ import { IAuthenticatedUser } from "@/interfaces/IAuthenticatedUser";
 import { useQuery } from "@apollo/client";
 import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
+import { WithPermission } from "@/components/WithPermission/WithPermission";
+import { PermissionCodes } from "@/enums/permissions";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -30,7 +32,17 @@ const AppInnerComponent = () => {
           <Routes>
             <Route path="/profile" element={<ProfilePage />}></Route>
             <Route path="/admin">
-              <Route path="/admin/area" element={<AreasPage />}></Route>
+              <Route
+                path="/admin/area"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.AdminArea}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <AreasPage />
+                  </WithPermission>
+                }
+              ></Route>
             </Route>
             <Route path="/" element={<HomePage />}></Route>
           </Routes>

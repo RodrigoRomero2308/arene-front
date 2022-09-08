@@ -1,6 +1,10 @@
+import { WithPermission } from "@/components/WithPermission/WithPermission";
+import userContext from "@/context/UserContext/UserContext";
+import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_AREA } from "@/graphql/mutation/area.mutation";
 import { GET_AREAS } from "@/graphql/query/area.query";
 import { IArea } from "@/interfaces/IArea";
+import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -14,7 +18,7 @@ import {
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   AlertCircle,
   DotsVertical,
@@ -32,6 +36,8 @@ const AreasPage = () => {
   const [areasLoading, setAreasLoading] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [areaToUpdate, setAreaToUpdate] = useState<IArea | undefined>();
+
+  const { user } = useContext(userContext);
 
   const getAreasFromServer = () => {
     setAreasLoading(true);
@@ -64,10 +70,17 @@ const AreasPage = () => {
   return (
     <>
       <Title order={2}>Áreas</Title>
-      <Space h="md" />
-      <Button onClick={() => setCreateModalVisible(true)} rightIcon={<Plus />}>
-        Nuevo
-      </Button>
+      <WithPermission permissionRequired={PermissionCodes.AreaCreate}>
+        <>
+          <Space h="md" />
+          <Button
+            onClick={() => setCreateModalVisible(true)}
+            rightIcon={<Plus />}
+          >
+            Nuevo
+          </Button>
+        </>
+      </WithPermission>
       <Space h="md" />
       <div style={{ position: "relative" }}>
         <Table striped>
@@ -98,12 +111,18 @@ const AreasPage = () => {
                           setAreaToUpdate(item);
                         }}
                         icon={<Edit />}
+                        disabled={
+                          !userHasPermission(user, PermissionCodes.AreaUpdate)
+                        }
                       >
                         Modificar área
                       </Menu.Item>
                       <Menu.Item
                         onClick={() => setAreaToDelete(item)}
                         icon={<Trash />}
+                        disabled={
+                          !userHasPermission(user, PermissionCodes.AreaDelete)
+                        }
                       >
                         Eliminar área
                       </Menu.Item>
