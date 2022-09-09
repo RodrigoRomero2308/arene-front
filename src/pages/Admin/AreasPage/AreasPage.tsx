@@ -36,6 +36,8 @@ const AreasPage = () => {
   const [areasLoading, setAreasLoading] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [areaToUpdate, setAreaToUpdate] = useState<IArea | undefined>();
+  const [deleteModalButtonLoading, setDeleteModalButtonLoading] =
+    useState(false);
 
   const { user } = useContext(userContext);
 
@@ -162,15 +164,21 @@ const AreasPage = () => {
         <Space h="lg" />
         <Button
           color="red"
+          loading={deleteModalButtonLoading}
           onClick={() => {
+            setDeleteModalButtonLoading(true);
             deleteArea({
               variables: {
                 id: areaToDelete?.id,
               },
-            }).then(() => {
-              setAreaToDelete(undefined);
-              getAreasFromServer();
-            });
+            })
+              .then(() => {
+                setAreaToDelete(undefined);
+                getAreasFromServer();
+              })
+              .finally(() => {
+                setDeleteModalButtonLoading(false);
+              });
           }}
         >
           Eliminar
