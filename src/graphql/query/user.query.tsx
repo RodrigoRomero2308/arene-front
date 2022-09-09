@@ -15,7 +15,6 @@ export const AUTHENTICATE = gql`
       email
       firstname
       lastname
-      phone
       permissions {
         code
       }
