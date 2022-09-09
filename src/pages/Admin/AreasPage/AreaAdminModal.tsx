@@ -69,6 +69,11 @@ export const AreaAdminModal = ({
     return "Crear área";
   }, [initialValues.id]);
 
+  const submitButtonLabel = useMemo(() => {
+    if (initialValues.id) return "Actualizar";
+    return "Crear";
+  }, [initialValues.id]);
+
   return (
     <Modal title={modalTitle} opened={visible || false} onClose={onClose}>
       <form
@@ -95,7 +100,7 @@ export const AreaAdminModal = ({
         ></TextInput>
         <Space h="md" />
         <Button type="submit" loading={loading}>
-          Crear
+          {submitButtonLabel}
         </Button>
       </form>
     </Modal>
