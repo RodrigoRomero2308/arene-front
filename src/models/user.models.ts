@@ -4,5 +4,6 @@ export interface RegisterUserDTO {
   firstname: string;
   lastname: string;
   password: string;
-  phone: string;
+  phone_number: string;
+  birth_date: number;
 }

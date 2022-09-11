@@ -29,7 +29,7 @@ function RegisterPage() {
       firstname: "",
       lastname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
       confirmPasword: "",
       dni: "",
@@ -75,7 +75,8 @@ function RegisterPage() {
       firstname: values.firstname,
       lastname: values.lastname,
       password: values.password,
-      phone: values.phone,
+      phone_number: values.phone_number,
+      birth_date: new Date().getTime(),
     };
     try {
       const registerResult = await attemptRegister({
@@ -152,7 +153,7 @@ function RegisterPage() {
                   label="Número de teléfono"
                   placeholder="Ingrese número de teléfono"
                   required
-                  {...registerForm.getInputProps("phone")}
+                  {...registerForm.getInputProps("phone_number")}
                 ></TextInput>
               </Grid.Col>
               <Grid.Col lg={6}>
