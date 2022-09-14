@@ -16,6 +16,7 @@ import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
+import Turnos from "../TurnosPage/Turnos";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
