@@ -23,7 +23,15 @@ const AppInnerComponent = () => {
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
   const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
   const AreasPage = lazy(() => import("@/pages/Admin/AreasPage/AreasPage"));
+  const PatientsPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientsPage")
+  );
+  const AdminPatientPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
+  );
   const { appLoading } = useContext(AppContext);
+
+  const DefaultRedirect = () => <Navigate to="/app" />;
 
   const mainLayout = useMemo(() => {
     return (
@@ -37,9 +45,44 @@ const AppInnerComponent = () => {
                 element={
                   <WithPermission
                     permissionRequired={PermissionCodes.AdminArea}
-                    renderWithoutPermission={<Navigate to="/app" />}
+                    renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AreasPage />
+                  </WithPermission>
+                }
+              ></Route>
+            </Route>
+            <Route path="/patients">
+              <Route
+                index
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientsPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPatientPage />
                   </WithPermission>
                 }
               ></Route>

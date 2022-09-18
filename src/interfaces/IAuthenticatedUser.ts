@@ -1,11 +1,6 @@
 import { IPermission } from "./IPermission";
+import { IUser } from "./IUser";
 
-export interface IAuthenticatedUser {
-  id: number;
-  dni: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  phone: string;
+export interface IAuthenticatedUser extends IUser {
   permissions: IPermission[];
 }
