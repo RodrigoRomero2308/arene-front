@@ -17,8 +17,6 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import TurnoComponent from "./pages/TurnosPage/TurnoComponent";
-import Turnos from "./pages/TurnosPage/Turnos";
 
 const mantineTheme: MantineThemeOverride = {
   fontFamily: "Open Sans, sans-serif",
@@ -74,7 +72,6 @@ function MainComponent() {
             <Route path="app/*" element={<App />}></Route>
             <Route path="login" element={<LoginPage />}></Route>
             <Route path="register" element={<RegisterPage />}></Route>
-            <Route path="prueba" element={<Turnos />}></Route>
             <Route path="*" element={<Navigate to={"/"} replace />}></Route>
           </Route>
         </Routes>

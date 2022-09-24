@@ -16,7 +16,8 @@ import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
-import Turnos from "../TurnosPage/Turnos";
+import Turnos from "../AppointmentsPage/AppointmentsPage";
+import AppointmentsPage from "../AppointmentsPage/AppointmentsPage";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -41,6 +42,17 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<Navigate to="/app" />}
                   >
                     <AreasPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/admin/turnos"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.AdminArea}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <AppointmentsPage />
                   </WithPermission>
                 }
               ></Route>
