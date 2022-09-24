@@ -134,7 +134,7 @@ const App = () => {
           setAppLoading,
         }}
       >
-        <AppInnerComponent />
+        {user ? <AppInnerComponent /> : null}
       </AppContext.Provider>
     </UserContext.Provider>
   );
