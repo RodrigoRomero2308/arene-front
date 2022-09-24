@@ -45,3 +45,11 @@ export interface IPatient {
 
   user?: IUser | null;
 }
+
+export interface IPatientFilter {
+  dni?: string;
+
+  name?: string;
+
+  email?: string;
+}
