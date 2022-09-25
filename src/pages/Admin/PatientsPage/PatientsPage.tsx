@@ -11,6 +11,7 @@ import {
   Group,
   LoadingOverlay,
   Menu,
+  ScrollArea,
   Space,
   Table,
   TextInput,
@@ -136,58 +137,64 @@ const PatientsPage = () => {
       </form>
       <Space h="md" />
       <div style={{ position: "relative" }}>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>DNI</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Teléfono</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {patients.map((item) => (
-              <tr key={item.user_id}>
-                <td>{item.user?.dni}</td>
-                <td>
-                  {item.user
-                    ? `${item.user.firstname} ${item.user.lastname}`
-                    : ""}
-                </td>
-                <td>{item.user?.email}</td>
-                <td>{item.user?.phone_number}</td>
-                <td>
-                  <Menu shadow="sm">
-                    <Menu.Target>
-                      <UnstyledButton>
-                        <DotsVertical />
-                      </UnstyledButton>
-                    </Menu.Target>
-
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        onClick={() => {
-                          navigate(`/app/patients/edit/${item.user_id}`);
-                        }}
-                        icon={<Edit />}
-                        disabled={
-                          !userHasPermission(
-                            user,
-                            PermissionCodes.PatientUpdate
-                          )
-                        }
-                      >
-                        Modificar paciente
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </td>
+        <ScrollArea
+          sx={() => ({
+            maxWidth: "100vw",
+          })}
+        >
+          <Table striped>
+            <thead>
+              <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+
+            <tbody>
+              {patients.map((item) => (
+                <tr key={item.user_id}>
+                  <td>{item.user?.dni}</td>
+                  <td>
+                    {item.user
+                      ? `${item.user.firstname} ${item.user.lastname}`
+                      : ""}
+                  </td>
+                  <td>{item.user?.email}</td>
+                  <td>{item.user?.phone_number}</td>
+                  <td>
+                    <Menu shadow="sm">
+                      <Menu.Target>
+                        <UnstyledButton>
+                          <DotsVertical />
+                        </UnstyledButton>
+                      </Menu.Target>
+
+                      <Menu.Dropdown>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(`/app/patients/edit/${item.user_id}`);
+                          }}
+                          icon={<Edit />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientUpdate
+                            )
+                          }
+                        >
+                          Modificar paciente
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </ScrollArea>
         <LoadingOverlay visible={patientsLoading} />
       </div>
     </>
