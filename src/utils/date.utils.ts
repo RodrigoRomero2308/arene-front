@@ -13,3 +13,13 @@ export const textFromTextInputToDate = (value: string): Date | undefined => {
 
   return new Date(year, month - 1, day);
 };
+
+export const dateToTextInputFormat = (value: Date): string | undefined => {
+  if (!value) return;
+  const day = value.getDate().toString().padStart(2, "0");
+  const month = (value.getMonth() + 1).toString().padStart(2, "0");
+  const year = value.getFullYear();
+  const dateParts = [year, month, day];
+
+  return dateParts.join("-");
+};

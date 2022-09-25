@@ -1,10 +1,9 @@
 import { gql } from "@apollo/client";
 
-export const GET_PATIENTS = gql`
-  query getPatients($filter: PatientFilter) {
-    getPatients(filter: $filter) {
+export const GET_PATIENT_BY_ID_TO_UPDATE = gql`
+  query getPatientById($id: Int!) {
+    getPatientById(id: $id) {
       user_id
-      patient_status_id
       companion_firstname
       companion_lastname
       companion_phone_type_id
@@ -30,6 +29,8 @@ export const GET_PATIENTS = gql`
         firstname
         lastname
         birth_date
+        gender
+        marital_status
         phone_type_id
         phone_number
         address {
@@ -41,6 +42,22 @@ export const GET_PATIENTS = gql`
           department
         }
         profile_picture_id
+      }
+    }
+  }
+`;
+
+export const GET_PATIENTS_FOR_TABLE = gql`
+  query getPatients($filter: PatientFilter) {
+    getPatients(filter: $filter) {
+      user_id
+      patient_status_id
+      user {
+        dni
+        email
+        firstname
+        lastname
+        phone_number
       }
     }
   }

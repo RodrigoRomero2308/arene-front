@@ -1,7 +1,7 @@
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
-import { GET_PATIENTS } from "@/graphql/query/patient.query";
+import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
 import { IPatient, IPatientFilter } from "@/interfaces/IPatient";
 import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery } from "@apollo/client";
@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { DotsVertical, Edit, Plus } from "tabler-icons-react";
 
 const PatientsPage = () => {
-  const [getPatients] = useLazyQuery(GET_PATIENTS);
+  const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [patientsLoading, setPatientsLoading] = useState(false);
   const navigate = useNavigate();

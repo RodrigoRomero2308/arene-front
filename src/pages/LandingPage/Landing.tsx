@@ -65,7 +65,6 @@ function Landing() {
 
   const handleSending = consultaForm.onSubmit(async (values) => {
     setSubmitButtonLoading(true);
-    console.log(values);
     const ConsultaInput: ConsultaDTO = {
       nombre: values.nombre,
       email: values.email,
@@ -78,7 +77,6 @@ function Landing() {
           input: ConsultaInput,
         },
       });
-      console.log(sendingResult);
       if (!sendingResult.errors) {
         handleSuccessfulSent();
       }
