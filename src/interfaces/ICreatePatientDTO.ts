@@ -15,7 +15,7 @@ export interface ICreatePatientFormDto {
 
   birth_date: string;
 
-  phone_type_id?: number;
+  phone_type_id?: string;
 
   phone_number?: string;
 
@@ -26,7 +26,7 @@ export interface ICreatePatientFormDto {
 
     companion_lastname?: string;
 
-    companion_phone_type_id?: number;
+    companion_phone_type_id?: string;
 
     companion_phone_number?: string;
 
@@ -34,7 +34,7 @@ export interface ICreatePatientFormDto {
 
     responsible_lastname?: string;
 
-    responsible_phone_type_id?: number;
+    responsible_phone_type_id?: string;
 
     responsible_phone_number?: string;
 
@@ -42,7 +42,7 @@ export interface ICreatePatientFormDto {
 
     primary_doctor_lastname?: string;
 
-    primary_doctor_phone_type_id?: number;
+    primary_doctor_phone_type_id?: string;
 
     primary_doctor_phone_number?: string;
 
@@ -50,13 +50,13 @@ export interface ICreatePatientFormDto {
 
     diagnose_date: string;
 
-    needs_transfer: boolean;
+    needs_transfer: string;
 
     transfer?: string;
 
     transfer_responsible?: string;
 
-    transfer_phone_type_id?: number;
+    transfer_phone_type_id?: string;
 
     transfer_phone_number?: string;
   };
