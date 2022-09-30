@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   AppShell,
   Navbar,
@@ -7,6 +7,7 @@ import {
   Burger,
   useMantineTheme,
 } from "@mantine/core";
+import { CustomEvents } from "@/enums/customEvents";
 
 const LayoutWithNav = ({
   navBarContent,
@@ -19,6 +20,18 @@ const LayoutWithNav = ({
 }) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+
+  useEffect(() => {
+    const handleNavClick = () => {
+      setOpened(false);
+    };
+
+    document.addEventListener(CustomEvents.onNavLinkClick, handleNavClick);
+
+    return () => {
+      document.removeEventListener(CustomEvents.onNavLinkClick, handleNavClick);
+    };
+  }, []);
 
   return (
     <AppShell

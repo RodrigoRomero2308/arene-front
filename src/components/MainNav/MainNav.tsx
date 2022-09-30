@@ -11,9 +11,17 @@ import {
 import { useNavigate } from "react-router-dom";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { navRoutes } from "./NavRoutes";
+import { CustomEvents } from "@/enums/customEvents";
 
 function MainNav() {
   const navigate = useNavigate();
+
+  const emitNavClickEvent = () => {
+    const event = new CustomEvent(CustomEvents.onNavLinkClick);
+
+    document.dispatchEvent(event);
+  };
+
   return (
     <Navbar.Section
       grow
@@ -27,6 +35,7 @@ function MainNav() {
           <div key={route.route}>
             <UnstyledButton
               onClick={() => {
+                emitNavClickEvent();
                 navigate(`/app${route.route}`);
               }}
             >
