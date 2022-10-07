@@ -18,6 +18,7 @@ import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
 import Turnos from "../AppointmentsPage/AppointmentsPage";
 import AppointmentsPage from "../AppointmentsPage/AppointmentsPage";
+import TreatmentsPage from "../Admin/TreatmentsPage/TreatmentsPage";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -96,6 +97,17 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+                          <Route
+                path="/patients/treatments/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <TreatmentsPage />
                   </WithPermission>
                 }
               ></Route>

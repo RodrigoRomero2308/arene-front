@@ -11,4 +11,8 @@ export enum PermissionCodes {
   PatientRead = "PATIENT_R",
   PatientCreate = "PATIENT_C",
   PatientUpdate = "PATIENT_U",
+  TreatmentCreate = "TREATMENT_C",
+  TreatmentRead = "TREATMENT_R",
+  TreatmentUpdate = "TREATMENT_U",
+  TreatmentDelete = "TREATMENT_D",
 }
