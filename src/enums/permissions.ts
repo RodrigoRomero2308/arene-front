@@ -7,6 +7,7 @@ export enum PermissionCodes {
   RoleCreate = "ROLE_C",
   RoleUpdate = "ROLE_U",
   RoleDelete = "ROLE_D",
+  AdminRole = "ADMIN_ROLE",
   AdminArea = "ADMIN_AREA",
   PatientRead = "PATIENT_R",
   PatientCreate = "PATIENT_C",

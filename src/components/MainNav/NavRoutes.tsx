@@ -43,10 +43,17 @@ export const navRoutes: INavRoute[] = [
     iconColor: "red",
   },
   {
+    icon: <AdjustmentsAlt />,
+    label: "Roles",
+    permissionRequired: PermissionCodes.AdminRole,
+    route: "/admin/role",
+    iconColor: "green",
+  },  
+  {
     icon: <Calendar />,
-    label: "Administración de turnos",
-    permissionRequired: PermissionCodes.AdminArea,
-    route: "/admin/turnos",
+    label: "Turnos",
+    permissionRequired: PermissionCodes.Admin,
+    route: "/admin/appointments",
     iconColor: "pink",
   },
 ];

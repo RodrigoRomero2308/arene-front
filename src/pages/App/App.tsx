@@ -26,6 +26,7 @@ const AppInnerComponent = () => {
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
   const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
   const AreasPage = lazy(() => import("@/pages/Admin/AreasPage/AreasPage"));
+  const RolesPage = lazy(() => import("@/pages/Admin/RolePage/RolesPage"));
   const PatientsPage = lazy(
     () => import("@/pages/Admin/PatientsPage/PatientsPage")
   );
@@ -62,6 +63,19 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<Navigate to="/app" />}
                   >
                     <AppointmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
+            </Route>
+            <Route path="/admin">
+              <Route
+                path="/admin/role"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.AdminRole}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <RolesPage />
                   </WithPermission>
                 }
               ></Route>
