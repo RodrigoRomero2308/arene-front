@@ -23,6 +23,15 @@ export const GET_PATIENT_BY_ID_TO_UPDATE = gql`
       transfer_responsible
       transfer_phone_type_id
       transfer_phone_number
+      cud_number
+      cud_companion
+      cud_valid_from
+      cud_valid_to
+      social_work
+      social_work_plan
+      social_work_number
+      social_work_valid_from
+      social_work_valid_to
       user {
         dni
         email
