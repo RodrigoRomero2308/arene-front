@@ -2,6 +2,7 @@ import { PermissionCodes } from "@/enums/permissions";
 import { ReactNode } from "react";
 import {
   AdjustmentsAlt,
+  BuildingCommunity,
   Heartbeat,
   Home,
   UserCircle,
@@ -36,6 +37,13 @@ export const navRoutes: INavRoute[] = [
     iconColor: "green",
   },
   {
+    icon: <BuildingCommunity />,
+    label: "Personal Institucional",
+    permissionRequired: PermissionCodes.ProfessionalRead,
+    route: "/institucionalStaff",
+    iconColor: "violet",
+  },
+  {
     icon: <AdjustmentsAlt />,
     label: "Áreas",
     permissionRequired: PermissionCodes.AdminArea,
@@ -48,5 +56,5 @@ export const navRoutes: INavRoute[] = [
     permissionRequired: PermissionCodes.AdminRole,
     route: "/admin/role",
     iconColor: "green",
-  },  
+  },
 ];
