@@ -1,15 +1,14 @@
 import {
   CREATE_TREATMENT,
   DELETE_TREATMENT,
-  UPDATE_TREATMENT,
 } from "@/graphql/mutation/treatment.mutation";
 import { GET_AREAS } from "@/graphql/query/area.query";
 import { GET_PATIENT_BY_ID_TO_UPDATE } from "@/graphql/query/patient.query";
-import { GET_TREATMENTS_BY_USERID } from "@/graphql/query/treatment.query";
+import { GET_TREATMENTS_WITH_FILTER } from "@/graphql/query/treatment.query";
 import { IArea } from "@/interfaces/IArea";
 import { ICreateTreatmentDTO } from "@/interfaces/ICreateTreatmentDTO";
 import { IPatient } from "@/interfaces/IPatient";
-import { ITreatment } from "@/interfaces/ITreatment";
+import { ITreatment, ITreatmentFilter } from "@/interfaces/ITreatment";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -19,19 +18,16 @@ import {
   Space,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const TreatmentsPage = () => {
   const [createTreatment] = useMutation(CREATE_TREATMENT);
-  /*   const [updateTreatment] = useMutation(UPDATE_TREATMENT); */
   const [deleteTreatment] = useMutation(DELETE_TREATMENT);
   const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID_TO_UPDATE);
   const [getAreas] = useLazyQuery(GET_AREAS);
-  const [getTreatmentByUserId] = useLazyQuery(GET_TREATMENTS_BY_USERID);
-  const [areasLoading, setAreasLoading] = useState(false);
-  const [patientLoading, setPatientLoading] = useState(false);
+  const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
+  const [dataLoading, setDataLoading] = useState(false);
   const [areas, setAreas] = useState<IArea[]>([]);
   const [actualTreatments, setActualTreatments] = useState<ITreatment[]>([]);
   const [patientData, setPatientData] = useState<IPatient>();
@@ -42,7 +38,7 @@ const TreatmentsPage = () => {
 
   const getPatientFromServer = async (userId: number) => {
     try {
-      setPatientLoading(true);
+      setDataLoading(true);
       const data = await getPatientData({
         variables: {
           id: userId,
@@ -51,41 +47,35 @@ const TreatmentsPage = () => {
       setPatientData(data.data.getPatientById);
     } catch (error) {
       console.error(error);
-    } finally {
-      setPatientLoading(false);
     }
   };
 
   const getAreasFromServer = () => {
     getAreas()
       .then((result) => {
+        setDataLoading(true);
         setAreas(result.data.getAreas);
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        setAreasLoading(true);
       });
   };
 
-  const getTreatmentsFromServer = () => {
-    getTreatmentByUserId({
-      variables: {
-        id: Number(params.user_id),
-      },
+  const getTreatmentsFromServer = (variables?: {
+    filter: ITreatmentFilter;
+  }) => {
+    getTreatments({
+      variables,
     })
       .then((result) => {
-        const data = result.data.getTreatmentsByUserId;
+        setDataLoading(true);
+        const data = result.data.getTreatments;
         setActualTreatments(data);
         const selectedAreas = data.map((item: any) => item.area_id.toString());
         setSelectedAreas(selectedAreas);
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        setAreasLoading(true);
       });
   };
 
@@ -93,7 +83,14 @@ const TreatmentsPage = () => {
     if (params.user_id && Number.isInteger(+params.user_id)) {
       getPatientFromServer(Number(params.user_id));
       getAreasFromServer();
-      getTreatmentsFromServer();
+      getTreatmentsFromServer({
+        filter: {
+          patient_id: Number(params.user_id),
+        },
+      });
+      setDataLoading(false);
+    } else {
+      navigate("app/patients");
     }
   }, []);
 
@@ -145,24 +142,15 @@ const TreatmentsPage = () => {
 
   return (
     <>
-      <Modal
-        opened={modalOpened}
-        /* title={"Tratamiento guardado"} */ onClose={() =>
-          setModalOpened(false)
-        }
-      >
+      <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
         <Title order={4}>Tratamiento guardado exitosamente</Title>
         <Space h={"xl"} />
         <Button onClick={handleCloseModal}>Cerrar</Button>
       </Modal>
       <Title order={2}>
         Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}{" "}
-        <LoadingOverlay visible={patientLoading} />
       </Title>
-      <Title order={4}>
-        DNI: {patientData?.user?.dni}
-        <LoadingOverlay visible={patientLoading} />
-      </Title>
+      <Title order={4}>DNI: {patientData?.user?.dni}</Title>
       <Space h="md" />
       <MultiSelect
         label="Terapias"
@@ -179,9 +167,10 @@ const TreatmentsPage = () => {
         clearable
       />
       <Space h="md" />
-      <Button type="submit" onClick={handleSubmit}>
+      <Button type="submit" onClick={handleSubmit} loading={!dataLoading}>
         Asignar
       </Button>
+      <LoadingOverlay visible={!dataLoading} />
     </>
   );
 };
