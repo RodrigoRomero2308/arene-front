@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import "dayjs/locale/es";
 import { Space, Tabs, Title } from "@mantine/core";
 import AppointmentsSchedule from "@/components/Appointments/AppointmentsSchedule";
 
 const AppointmentsPage = () => {
-  const [activeTab, setActiveTab] = useState<string | null>("Lunes");
-  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  const AppointmentsSchedule = lazy(
+    () => import("@/components/Appointments/AppointmentsSchedule")
+  );
+  const [activeTab, setActiveTab] = useState<string | null>("monday");
+
+  const daysOfTheWeek = [
+    { id: 1, label: "Lunes", value: "monday" },
+    { id: 2, label: "Martes", value: "tuesday" },
+    { id: 3, label: "Miércoles", value: "wednesday" },
+    { id: 4, label: "Jueves", value: "thursday" },
+    { id: 5, label: "Viernes", value: "friday" },
+  ];
 
   return (
     <>
@@ -13,16 +23,13 @@ const AppointmentsPage = () => {
       <Space h="md" />
       <Tabs value={activeTab} onTabChange={setActiveTab}>
         <Tabs.List>
-          {dias.map((dia) => (
-            <Tabs.Tab value={dia} key={dia}>{dia}</Tabs.Tab>
+          {daysOfTheWeek.map((day) => (
+            <Tabs.Tab value={day.value} key={day.id}>
+              {day.label}
+            </Tabs.Tab>
           ))}
         </Tabs.List>
-
-        {dias.map((dia) => (
-          <Tabs.Panel value={dia} key={dia}>
-            <AppointmentsSchedule dia={dia} key={dia}/>
-          </Tabs.Panel>
-        ))}
+        <AppointmentsSchedule dayOfTheWeek={activeTab || "monday"} />
       </Tabs>
     </>
   );

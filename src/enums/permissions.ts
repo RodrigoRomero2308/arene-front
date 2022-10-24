@@ -16,4 +16,5 @@ export enum PermissionCodes {
   TreatmentRead = "TREATMENT_R",
   TreatmentUpdate = "TREATMENT_U",
   TreatmentDelete = "TREATMENT_D",
+  AdminAppointment = "ADMIN_APPOINTMENTS",
 }

@@ -16,9 +16,6 @@ import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
-import Turnos from "../AppointmentsPage/AppointmentsPage";
-import AppointmentsPage from "../AppointmentsPage/AppointmentsPage";
-import TreatmentsPage from "../Admin/TreatmentsPage/TreatmentsPage";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -29,6 +26,12 @@ const AppInnerComponent = () => {
   const RolesPage = lazy(() => import("@/pages/Admin/RolePage/RolesPage"));
   const PatientsPage = lazy(
     () => import("@/pages/Admin/PatientsPage/PatientsPage")
+  );
+  const AppointmentsPage = lazy(
+    () => import("@/pages/Admin/AppointmentsPage/AppointmentsPage")
+  );
+  const TreatmentsPage = lazy(
+    () => import("@/pages/Admin/TreatmentsPage/TreatmentsPage")
   );
   const AdminPatientPage = lazy(
     () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
@@ -56,10 +59,10 @@ const AppInnerComponent = () => {
                 }
               ></Route>
               <Route
-                path="/admin/turnos"
+                path="/admin/appointments"
                 element={
                   <WithPermission
-                    permissionRequired={PermissionCodes.AdminArea}
+                    permissionRequired={PermissionCodes.Admin}
                     renderWithoutPermission={<Navigate to="/app" />}
                   >
                     <AppointmentsPage />
@@ -114,7 +117,7 @@ const AppInnerComponent = () => {
                   </WithPermission>
                 }
               ></Route>
-                          <Route
+              <Route
                 path="/patients/treatments/:user_id"
                 element={
                   <WithPermission
