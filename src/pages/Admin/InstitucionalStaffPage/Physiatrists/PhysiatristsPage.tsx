@@ -208,7 +208,7 @@ const PhysiatristPage = () => {
                             )
                           }
                         >
-                          Modificar profesional
+                          Modificar
                         </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

@@ -1,10 +1,8 @@
 import { WithPermission } from "@/components/WithPermission/WithPermission";
-import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
-import { GET_PROFESSIONALS_FOR_TABLE } from "@/graphql/query/professional.query";
+import { IAuthenticatedUser } from "@/interfaces/IAuthenticatedUser";
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { userHasPermission } from "@/utils/permission.utils";
-import { useLazyQuery } from "@apollo/client";
 import {
   Button,
   Grid,
@@ -19,53 +17,40 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { DotsVertical, Edit, Plus } from "tabler-icons-react";
 
-const ProfessionalPage = () => {
-  const [getProfessionals] = useLazyQuery(GET_PROFESSIONALS_FOR_TABLE);
-  const [professionals, setProfessionals] = useState<IProfessional[]>([]);
-  const [professionalsLoading, setProfessionalsLoading] = useState(false);
+type Props = {
+  handleSearchFormSubmit: any;
+  tableLoading: boolean;
+  staffName: "Administradores" | "Coordinadores" | "Directores";
+  staffPathName: "administrators" | "coordinators" | "directors";
+  staffPeople: IProfessional[];
+  user: IAuthenticatedUser | undefined;
+};
+
+export const NoMedicalStaffSearch = ({
+  handleSearchFormSubmit,
+  tableLoading,
+  staffPathName,
+  staffName,
+  staffPeople,
+  user,
+}: Props) => {
   const navigate = useNavigate();
 
-  const { user } = useContext(userContext);
+  const stafNameFirstCharTotUpperCase =
+    staffName.charAt(0).toUpperCase() + staffName.slice(1);
 
-  const getProfessionalsFromServer = (variables?: {
-    filter: IProfessionalFilter;
-  }) => {
-    setProfessionalsLoading(true);
-    getProfessionals({
-      variables,
-    })
-      .then((result) => {
-        setProfessionals(
-          result.data.getProfessionals.map((item: any) => {
-            delete item.__typename;
-            return item;
-          })
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => {
-        setProfessionalsLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    getProfessionalsFromServer();
-  }, []);
-
-  const newProfessionalButton = useMemo(
+  const newStaffPersonButton = useMemo(
     () => (
       <WithPermission permissionRequired={PermissionCodes.ProfessionalCreate}>
         <>
           <Space h="md" />
           <Button
             onClick={() => {
-              navigate("/app/institucionalStaff/professionals/new");
+              navigate(`/app/institucionalStaff/${staffPathName}/new`);
             }}
             rightIcon={<Plus />}
           >
@@ -81,19 +66,12 @@ const ProfessionalPage = () => {
     initialValues: {
       dni: "",
       name: "",
-      profession: "",
-      medical_license_number: "",
-      speciality: "",
     },
   });
 
-  const handleSearchFormSubmit = (values: IProfessionalFilter) => {
-    getProfessionalsFromServer({ filter: values });
-  };
-
   return (
     <>
-      <Title order={2}>Profesionales</Title>
+      <Title order={2}>{stafNameFirstCharTotUpperCase}</Title>
       <Space h="md" />
       <Title order={5} style={{ marginLeft: 15 }}>
         Búsqueda por:
@@ -112,34 +90,16 @@ const ProfessionalPage = () => {
               placeholder="Ingrese Nombre y Apellido"
               {...searchForm.getInputProps("name")}
             ></TextInput>
-            <Space h="sm" />
+          </Grid.Col>
+          <Grid.Col md={4}>
             <TextInput
               label="DNI"
               placeholder="Ingrese DNI"
               {...searchForm.getInputProps("dni")}
             ></TextInput>
-            <Space h="sm" />
-            <TextInput
-              label="Matricula"
-              placeholder="Ingrese Matricula"
-              {...searchForm.getInputProps("medical_license_number")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Especialidad"
-              placeholder="Ingrese Especialidad"
-              {...searchForm.getInputProps("speciality")}
-            ></TextInput>
-            <Space h="sm" />
-            <TextInput
-              label="Profesión"
-              placeholder="Ingrese Profesión"
-              {...searchForm.getInputProps("profession")}
-            ></TextInput>
             <Space h="xl" />
             <Space h="sm" />
-            <Group>
+            <Group position="apart">
               <div>
                 <Button
                   sx={(theme) => ({
@@ -147,25 +107,23 @@ const ProfessionalPage = () => {
                   })}
                   type="submit"
                   //rightIcon={<Search />}
-                  loading={professionalsLoading}
+                  loading={tableLoading}
                 >
                   Buscar
                 </Button>
                 <Button
                   variant="outline"
                   onClick={searchForm.reset}
-                  loading={professionalsLoading}
+                  loading={tableLoading}
                 >
                   Limpiar
                 </Button>
               </div>
             </Group>
           </Grid.Col>
-          <Grid.Col md={4}></Grid.Col>
         </Grid>
         <Space h="md" />
-        <div></div>
-        {newProfessionalButton}
+        {newStaffPersonButton}
       </form>
       <Space h="md" />
       <div style={{ position: "relative" }}>
@@ -179,15 +137,14 @@ const ProfessionalPage = () => {
               <tr>
                 <th>DNI</th>
                 <th>Nombre</th>
-                <th>Profesión</th>
-                <th>Especialidad</th>
-                <th>Matricula</th>
+                <th>Mail</th>
+                <th>Numero de teléfono</th>
                 <th>Opciones</th>
               </tr>
             </thead>
 
             <tbody>
-              {professionals.map((item) => (
+              {staffPeople.map((item) => (
                 <tr key={item.user_id}>
                   <td>{item.user?.dni}</td>
                   <td>
@@ -195,9 +152,8 @@ const ProfessionalPage = () => {
                       ? `${item.user.firstname} ${item.user.lastname}`
                       : ""}
                   </td>
-                  <td>{item.profession}</td>
-                  <td>{item.speciality}</td>
-                  <td>{item.medical_license_number}</td>
+                  <td>{item.user?.email}</td>
+                  <td>{item.user?.phone_number}</td>
                   <td>
                     <Menu shadow="sm">
                       <Menu.Target>
@@ -205,19 +161,18 @@ const ProfessionalPage = () => {
                           <DotsVertical />
                         </UnstyledButton>
                       </Menu.Target>
-
                       <Menu.Dropdown>
                         <Menu.Item
                           onClick={() => {
                             navigate(
-                              `/app/institucionalStaff/professionals/edit/${item.user_id}`
+                              `/app/institucionalStaff/administrators/edit/${item.user_id}`
                             );
                           }}
                           icon={<Edit />}
                           disabled={
                             !userHasPermission(
                               user,
-                              PermissionCodes.PatientUpdate
+                              PermissionCodes.ProfessionalUpdate
                             )
                           }
                         >
@@ -231,10 +186,8 @@ const ProfessionalPage = () => {
             </tbody>
           </Table>
         </ScrollArea>
-        <LoadingOverlay visible={professionalsLoading} />
+        <LoadingOverlay visible={tableLoading} />
       </div>
     </>
   );
 };
-
-export default ProfessionalPage;

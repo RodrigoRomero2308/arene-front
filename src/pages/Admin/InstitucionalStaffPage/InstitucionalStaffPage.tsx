@@ -4,27 +4,43 @@ import AdministratorsPage from "./Administrators/AdministratorsPage";
 import PhysiatristsPage from "./Physiatrists/PhysiatristsPage";
 import CoordinatorPage from "./Coordinators/CoordinatorsPage";
 import DirectorsPage from "./Directors/DirectorsPage";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const InstitucionalStaffPage = () => {
   const navigate = useNavigate();
   const { tabValue } = useParams();
+
+  const tabs = {
+    professionals: "professionals",
+    administrators: "administrators",
+    physiatrists: "physiatrists",
+    coordinators: "coordinators",
+    directors: "directors",
+  };
+
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+
+  let defaultTab = searchParams.get("tab");
+
+  if (defaultTab && !Object.values(tabs).includes(defaultTab)) {
+    defaultTab = null;
+  }
 
   return (
     <>
       <Tabs
         variant="outline"
         radius="md"
-        defaultValue="professionals"
-        // value={tabValue}
-        // onTabChange={(value) => navigate(`/institucionalStaff/${value}`)}
+        defaultValue={defaultTab || "professionals"}
       >
         <Tabs.List>
-          <Tabs.Tab value="professionals">Profesionales</Tabs.Tab>
-          <Tabs.Tab value="administrators">Administradores</Tabs.Tab>
-          <Tabs.Tab value="physiatrists">Fisiatras</Tabs.Tab>
-          <Tabs.Tab value="coordinators">Coordinadores</Tabs.Tab>
-          <Tabs.Tab value="directors">Directores</Tabs.Tab>
+          <Tabs.Tab value={tabs.professionals}>Profesionales</Tabs.Tab>
+          <Tabs.Tab value={tabs.administrators}>Administradores</Tabs.Tab>
+          <Tabs.Tab value={tabs.physiatrists}>Fisiatras</Tabs.Tab>
+          <Tabs.Tab value={tabs.coordinators}>Coordinadores</Tabs.Tab>
+          <Tabs.Tab value={tabs.directors}>Directores</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="professionals" pt="xs">

@@ -19,10 +19,9 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { LooseKeys } from "@mantine/form/lib/types";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { PhysiatristFormDataSerializer } from "./PhysiatristFormDataSerializer";
+import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
 
 const AdminPhysiatristPage = () => {
   const [createPhysiatrist] = useMutation(CREATE_PHYSIATRIST);
@@ -45,7 +44,7 @@ const AdminPhysiatristPage = () => {
       phone_type_id: "",
       professional: {
         medical_licencse_number: "",
-        profession: "Fisiatra",
+        profession: "",
         speciality: "",
       },
       address: {
@@ -67,10 +66,9 @@ const AdminPhysiatristPage = () => {
         },
       });
 
-      const formData =
-        new PhysiatristFormDataSerializer().physiatristDataToFormData(
-          data.data.getProfessionalById
-        );
+      const formData = new StaffFormDataSerializer().staffDataToFormData(
+        data.data.getProfessionalById
+      );
 
       form.setValues(formData);
     } catch (error) {
@@ -88,38 +86,6 @@ const AdminPhysiatristPage = () => {
 
     return () => {};
   }, []);
-
-  const PhoneInputs = useCallback(
-    ({
-      form,
-      typeProperty,
-      numberProperty,
-    }: {
-      form: UseFormReturnType<ICreateProfessionalFormDto>;
-      typeProperty: LooseKeys<ICreateProfessionalFormDto>;
-      numberProperty: LooseKeys<ICreateProfessionalFormDto>;
-    }) => {
-      return (
-        <>
-          <Grid.Col md={4}>
-            <Select
-              searchable
-              data={phoneTypes}
-              label="Tipo Tel."
-              {...form.getInputProps(typeProperty)}
-            ></Select>
-            <Space h="sm" />
-            <NumberInput
-              hideControls
-              label="Teléfono"
-              {...form.getInputProps(numberProperty)}
-            ></NumberInput>
-          </Grid.Col>
-        </>
-      );
-    },
-    []
-  );
 
   const saveOperation = useCallback(
     (input) => {
@@ -152,7 +118,7 @@ const AdminPhysiatristPage = () => {
       try {
         setFormLoading(true);
 
-        const input = new PhysiatristFormDataSerializer().formDataToCreateData(
+        const input = new StaffFormDataSerializer().formDataToCreateData(
           values
         );
 
@@ -172,7 +138,9 @@ const AdminPhysiatristPage = () => {
   return (
     <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Title order={2}>Registrar Fisiatra</Title>
+        <Title order={2}>
+          {isUpdate ? "Actualizar Fisiatra" : "Registrar Fisiatra"}
+        </Title>
         <Space h="sm" />
         <Title order={4}>Datos del Fisiatra:</Title>
         <Space h="sm" />
@@ -227,11 +195,21 @@ const AdminPhysiatristPage = () => {
               {...form.getInputProps("marital_status")}
             ></TextInput>
           </Grid.Col>
-          <PhoneInputs
-            form={form}
-            typeProperty="phone_type_id"
-            numberProperty="phone_number"
-          />
+          <Grid.Col md={4}>
+            <Select
+              searchable
+              data={phoneTypes}
+              label="Tipo Tel."
+              {...form.getInputProps("phone_type_id")}
+            ></Select>
+          </Grid.Col>
+          <Grid.Col md={4}>
+            <NumberInput
+              hideControls
+              label="Teléfono"
+              {...form.getInputProps("phone_number")}
+            ></NumberInput>
+          </Grid.Col>
         </Grid>
         <Space h="xl" />
         <Divider my="xs" label="Datos como fisiatra" />

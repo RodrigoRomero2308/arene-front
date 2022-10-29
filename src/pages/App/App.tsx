@@ -180,18 +180,6 @@ const AppInnerComponent = () => {
               ></Route>
 
               <Route
-                path="/institucionalStaff/professionals"
-                element={
-                  <WithPermission
-                    permissionRequired={PermissionCodes.ProfessionalRead}
-                    renderWithoutPermission={<DefaultRedirect />}
-                  >
-                    <ProfessionalsPage />
-                  </WithPermission>
-                }
-              ></Route>
-
-              <Route
                 path="/institucionalStaff/professionals/new"
                 element={
                   <WithPermission
@@ -222,18 +210,6 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminProfessionalPage />
-                  </WithPermission>
-                }
-              ></Route>
-
-              <Route
-                path="/institucionalStaff/administrators"
-                element={
-                  <WithPermission
-                    permissionRequired={PermissionCodes.ProfessionalRead}
-                    renderWithoutPermission={<DefaultRedirect />}
-                  >
-                    <AdministratorsPage />
                   </WithPermission>
                 }
               ></Route>
@@ -273,18 +249,6 @@ const AppInnerComponent = () => {
               ></Route>
 
               <Route
-                path="/institucionalStaff/physiatrists"
-                element={
-                  <WithPermission
-                    permissionRequired={PermissionCodes.ProfessionalCreate}
-                    renderWithoutPermission={<DefaultRedirect />}
-                  >
-                    <PhysiatristsPage />
-                  </WithPermission>
-                }
-              ></Route>
-
-              <Route
                 path="/institucionalStaff/physiatrists/new"
                 element={
                   <WithPermission
@@ -314,18 +278,6 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminPhysiatristPage />
-                  </WithPermission>
-                }
-              ></Route>
-
-              <Route
-                path="/institucionalStaff/coordinators"
-                element={
-                  <WithPermission
-                    permissionRequired={PermissionCodes.ProfessionalCreate}
-                    renderWithoutPermission={<DefaultRedirect />}
-                  >
-                    <CoordinatorsPage />
                   </WithPermission>
                 }
               ></Route>

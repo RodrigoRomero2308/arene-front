@@ -1,13 +1,10 @@
-import { ICreateUserFormDto } from "@/interfaces/ICreateUserDTO";
-import { IUser } from "@/interfaces/IUser";
-import {
-  dateToTextInputFormat,
-  textFromTextInputToDate,
-} from "@/utils/date.utils";
+import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
+import { IProfessional } from "@/interfaces/IProfessional";
+import { dateToTextInputFormat } from "@/utils/date.utils";
 import { isDefined } from "class-validator";
 
-export class CoordinatorFormDataSerializer {
-  formDataToCreateData(data: ICreateUserFormDto) {
+export class StaffFormDataSerializer {
+  formDataToCreateData(data: ICreateProfessionalFormDto) {
     const input = JSON.parse(JSON.stringify(data));
     /* Transformo datos */
 
@@ -16,25 +13,23 @@ export class CoordinatorFormDataSerializer {
       input.phone_number = String(input.phone_number);
     if (isDefined(input.address.height))
       input.address.height = String(input.address.height);
-    if (input.birth_date)
-      input.birth_date = textFromTextInputToDate(input.birth_date)?.getTime();
 
     /* Fin Transofrmo datos */
     return input;
   }
 
-  coordinatorDataToFormData(data: IUser): ICreateUserFormDto {
-    const clonedValues: IUser = JSON.parse(JSON.stringify(data));
+  staffDataToFormData(data: IProfessional): ICreateProfessionalFormDto {
+    const clonedValues: IProfessional = JSON.parse(JSON.stringify(data));
 
-    const user = clonedValues as any;
+    const { user, ...professional } = clonedValues as any;
 
     const input = {
       ...user,
       address: user.address || {},
+      professional,
     };
 
     if (input.phone_type_id) input.phone_type_id = String(input.phone_type_id);
-
     if (input.phone_number) input.phone_number = +input.phone_number;
 
     if (input.address.height) input.address.height = +input.address.height;
@@ -44,6 +39,7 @@ export class CoordinatorFormDataSerializer {
 
     delete input.__typename;
     delete input.address.__typename;
+    delete input.professional.__typename;
     delete input.profile_picture_id;
 
     return input;

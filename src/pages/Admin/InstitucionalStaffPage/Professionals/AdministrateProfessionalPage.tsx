@@ -19,10 +19,9 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { LooseKeys } from "@mantine/form/lib/types";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProfessionalFormDataSerializer } from "./ProfessionalFormDataSerializer";
+import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
 
 const AdminProfessionalPage = () => {
   const [createProfessional] = useMutation(CREATE_PROFESSIONAL);
@@ -67,10 +66,9 @@ const AdminProfessionalPage = () => {
         },
       });
 
-      const formData =
-        new ProfessionalFormDataSerializer().professionalDataToFormData(
-          data.data.getProfessionalById
-        );
+      const formData = new StaffFormDataSerializer().staffDataToFormData(
+        data.data.getProfessionalById
+      );
 
       form.setValues(formData);
     } catch (error) {
@@ -88,38 +86,6 @@ const AdminProfessionalPage = () => {
 
     return () => {};
   }, []);
-
-  const PhoneInputs = useCallback(
-    ({
-      form,
-      typeProperty,
-      numberProperty,
-    }: {
-      form: UseFormReturnType<ICreateProfessionalFormDto>;
-      typeProperty: LooseKeys<ICreateProfessionalFormDto>;
-      numberProperty: LooseKeys<ICreateProfessionalFormDto>;
-    }) => {
-      return (
-        <>
-          <Grid.Col md={4}>
-            <Select
-              searchable
-              data={phoneTypes}
-              label="Tipo Tel."
-              {...form.getInputProps(typeProperty)}
-            ></Select>
-            <Space h="sm" />
-            <NumberInput
-              hideControls
-              label="Teléfono"
-              {...form.getInputProps(numberProperty)}
-            ></NumberInput>
-          </Grid.Col>
-        </>
-      );
-    },
-    []
-  );
 
   const saveOperation = useCallback(
     (input) => {
@@ -152,7 +118,7 @@ const AdminProfessionalPage = () => {
       try {
         setFormLoading(true);
 
-        const input = new ProfessionalFormDataSerializer().formDataToCreateData(
+        const input = new StaffFormDataSerializer().formDataToCreateData(
           values
         );
 
@@ -160,7 +126,7 @@ const AdminProfessionalPage = () => {
 
         setFormLoading(false);
 
-        navigate("/app/institucionalStaff/professionals");
+        navigate("/app/institucionalStaff?tab=professionals");
       } catch (error) {
         console.error(error);
         setFormLoading(false);
@@ -172,7 +138,9 @@ const AdminProfessionalPage = () => {
   return (
     <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Title order={2}>Registrar Profesional</Title>
+        <Title order={2}>
+          {isUpdate ? "Actualizar Professional" : "Registrar Professional"}
+        </Title>
         <Space h="sm" />
         <Title order={4}>Datos del Profesional:</Title>
         <Space h="sm" />
@@ -227,11 +195,21 @@ const AdminProfessionalPage = () => {
               {...form.getInputProps("marital_status")}
             ></TextInput>
           </Grid.Col>
-          <PhoneInputs
-            form={form}
-            typeProperty="phone_type_id"
-            numberProperty="phone_number"
-          />
+          <Grid.Col md={4}>
+            <Select
+              searchable
+              data={phoneTypes}
+              label="Tipo Tel."
+              {...form.getInputProps("phone_type_id")}
+            ></Select>
+          </Grid.Col>
+          <Grid.Col md={4}>
+            <NumberInput
+              hideControls
+              label="Teléfono"
+              {...form.getInputProps("phone_number")}
+            ></NumberInput>
+          </Grid.Col>
         </Grid>
         <Space h="xl" />
         <Divider my="xs" label="Datos como profesional" />
