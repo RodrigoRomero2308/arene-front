@@ -23,3 +23,11 @@ export interface IUser {
 
   profile_picture_id?: number | null;
 }
+
+export interface IUserFilter {
+  dni?: string;
+
+  name?: string;
+
+  email?: string;
+}
