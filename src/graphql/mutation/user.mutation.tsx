@@ -5,3 +5,11 @@ export const REGISTER = gql`
     register(input: $input)
   }
 `;
+
+export const UPDATE_USER = gql`
+  mutation updateUser($id: Int!, $input: UpdateUserInput!) {
+    updateUser(id: $id, input: $input) {
+      id
+    }
+  }
+`;
