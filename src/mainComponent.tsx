@@ -4,6 +4,7 @@ import {
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { createUploadLink } from "apollo-upload-client";
 import {
   LoadingOverlay,
   MantineProvider,
@@ -25,13 +26,13 @@ const mantineTheme: MantineThemeOverride = {
   },
 };
 
-const httpLink = createHttpLink({
+const uploadLink = createUploadLink({
   credentials: "include",
   uri: import.meta.env.VITE_BACKEND_URL,
 });
 
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link: uploadLink,
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
