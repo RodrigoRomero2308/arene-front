@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_PATIENT_BY_ID_TO_UPDATE = gql`
+export const GET_PATIENT_BY_ID = gql`
   query getPatientById($id: Int!) {
     getPatientById(id: $id) {
       user_id

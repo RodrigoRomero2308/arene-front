@@ -3,7 +3,7 @@ import {
   CREATE_PATIENT,
   UPDATE_PATIENT,
 } from "@/graphql/mutation/patient.mutation";
-import { GET_PATIENT_BY_ID_TO_UPDATE } from "@/graphql/query/patient.query";
+import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { ICreatePatientFormDto } from "@/interfaces/ICreatePatientDTO";
 import { formatInitialDateForTextInput } from "@/utils/date.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -30,7 +30,7 @@ const AdminPatientPage = () => {
   const [createPatient] = useMutation(CREATE_PATIENT);
   const [updatePatient] = useMutation(UPDATE_PATIENT);
   const [formLoading, setFormLoading] = useState(false);
-  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID_TO_UPDATE);
+  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
   const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
   const params = useParams();

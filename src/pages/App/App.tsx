@@ -30,6 +30,9 @@ const AppInnerComponent = () => {
   const AdminPatientPage = lazy(
     () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
   );
+  const PatientDocumentation = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientDocumentation")
+  );
   const InstitucionalStaffPage = lazy(
     () => import("@/pages/Admin/InstitucionalStaffPage/InstitucionalStaffPage")
   );
@@ -162,6 +165,17 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/documentation/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.DocumentationRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientDocumentation />
                   </WithPermission>
                 }
               ></Route>
