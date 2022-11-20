@@ -1,3 +1,4 @@
+import DocumentationList from "@/components/DocumentationList/DocumentationList";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
 import { SAVE_DOCUMENTATION } from "@/graphql/mutation/documentation.mutation";
@@ -11,6 +12,7 @@ import { ICreateDocumentationDTO } from "@/interfaces/ICreateDocumentationDTO";
 import { IDocumentation } from "@/interfaces/IDocumentation";
 import { IDocumentationType } from "@/interfaces/IDocumentationType";
 import { IPatient } from "@/interfaces/IPatient";
+import { DocumentationService } from "@/services/documentation.service";
 import { downloadFile } from "@/utils/file.utils";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
@@ -46,60 +48,6 @@ const PatientData = ({ patient }: { patient?: IPatient }) => {
       )}
       <LoadingOverlay visible={!patient} />
     </div>
-  );
-};
-
-const DocumentationList = ({
-  documentationList,
-  downloadDocument,
-}: {
-  documentationList: IDocumentation[];
-  downloadDocument: (documentId: number) => void;
-}) => {
-  return (
-    <Table striped>
-      <thead>
-        <tr>
-          <th>Nombre del archivo</th>
-          <th>Tipo de documentación</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {documentationList.map((item) => {
-          return (
-            <tr key={item.id}>
-              <td>{item.filename}</td>
-              <td>
-                {item.documentationType?.name ||
-                  item.other_documentation_type ||
-                  ""}
-              </td>
-              <td>
-                <Menu shadow="sm">
-                  <Menu.Target>
-                    <UnstyledButton>
-                      <DotsVertical />
-                    </UnstyledButton>
-                  </Menu.Target>
-
-                  <Menu.Dropdown>
-                    <Menu.Item
-                      onClick={() => {
-                        downloadDocument(item.id);
-                      }}
-                      icon={<Download />}
-                    >
-                      Descargar archivo
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
   );
 };
 
@@ -237,11 +185,7 @@ const NewDocumentModal = ({
 };
 
 function PatientDocumentation() {
-  const [getDocumentationList] = useLazyQuery(GET_DOCUMENTATION_LIST);
   const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
-  const [getDocument] = useLazyQuery<{
-    getDocumentation: IDocumentation & { file: string };
-  }>(GET_DOCUMENTATION);
   const [documentationLoading, setDocumentationLoading] = useState(false);
   const [documentationList, setDocumentationList] = useState<IDocumentation[]>(
     []
@@ -253,6 +197,8 @@ function PatientDocumentation() {
   const navigate = useNavigate();
   let patientId = 0;
 
+  const { getDocumentationList, getDocumentation } = DocumentationService();
+
   if (params.user_id && Number.isInteger(+params.user_id)) {
     patientId = +params.user_id;
   }
@@ -260,19 +206,9 @@ function PatientDocumentation() {
   const getDocumentationForPatient = async (patient_id: number) => {
     setDocumentationLoading(true);
     try {
-      const data = await getDocumentationList({
-        variables: {
-          filter: {
-            patient_id: [patient_id],
-          },
-          orderBy: {
-            field: "its",
-            direction: "desc",
-          },
-        },
-      });
+      const data = await getDocumentationList(patient_id);
 
-      setDocumentationList(data.data.getDocumentationList);
+      setDocumentationList(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -321,28 +257,9 @@ function PatientDocumentation() {
     return () => {};
   }, [patientId]);
 
-  const getDocumentation = useCallback(async (documentId: number) => {
+  const downloadDocumentation = useCallback(async (documentId: number) => {
     try {
-      const thisDocumentResponse = await getDocument({
-        variables: {
-          id: documentId,
-        },
-      });
-
-      if (thisDocumentResponse.data) {
-        const thisDocument = thisDocumentResponse.data.getDocumentation;
-
-        downloadFile(
-          thisDocument.file,
-          thisDocument.filename,
-          thisDocument.mimetype
-        );
-      } else {
-        console.log(thisDocumentResponse);
-        throw new Error(
-          "Ha ocurrido un error al descargar el archivo, por favor intente nuevamente más tarde"
-        );
-      }
+      await getDocumentation(documentId);
     } catch (error) {
       console.error(error);
       return;
@@ -382,7 +299,7 @@ function PatientDocumentation() {
       <Space h="md" />
       <div style={{ position: "relative" }}>
         <DocumentationList
-          downloadDocument={getDocumentation}
+          downloadDocument={downloadDocumentation}
           documentationList={documentationList}
         />
         <LoadingOverlay visible={documentationLoading} />
