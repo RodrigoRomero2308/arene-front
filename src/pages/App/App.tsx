@@ -16,6 +16,7 @@ import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
+import DefaultRedirect from "@/components/DefaultRedirect/DefaultRedirect";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -32,6 +33,9 @@ const AppInnerComponent = () => {
   );
   const PatientDocumentation = lazy(
     () => import("@/pages/Admin/PatientsPage/PatientDocumentation")
+  );
+  const PatientPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientPage")
   );
   const InstitucionalStaffPage = lazy(
     () => import("@/pages/Admin/InstitucionalStaffPage/InstitucionalStaffPage")
@@ -100,8 +104,6 @@ const AppInnerComponent = () => {
 
   const { appLoading } = useContext(AppContext);
 
-  const DefaultRedirect = () => <Navigate to="/app" />;
-
   const mainLayout = useMemo(() => {
     return (
       <LayoutWithNav headerContent={<MainHeader />} navBarContent={<MainNav />}>
@@ -165,6 +167,17 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/view/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientPage />
                   </WithPermission>
                 }
               ></Route>
