@@ -2,15 +2,15 @@ import userContext from "@/context/UserContext/UserContext";
 import { GET_COORDINATORS_FOR_TABLE } from "@/graphql/query/professional.query";
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
-import { useContext, useEffect, useState } from "react";
+import { Space } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { NoMedicalStaffSearch } from "../Common/StaffSearch";
+import { NoMedicalsTable } from "../Common/StaffTables";
 
 const CoordinatorsPage = () => {
   const [getCoordinators] = useLazyQuery(GET_COORDINATORS_FOR_TABLE);
   const [coordinators, setCoordinators] = useState<IProfessional[]>([]);
   const [coordinatorsLoading, setCoordinatorsLoading] = useState(false);
-
-  const { user } = useContext(userContext);
 
   const getCoordinatorsFromServer = (variables?: {
     filter: IProfessionalFilter;
@@ -44,14 +44,20 @@ const CoordinatorsPage = () => {
   };
 
   return (
-    <NoMedicalStaffSearch
-      handleSearchFormSubmit={handleSearchFormSubmit}
-      user={user}
-      staffName="Coordinadores"
-      staffPathName="coordinators"
-      staffPeople={coordinators}
-      tableLoading={coordinatorsLoading}
-    ></NoMedicalStaffSearch>
+    <>
+      <NoMedicalStaffSearch
+        handleSearchFormSubmit={handleSearchFormSubmit}
+        staffName="Coordinadores"
+        staffPathName="coordinators"
+        tableLoading={coordinatorsLoading}
+      />
+      <Space h="md" />
+      <NoMedicalsTable
+        staff={coordinators}
+        staffLoading={coordinatorsLoading}
+        pathName="coordinators"
+      />
+    </>
   );
 };
 

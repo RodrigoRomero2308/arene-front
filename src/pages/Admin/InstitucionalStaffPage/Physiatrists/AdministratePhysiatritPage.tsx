@@ -1,4 +1,3 @@
-import { phoneTypes } from "@/constants/phoneTypes";
 import {
   CREATE_PHYSIATRIST,
   UPDATE_PROFESSIONAL,
@@ -6,22 +5,11 @@ import {
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {
-  Button,
-  Divider,
-  Grid,
-  LoadingOverlay,
-  NumberInput,
-  PasswordInput,
-  Select,
-  Space,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
+import { NoMedicalStaffForm } from "../Common/StaffForms";
 
 const AdminPhysiatristPage = () => {
   const [createPhysiatrist] = useMutation(CREATE_PHYSIATRIST);
@@ -43,7 +31,7 @@ const AdminPhysiatristPage = () => {
       phone_number: "",
       phone_type_id: "",
       professional: {
-        medical_licencse_number: "",
+        medical_license_number: "",
         profession: "",
         speciality: "",
       },
@@ -136,163 +124,13 @@ const AdminPhysiatristPage = () => {
   );
 
   return (
-    <>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Title order={2}>
-          {isUpdate ? "Actualizar Fisiatra" : "Registrar Fisiatra"}
-        </Title>
-        <Space h="sm" />
-        <Title order={4}>Datos del Fisiatra:</Title>
-        <Space h="sm" />
-        <Divider my="xs" label="Datos como usuario" />
-        <Grid
-          sx={(theme) => ({
-            marginLeft: theme.spacing.xs,
-          })}
-        >
-          <Grid.Col md={4}>
-            <TextInput
-              label="Nombre"
-              required
-              {...form.getInputProps("firstname")}
-            ></TextInput>
-            <Space h="sm" />
-            <TextInput label="DNI" {...form.getInputProps("dni")}></TextInput>
-            <Space h="sm" />
-            <TextInput
-              label="Email"
-              required
-              {...form.getInputProps("email")}
-            ></TextInput>
-            <Space h="sm" />
-            <TextInput
-              label="Género"
-              {...form.getInputProps("gender")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Apellido"
-              required
-              {...form.getInputProps("lastname")}
-            ></TextInput>
-            <Space h="sm" />
-            <TextInput
-              type="date"
-              required
-              label="Fecha de nacimiento"
-              {...form.getInputProps("birth_date")}
-            ></TextInput>
-            <Space h="sm" />
-            <PasswordInput
-              label="Contraseña"
-              required
-              {...form.getInputProps("password")}
-            ></PasswordInput>
-            <Space h="sm" />
-            <TextInput
-              label="Estado Civil"
-              {...form.getInputProps("marital_status")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <Select
-              searchable
-              data={phoneTypes}
-              label="Tipo Tel."
-              {...form.getInputProps("phone_type_id")}
-            ></Select>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <NumberInput
-              hideControls
-              label="Teléfono"
-              {...form.getInputProps("phone_number")}
-            ></NumberInput>
-          </Grid.Col>
-        </Grid>
-        <Space h="xl" />
-        <Divider my="xs" label="Datos como fisiatra" />
-        <Grid
-          sx={(theme) => ({
-            marginLeft: theme.spacing.xs,
-          })}
-        >
-          <Grid.Col md={4}>
-            <TextInput
-              label="Especialidad"
-              {...form.getInputProps("professional.speciality")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Matricula"
-              {...form.getInputProps("professional.medical_licencse_number")}
-            ></TextInput>
-          </Grid.Col>
-        </Grid>
-        <Space h="lg" />
-        <Divider></Divider>
-        <Space h="sm" />
-        <Title order={4}>Datos residenciales del fisiatra:</Title>
-        <Space h="sm" />
-        <Grid
-          sx={(theme) => ({
-            marginLeft: theme.spacing.xs,
-          })}
-        >
-          <Grid.Col md={4}>
-            <TextInput
-              label="Calle"
-              required
-              {...form.getInputProps("address.street")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <NumberInput
-              hideControls
-              label="Altura"
-              required
-              {...form.getInputProps("address.height")}
-            ></NumberInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Nro Dpto"
-              {...form.getInputProps("address.flat_number")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Provincia"
-              required
-              {...form.getInputProps("address.province")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Ciudad"
-              required
-              {...form.getInputProps("address.city")}
-            ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Departamento"
-              required
-              {...form.getInputProps("address.department")}
-            ></TextInput>
-          </Grid.Col>
-        </Grid>
-        <Space h="lg" />
-        <Divider></Divider>
-        <Space h="sm" />
-        <Button type="submit" loading={formLoading}>
-          {isUpdate ? "Actualizar" : "Guardar"}
-        </Button>
-        <LoadingOverlay visible={formLoading} />
-      </form>
-    </>
+    <NoMedicalStaffForm
+      form={form}
+      formLoading={formLoading}
+      handleSubmit={handleSubmit}
+      isUpdate={isUpdate}
+      staffName="Fisiatra"
+    />
   );
 };
 

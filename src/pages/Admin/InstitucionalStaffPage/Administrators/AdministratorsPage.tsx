@@ -2,15 +2,16 @@ import userContext from "@/context/UserContext/UserContext";
 import { GET_ADMINISTRATORS_FOR_TABLE } from "@/graphql/query/professional.query";
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
-import { useContext, useEffect, useState } from "react";
+import { Space } from "@mantine/core";
+import { useEffect, useState } from "react";
+import StaffElementPage from "../Common/StaffElementPage";
 import { NoMedicalStaffSearch } from "../Common/StaffSearch";
+import { NoMedicalsTable } from "../Common/StaffTables";
 
 const AdministratorsPage = () => {
   const [getAdministrators] = useLazyQuery(GET_ADMINISTRATORS_FOR_TABLE);
   const [administrators, setAdministrators] = useState<IProfessional[]>([]);
   const [administratorsLoading, setAdministratorsLoading] = useState(false);
-
-  const { user } = useContext(userContext);
 
   const getAdministratorsFromServer = (variables?: {
     filter: IProfessionalFilter;
@@ -44,14 +45,12 @@ const AdministratorsPage = () => {
   };
 
   return (
-    <NoMedicalStaffSearch
+    <StaffElementPage
       handleSearchFormSubmit={handleSearchFormSubmit}
-      user={user}
+      staff={administrators}
+      staffLoading={administratorsLoading}
       staffName="Administradores"
-      staffPathName="administrators"
-      staffPeople={administrators}
-      tableLoading={administratorsLoading}
-    ></NoMedicalStaffSearch>
+    />
   );
 };
 

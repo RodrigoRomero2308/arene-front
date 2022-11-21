@@ -5,7 +5,7 @@ import {
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
@@ -31,7 +31,7 @@ const AdminDirectorPage = () => {
       phone_number: "",
       phone_type_id: "",
       professional: {
-        medical_licencse_number: "",
+        medical_license_number: "",
         profession: "",
         speciality: "",
       },
