@@ -3,7 +3,7 @@ import {
   CREATE_PATIENT,
   UPDATE_PATIENT,
 } from "@/graphql/mutation/patient.mutation";
-import { GET_PATIENT_BY_ID_TO_UPDATE } from "@/graphql/query/patient.query";
+import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { ICreatePatientFormDto } from "@/interfaces/ICreatePatientDTO";
 import { formatInitialDateForTextInput } from "@/utils/date.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -21,8 +21,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm, UseFormReturnType } from "@mantine/form";
-import { LooseKeys } from "@mantine/form/lib/types";
+import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PatientFormDataSerializer } from "./PatientFormDataSerializer";
@@ -31,7 +30,7 @@ const AdminPatientPage = () => {
   const [createPatient] = useMutation(CREATE_PATIENT);
   const [updatePatient] = useMutation(UPDATE_PATIENT);
   const [formLoading, setFormLoading] = useState(false);
-  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID_TO_UPDATE);
+  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
   const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
@@ -88,36 +87,6 @@ const AdminPatientPage = () => {
 
     return () => {};
   }, []);
-
-  const PhoneInputs = ({
-    form,
-    typeProperty,
-    numberProperty,
-  }: {
-    form: UseFormReturnType<ICreatePatientFormDto>;
-    typeProperty: LooseKeys<ICreatePatientFormDto>;
-    numberProperty: LooseKeys<ICreatePatientFormDto>;
-  }) => {
-    return (
-      <>
-        <Grid.Col md={4}>
-          <Select
-            searchable
-            data={phoneTypes}
-            label="Tipo Tel."
-            {...form.getInputProps(typeProperty)}
-          ></Select>
-        </Grid.Col>
-        <Grid.Col md={4}>
-          <NumberInput
-            hideControls
-            label="Teléfono"
-            {...form.getInputProps(numberProperty)}
-          ></NumberInput>
-        </Grid.Col>
-      </>
-    );
-  };
 
   const saveOperation = useCallback(
     (input) => {
@@ -225,11 +194,21 @@ const AdminPatientPage = () => {
                 {...form.getInputProps("marital_status")}
               ></TextInput>
             </Grid.Col>
-            <PhoneInputs
-              form={form}
-              typeProperty="phone_type_id"
-              numberProperty="phone_number"
-            />
+            <Grid.Col md={4}>
+              <Select
+                searchable
+                data={phoneTypes}
+                label="Tipo Tel."
+                {...form.getInputProps("phone_type_id")}
+              ></Select>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <NumberInput
+                hideControls
+                label="Teléfono"
+                {...form.getInputProps("phone_number")}
+              ></NumberInput>
+            </Grid.Col>
           </Grid>
           <Space h="lg" />
           <Divider></Divider>
@@ -298,11 +277,21 @@ const AdminPatientPage = () => {
                 {...form.getInputProps("patient.companion_lastname")}
               ></TextInput>
             </Grid.Col>
-            <PhoneInputs
-              form={form}
-              typeProperty="patient.companion_phone_type_id"
-              numberProperty="patient.companion_phone_number"
-            />
+            <Grid.Col md={4}>
+              <Select
+                searchable
+                data={phoneTypes}
+                label="Tipo Tel."
+                {...form.getInputProps("patient.companion_phone_type_id")}
+              ></Select>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <NumberInput
+                hideControls
+                label="Teléfono"
+                {...form.getInputProps("patient.companion_phone_number")}
+              ></NumberInput>
+            </Grid.Col>
           </Grid>
           <Space h="lg" />
           <Divider></Divider>
@@ -322,11 +311,21 @@ const AdminPatientPage = () => {
                 {...form.getInputProps("patient.responsible_lastname")}
               ></TextInput>
             </Grid.Col>
-            <PhoneInputs
-              form={form}
-              typeProperty="patient.responsible_phone_type_id"
-              numberProperty="patient.responsible_phone_number"
-            />
+            <Grid.Col md={4}>
+              <Select
+                searchable
+                data={phoneTypes}
+                label="Tipo Tel."
+                {...form.getInputProps("patient.responsible_phone_type_id")}
+              ></Select>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <NumberInput
+                hideControls
+                label="Teléfono"
+                {...form.getInputProps("patient.responsible_phone_number")}
+              ></NumberInput>
+            </Grid.Col>
           </Grid>
           <Space h="lg" />
           <Divider></Divider>
@@ -346,11 +345,21 @@ const AdminPatientPage = () => {
                 {...form.getInputProps("patient.primary_doctor_lastname")}
               ></TextInput>
             </Grid.Col>
-            <PhoneInputs
-              form={form}
-              typeProperty="patient.primary_doctor_phone_type_id"
-              numberProperty="patient.primary_doctor_phone_number"
-            />
+            <Grid.Col md={4}>
+              <Select
+                searchable
+                data={phoneTypes}
+                label="Tipo Tel."
+                {...form.getInputProps("patient.primary_doctor_phone_type_id")}
+              ></Select>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <NumberInput
+                hideControls
+                label="Teléfono"
+                {...form.getInputProps("patient.primary_doctor_phone_number")}
+              ></NumberInput>
+            </Grid.Col>
             <Grid.Col>
               <Textarea
                 autosize
@@ -398,11 +407,98 @@ const AdminPatientPage = () => {
                 {...form.getInputProps("patient.transfer_responsible")}
               ></TextInput>
             </Grid.Col>
-            <PhoneInputs
-              form={form}
-              typeProperty="patient.transfer_phone_type_id"
-              numberProperty="patient.transfer_phone_number"
-            />
+            <Grid.Col md={4}>
+              <Select
+                searchable
+                data={phoneTypes}
+                label="Tipo Tel."
+                {...form.getInputProps("patient.transfer_phone_type_id")}
+              ></Select>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <NumberInput
+                hideControls
+                label="Teléfono"
+                {...form.getInputProps("patient.transfer_phone_number")}
+              ></NumberInput>
+            </Grid.Col>
+          </Grid>
+          <Space h="lg" />
+          <Divider></Divider>
+          <Space h="sm" />
+          <Title order={4}>Datos de CUD:</Title>
+          <Space h="sm" />
+          <Grid>
+            <Grid.Col md={4}>
+              <TextInput
+                label="Certificado unico de discapacidad"
+                placeholder="Ingrese los 10 dígitos del CUD"
+                {...form.getInputProps("patient.cud_number")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <Radio.Group
+                defaultValue="false"
+                label="Acompañante"
+                {...form.getInputProps("patient.cud_companion")}
+              >
+                <Radio value="true" label="Si"></Radio>
+                <Radio value="false" label="No"></Radio>
+              </Radio.Group>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                type="date"
+                label="Vigencia desde"
+                {...form.getInputProps("patient.cud_valid_from")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                type="date"
+                label="Vigencia hasta"
+                {...form.getInputProps("patient.cud_valid_to")}
+              ></TextInput>
+            </Grid.Col>
+          </Grid>
+          <Space h="lg" />
+          <Divider></Divider>
+          <Space h="sm" />
+          <Title order={4}>Datos de Obra Social:</Title>
+          <Space h="sm" />
+          <Grid>
+            <Grid.Col md={4}>
+              <TextInput
+                label="Obra social"
+                {...form.getInputProps("patient.social_work")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                label="Plan"
+                {...form.getInputProps("patient.social_work_plan")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                label="Número de afiliado"
+                {...form.getInputProps("patient.social_work_number")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                type="date"
+                label="Vigencia desde"
+                {...form.getInputProps("patient.social_work_valid_from")}
+              ></TextInput>
+            </Grid.Col>
+            <Grid.Col md={4}>
+              <TextInput
+                type="date"
+                label="Vigencia hasta"
+                {...form.getInputProps("patient.social_work_valid_to")}
+              ></TextInput>
+            </Grid.Col>
           </Grid>
           <Space h="lg" />
           <Divider></Divider>

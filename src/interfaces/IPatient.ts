@@ -31,7 +31,7 @@ export interface IPatient {
 
   diagnose: string;
 
-  diagnose_date: Date;
+  diagnose_date: string;
 
   needs_transfer: boolean;
 
@@ -42,6 +42,24 @@ export interface IPatient {
   transfer_phone_type_id?: number | null;
 
   transfer_phone_number?: string | null;
+
+  cud_number?: string | null;
+
+  cud_companion?: boolean | null;
+
+  cud_valid_from?: string | null;
+
+  cud_valid_to?: string | null;
+
+  social_work?: string | null;
+
+  social_work_plan?: string | null;
+
+  social_work_number?: string | null;
+
+  social_work_valid_from?: string | null;
+
+  social_work_valid_to?: string | null;
 
   user?: IUser | null;
 }

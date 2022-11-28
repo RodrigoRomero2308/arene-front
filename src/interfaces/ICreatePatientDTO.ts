@@ -59,6 +59,24 @@ export interface ICreatePatientFormDto {
     transfer_phone_type_id?: string;
 
     transfer_phone_number?: string;
+
+    cud_number?: string;
+
+    cud_companion?: boolean;
+
+    cud_valid_from?: string;
+
+    cud_valid_to?: string;
+
+    social_work?: string;
+
+    social_work_plan?: string;
+
+    social_work_number?: string;
+
+    social_work_valid_from?: string;
+
+    social_work_valid_to?: string;
   };
 
   address: {

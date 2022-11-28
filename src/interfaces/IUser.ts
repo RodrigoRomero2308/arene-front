@@ -1,3 +1,5 @@
+import { IAddress } from "./IAddress";
+
 export interface IUser {
   id: number;
 
@@ -13,7 +15,11 @@ export interface IUser {
 
   active: boolean;
 
-  birth_date: Date;
+  birth_date: string;
+
+  gender?: string | null;
+
+  marital_status?: string | null;
 
   phone_type_id?: number | null;
 
@@ -22,4 +28,14 @@ export interface IUser {
   adress_id?: number | null;
 
   profile_picture_id?: number | null;
+
+  address?: IAddress | null;
+}
+
+export interface IUserFilter {
+  dni?: string;
+
+  name?: string;
+
+  email?: string;
 }
