@@ -2,6 +2,7 @@ import { PermissionCodes } from "@/enums/permissions";
 import { ReactNode } from "react";
 import {
   AdjustmentsAlt,
+  BuildingCommunity,
   Heartbeat,
   Calendar, Home,
   UserCircle,
@@ -34,6 +35,13 @@ export const navRoutes: INavRoute[] = [
     permissionRequired: PermissionCodes.PatientRead,
     route: "/patients",
     iconColor: "green",
+  },
+  {
+    icon: <BuildingCommunity />,
+    label: "Personal Institucional",
+    permissionRequired: PermissionCodes.ProfessionalRead,
+    route: "/institucionalStaff",
+    iconColor: "violet",
   },
   {
     icon: <AdjustmentsAlt />,

@@ -21,7 +21,14 @@ import {
 import { useForm } from "@mantine/form";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DotsVertical, Edit, HeartRateMonitor, Plus } from "tabler-icons-react";
+import {
+  DotsVertical,
+  Edit,
+  HeartRateMonitor,
+  Eye,
+  File,
+  Plus,
+} from "tabler-icons-react";
 
 const PatientsPage = () => {
   const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
@@ -175,6 +182,20 @@ const PatientsPage = () => {
                       <Menu.Dropdown>
                         <Menu.Item
                           onClick={() => {
+                            navigate(`/app/patients/view/${item.user_id}`);
+                          }}
+                          icon={<Eye />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientRead
+                            )
+                          }
+                        >
+                          Ver información del paciente
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
                             navigate(`/app/patients/edit/${item.user_id}`);
                           }}
                           icon={<Edit />}
@@ -200,7 +221,25 @@ const PatientsPage = () => {
                               PermissionCodes.TreatmentCreate
                             )
                           }
-                        >Asignar tratamiento</Menu.Item>
+                        >
+                          Asignar tratamiento
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(
+                              `/app/patients/documentation/${item.user_id}`
+                            );
+                          }}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.DocumentationRead
+                            )
+                          }
+                          icon={<File />}
+                        >
+                          Administrar documentación
+                        </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>
                   </td>

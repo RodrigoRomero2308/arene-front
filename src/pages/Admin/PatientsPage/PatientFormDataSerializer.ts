@@ -44,16 +44,15 @@ export class PatientFormDataSerializer {
       input.patient.transfer_phone_number = String(
         input.patient.transfer_phone_number
       );
-    if (input.birth_date)
-      input.birth_date = textFromTextInputToDate(input.birth_date)?.getTime();
-    if (input.patient.diagnose_date)
-      input.patient.diagnose_date = textFromTextInputToDate(
-        input.patient.diagnose_date
-      )?.getTime();
     if (input.patient.needs_transfer === "true") {
       input.patient.needs_transfer = true;
     } else {
       input.patient.needs_transfer = false;
+    }
+    if (input.patient.cud_companion === "true") {
+      input.patient.cud_companion = true;
+    } else {
+      input.patient.cud_companion = false;
     }
 
     /* Fin Transofrmo datos */
@@ -112,13 +111,9 @@ export class PatientFormDataSerializer {
       ? "true"
       : "false";
 
-    if (input.birth_date)
-      input.birth_date = dateToTextInputFormat(new Date(input.birth_date));
-
-    if (input.patient.diagnose_date)
-      input.patient.diagnose_date = dateToTextInputFormat(
-        new Date(input.patient.diagnose_date)
-      );
+    input.patient.cud_companion = input.patient.cud_companion
+      ? "true"
+      : "false";
 
     delete input.__typename;
     delete input.address.__typename;
