@@ -15,6 +15,7 @@ type Props = {
   staff: IProfessional[];
   staffLoading: boolean;
   handleSearchFormSubmit: any;
+  onReload: () => void;
   staffName:
     | "Administradores"
     | "Coordinadores"
@@ -28,6 +29,7 @@ const StaffElementPage = ({
   staff,
   staffName,
   staffLoading,
+  onReload,
 }: Props) => {
   return (
     <>
@@ -77,30 +79,35 @@ const StaffElementPage = ({
           staffLoading={staffLoading}
           staff={staff}
           pathName="professionals"
+          onReload={onReload}
         />
       ) : staffName == "Fisiatras" ? (
         <PhysiatristsTable
           staffLoading={staffLoading}
           staff={staff}
           pathName="physiatrists"
+          onReload={onReload}
         />
       ) : staffName == "Administradores" ? (
         <NoMedicalsTable
           staffLoading={staffLoading}
           staff={staff}
           pathName="administrators"
+          onReload={onReload}
         />
       ) : staffName == "Coordinadores" ? (
         <NoMedicalsTable
           staffLoading={staffLoading}
           staff={staff}
           pathName="coordinators"
+          onReload={onReload}
         />
       ) : staffName == "Directores" ? (
         <NoMedicalsTable
           staffLoading={staffLoading}
           staff={staff}
           pathName="directors"
+          onReload={onReload}
         />
       ) : (
         <></>

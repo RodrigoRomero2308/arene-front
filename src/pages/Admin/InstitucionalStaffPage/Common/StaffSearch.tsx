@@ -1,19 +1,11 @@
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
 import { IProfessionalFilter } from "@/interfaces/IProfessional";
-import {
-  Button,
-  Grid,
-  Group,
-  Space,
-  Table,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Button, Grid, Group, Space, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { DotsVertical, Edit, Plus } from "tabler-icons-react";
+import { Plus } from "tabler-icons-react";
 
 type Props = {
   handleSearchFormSubmit: any;
@@ -36,7 +28,6 @@ export const ProfessionalStaffSearch = ({
   handleSearchFormSubmit,
   tableLoading,
   staffPathName,
-  staffName,
 }: Props) => {
   const navigate = useNavigate();
 
