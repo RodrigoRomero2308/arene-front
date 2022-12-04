@@ -3,7 +3,7 @@ import {
   DELETE_TREATMENT,
 } from "@/graphql/mutation/treatment.mutation";
 import { GET_AREAS } from "@/graphql/query/area.query";
-import { GET_PATIENT_BY_ID_TO_UPDATE } from "@/graphql/query/patient.query";
+import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { GET_TREATMENTS_WITH_FILTER } from "@/graphql/query/treatment.query";
 import { IArea } from "@/interfaces/IArea";
 import { ICreateTreatmentDTO } from "@/interfaces/ICreateTreatmentDTO";
@@ -24,7 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const TreatmentsPage = () => {
   const [createTreatment] = useMutation(CREATE_TREATMENT);
   const [deleteTreatment] = useMutation(DELETE_TREATMENT);
-  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID_TO_UPDATE);
+  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
   const [getAreas] = useLazyQuery(GET_AREAS);
   const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
   const [dataLoading, setDataLoading] = useState(false);

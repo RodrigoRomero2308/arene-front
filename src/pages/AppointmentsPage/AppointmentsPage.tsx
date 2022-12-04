@@ -5,7 +5,7 @@ import AppointmentsSchedule from "@/components/Appointments/AppointmentsSchedule
 
 const AppointmentsPage = () => {
   const [activeTab, setActiveTab] = useState<string | null>("Lunes");
-  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  const daysOfTheWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
   return (
     <>
@@ -13,14 +13,16 @@ const AppointmentsPage = () => {
       <Space h="md" />
       <Tabs value={activeTab} onTabChange={setActiveTab}>
         <Tabs.List>
-          {dias.map((dia) => (
-            <Tabs.Tab value={dia} key={dia}>{dia}</Tabs.Tab>
+          {daysOfTheWeek.map((day) => (
+            <Tabs.Tab value={day} key={day}>
+              {day}
+            </Tabs.Tab>
           ))}
         </Tabs.List>
 
-        {dias.map((dia) => (
-          <Tabs.Panel value={dia} key={dia}>
-            <AppointmentsSchedule dia={dia} key={dia}/>
+        {daysOfTheWeek.map((day) => (
+          <Tabs.Panel value={day} key={day}>
+            <AppointmentsSchedule dayOfTheWeek={day} key={day} />
           </Tabs.Panel>
         ))}
       </Tabs>
