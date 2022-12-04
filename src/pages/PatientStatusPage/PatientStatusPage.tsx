@@ -1,7 +1,8 @@
-import { GET_PATIENT_BY_ID_TO_UPDATE } from "@/graphql/query/patient.query";
+import { CHANGE_STATUS } from "@/graphql/mutation/patient.mutation";
+import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { IPatient } from "@/interfaces/IPatient";
-import { useLazyQuery } from "@apollo/client";
-import { Button, LoadingOverlay, Radio, Space, Textarea, Title } from "@mantine/core";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { Button, LoadingOverlay, Modal, Radio, Space, Textarea, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -10,19 +11,25 @@ const PatientStatusPage = () => {
     const [dataLoading, setDataLoading] = useState(false);
     const navigate = useNavigate();
     const params = useParams();
-    const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID_TO_UPDATE);
-
+    const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
+    const [changeStatus] = useMutation(CHANGE_STATUS);
+    const [value, setValue] = useState('');
+    const [modalOpened, setModalOpened] = useState(false);
 
     const getPatientFromServer = async (userId: number) => {
+        setDataLoading(true)
         try {
-            setDataLoading(true);
-            const data = await getPatientData({
+            getPatientData({
                 variables: {
                     id: userId,
                 },
-            });
-            setPatientData(data.data.getPatientById);
-        } catch (error) {
+            })
+                .then((result) => {
+                    setPatientData(result.data.getPatientById);
+                 })
+
+        }
+        catch (error) {
             console.error(error);
         }
     };
@@ -34,30 +41,49 @@ const PatientStatusPage = () => {
         }
     }, []);
 
+       const handleSubmit = () => {
+        if (patientData && value) {
+            changeStatus({
+                variables: {
+                    id: patientData.user_id,
+                    statusId: parseInt(value)
+                }
+            }).then(() => {
+                setModalOpened(true);
+            });
+        }
+    }
+
+    const handleCloseModal = () => {
+        setModalOpened(false);
+        navigate("/app/patients");
+    };
     return (
         <>
+            <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
+                <Title order={4}>Estado asignado exitosamente</Title>
+                <Space h={"xl"} />
+                <Button onClick={handleCloseModal}>Cerrar</Button>
+            </Modal>
             <Title order={2}>Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}</Title>
             <Title order={4}>DNI: {patientData?.user?.dni}</Title>
             <Space h="md"></Space>
             <Radio.Group
+                value={value}
+                onChange={setValue}
                 label="Situación"
                 description="Situación actual del paciente"
                 withAsterisk
             >
-                <Radio value="aceptado" label="Aceptado" />
-                <Radio value="noaceptado" label="No Aceptado" />
-                <Radio value="evaluacion" label="En Evaluación O.S." />
-                <Radio value="alta" label="Dado de Alta" />
+                <Radio value='1' label="No Aceptado" />
+                <Radio value='2' label="Aceptado" />
+                <Radio value='3' label="En Evaluación O.S." />
+                <Radio value='4' label="Dado de Alta" />
             </Radio.Group>
             <Space h="md"></Space>
-            <Textarea
-                placeholder="Ingrese el motivo de la situación del paciente"
-                label="Motivo"
-                withAsterisk
-            />
-            <Space h="md"></Space>
-            <Button>
-                Enviar
+
+            <Button type="submit" onClick={handleSubmit} loading={dataLoading}>
+                Asignar
             </Button>
             <LoadingOverlay visible={dataLoading} />
         </>
