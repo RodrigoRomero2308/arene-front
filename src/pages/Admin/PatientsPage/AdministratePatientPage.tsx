@@ -181,7 +181,11 @@ const AdminPatientPage = () => {
               ></TextInput>
             </Grid.Col>
             <Grid.Col md={4}>
-              <TextInput label="DNI" {...form.getInputProps("dni")}></TextInput>
+              <TextInput
+                label="DNI"
+                required
+                {...form.getInputProps("dni")}
+              ></TextInput>
             </Grid.Col>
             <Grid.Col md={4}>
               <PasswordInput
