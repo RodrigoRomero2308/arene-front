@@ -26,7 +26,7 @@ export interface ICreateProfessionalFormDto {
 
     speciality: string;
 
-    medical_licencse_number: string;
+    medical_license_number: string;
   };
 
   address: {

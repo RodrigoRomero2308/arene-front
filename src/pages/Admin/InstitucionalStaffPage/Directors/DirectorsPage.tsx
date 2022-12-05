@@ -2,17 +2,15 @@ import userContext from "@/context/UserContext/UserContext";
 import { GET_DIRECTORS_FOR_TABLE } from "@/graphql/query/professional.query";
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
-import { useContext, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Space } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { NoMedicalStaffSearch } from "../Common/StaffSearch";
+import { NoMedicalsTable } from "../Common/StaffTables";
 
 const DirectorsPage = () => {
   const [getDirectors] = useLazyQuery(GET_DIRECTORS_FOR_TABLE);
   const [directors, setDirectors] = useState<IProfessional[]>([]);
   const [directorsLoading, setDirectorsLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const { user } = useContext(userContext);
 
   const getDirectorsFromServer = (variables?: {
     filter: IProfessionalFilter;
@@ -47,14 +45,20 @@ const DirectorsPage = () => {
   };
 
   return (
-    <NoMedicalStaffSearch
-      handleSearchFormSubmit={handleSearchFormSubmit}
-      user={user}
-      staffName="Directores"
-      staffPathName="directors"
-      staffPeople={directors}
-      tableLoading={directorsLoading}
-    ></NoMedicalStaffSearch>
+    <>
+      <NoMedicalStaffSearch
+        handleSearchFormSubmit={handleSearchFormSubmit}
+        staffName="Directores"
+        staffPathName="directors"
+        tableLoading={directorsLoading}
+      />
+      <Space h="md" />
+      <NoMedicalsTable
+        staff={directors}
+        staffLoading={directorsLoading}
+        pathName="directors"
+      />
+    </>
   );
 };
 
