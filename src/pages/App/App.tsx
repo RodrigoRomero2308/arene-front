@@ -29,6 +29,12 @@ const AppInnerComponent = () => {
   const PatientsPage = lazy(
     () => import("@/pages/Admin/PatientsPage/PatientsPage")
   );
+  const AppointmentsPage = lazy(
+    () => import("@/pages/Admin/AppointmentsPage/AppointmentsPage")
+  );
+  const TreatmentsPage = lazy(
+    () => import("@/pages/Admin/TreatmentsPage/TreatmentsPage")
+  );
   const AdminPatientPage = lazy(
     () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
   );
@@ -123,6 +129,17 @@ const AppInnerComponent = () => {
                   </WithPermission>
                 }
               ></Route>
+              <Route
+                path="/admin/appointments"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <AppointmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
             </Route>
             <Route path="/admin">
               <Route
@@ -179,10 +196,21 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <PatientStatusPage />
-                    </WithPermission>
+                  </WithPermission>
                 }
               ></Route>
-                <Route
+              <Route
+                path="/patients/treatments/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <TreatmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
                 path="/patients/view/:user_id"
                 element={
                   <WithPermission

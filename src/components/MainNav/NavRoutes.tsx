@@ -4,7 +4,7 @@ import {
   AdjustmentsAlt,
   BuildingCommunity,
   Heartbeat,
-  Home,
+  Calendar, Home,
   UserCircle,
 } from "tabler-icons-react";
 
@@ -56,5 +56,12 @@ export const navRoutes: INavRoute[] = [
     permissionRequired: PermissionCodes.AdminRole,
     route: "/admin/role",
     iconColor: "green",
+  },  
+  {
+    icon: <Calendar />,
+    label: "Turnos",
+    permissionRequired: PermissionCodes.Admin,
+    route: "/admin/appointments",
+    iconColor: "pink",
   },
 ];
