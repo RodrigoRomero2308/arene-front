@@ -148,6 +148,7 @@ const PatientsPage = () => {
         <ScrollArea
           sx={() => ({
             maxWidth: "100vw",
+            overflow: "visible",
           })}
         >
           <Table striped>
