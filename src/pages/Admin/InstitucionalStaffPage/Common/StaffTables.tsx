@@ -5,6 +5,7 @@ import { LoadingOverlay, ScrollArea, Table } from "@mantine/core";
 type Props = {
   staff: IProfessional[];
   staffLoading: boolean;
+  onReload: () => void;
   pathName:
     | "administrators"
     | "coordinators"
@@ -16,6 +17,7 @@ type Props = {
 export const ProfessionalsTable = ({
   staff,
   staffLoading,
+  onReload,
   pathName,
 }: Props) => {
   return (
@@ -53,6 +55,7 @@ export const ProfessionalsTable = ({
                   <StaffMenuDropDown
                     pathName={pathName}
                     item={item}
+                    onReload={onReload}
                   />
                 </td>
               </tr>
@@ -65,7 +68,12 @@ export const ProfessionalsTable = ({
   );
 };
 
-export const PhysiatristsTable = ({ staff, staffLoading, pathName }: Props) => {
+export const PhysiatristsTable = ({
+  staff,
+  staffLoading,
+  onReload,
+  pathName,
+}: Props) => {
   return (
     <div style={{ position: "relative" }}>
       <ScrollArea
@@ -101,6 +109,7 @@ export const PhysiatristsTable = ({ staff, staffLoading, pathName }: Props) => {
                   <StaffMenuDropDown
                     pathName={pathName}
                     item={item}
+                    onReload={onReload}
                   ></StaffMenuDropDown>
                 </td>
               </tr>
@@ -113,7 +122,12 @@ export const PhysiatristsTable = ({ staff, staffLoading, pathName }: Props) => {
   );
 };
 
-export const NoMedicalsTable = ({ staff, staffLoading, pathName }: Props) => {
+export const NoMedicalsTable = ({
+  staff,
+  staffLoading,
+  onReload,
+  pathName,
+}: Props) => {
   return (
     <div style={{ position: "relative" }}>
       <ScrollArea
@@ -147,6 +161,7 @@ export const NoMedicalsTable = ({ staff, staffLoading, pathName }: Props) => {
                   <StaffMenuDropDown
                     pathName={pathName}
                     item={item}
+                    onReload={onReload}
                   ></StaffMenuDropDown>
                 </td>
               </tr>

@@ -10,7 +10,7 @@ export const CREATE_ROLEUSER = gql`
 `;
 
 export const DELETE_ROLEUSER = gql`
-  mutation deleteRoleUser($input: DeleteRoleUserInput!) {
+  mutation deleteRoleUser($input: RoleUserUserIdRoleIdCompoundUniqueInput!) {
     deleteRoleUser(input: $input) {
       userId
       roleId

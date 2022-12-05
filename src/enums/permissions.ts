@@ -24,4 +24,6 @@ export enum PermissionCodes {
   ProfessionalRead = "PROFESSIONAL_R",
   ProfessionalCreate = "PROFESSIONAL_C",
   ProfessionalUpdate = "PROFESSIONAL_U",
+  AreaProfessionalCreate = "AREAPROFESSIONAL_C",
+  AreaProfessionalDelete = "AREAPROFESSIONAL_D",
 }

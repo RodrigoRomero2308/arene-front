@@ -1,11 +1,8 @@
 import { GET_PROFESSIONALS_FOR_TABLE } from "@/graphql/query/professional.query";
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
-import { Space } from "@mantine/core";
-
 import { useEffect, useState } from "react";
-import { ProfessionalsTable } from "../Common/StaffTables";
-import { ProfessionalStaffSearch } from "../Common/StaffSearch";
+import StaffElementPage from "../Common/StaffElementPage";
 
 const ProfessionalPage = () => {
   const [getProfessionals] = useLazyQuery(GET_PROFESSIONALS_FOR_TABLE);
@@ -43,21 +40,18 @@ const ProfessionalPage = () => {
     getProfessionalsFromServer({ filter: values });
   };
 
+  const onReload = () => {
+    getProfessionalsFromServer();
+  };
+
   return (
-    <>
-      <ProfessionalStaffSearch
-        handleSearchFormSubmit={handleSearchFormSubmit}
-        staffName="Profesionales"
-        staffPathName="professionals"
-        tableLoading={professionalsLoading}
-      />
-      <Space h="md" />
-      <ProfessionalsTable
-        staff={professionals}
-        staffLoading={professionalsLoading}
-        pathName="professionals"
-      />
-    </>
+    <StaffElementPage
+      handleSearchFormSubmit={handleSearchFormSubmit}
+      staff={professionals}
+      staffLoading={professionalsLoading}
+      staffName="Profesionales"
+      onReload={onReload}
+    />
   );
 };
 
