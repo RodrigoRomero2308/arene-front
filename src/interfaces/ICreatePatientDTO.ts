@@ -21,7 +21,7 @@ export interface ICreatePatientFormDto {
 
   adress_id?: number;
 
-  patient: {
+    patient: {
     companion_firstname?: string;
 
     companion_lastname?: string;

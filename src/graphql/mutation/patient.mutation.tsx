@@ -15,3 +15,11 @@ export const UPDATE_PATIENT = gql`
     }
   }
 `;
+
+export const CHANGE_STATUS = gql`
+  mutation changeStatus($id: Int!, $statusId: Int!) {
+    changeStatus(id: $id, statusId: $statusId) {
+      user_id
+    }
+  }
+`;

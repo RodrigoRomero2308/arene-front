@@ -21,7 +21,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DotsVertical, Edit, Eye, File, Plus } from "tabler-icons-react";
+import { DotsVertical, Edit, Plus, Accessible, Eye, File } from "tabler-icons-react";
 
 const PatientsPage = () => {
   const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
@@ -165,7 +165,7 @@ const PatientsPage = () => {
                   <td>{item.user?.email}</td>
                   <td>{item.user?.phone_number}</td>
                   <td>
-                    <Menu shadow="sm">
+                    <Menu shadow="sm" position="left-start">
                       <Menu.Target>
                         <UnstyledButton>
                           <DotsVertical />
@@ -200,8 +200,22 @@ const PatientsPage = () => {
                           }
                         >
                           Modificar paciente
-                        </Menu.Item>
+                         </Menu.Item>
                         <Menu.Item
+                          onClick={() => {
+                            navigate(`/app/patients/patientstatus/${item.user_id}`);
+                          }}
+                          icon={<Accessible />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientUpdate
+                            )
+                          }
+                        >
+                          Estado del Paciente
+                          </Menu.Item>
+                          <Menu.Item
                           onClick={() => {
                             navigate(
                               `/app/patients/documentation/${item.user_id}`
