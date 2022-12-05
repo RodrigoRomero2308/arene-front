@@ -33,6 +33,7 @@ function RegisterPage() {
       password: "",
       confirmPasword: "",
       dni: "",
+      birth_date: "",
     },
     validate: {
       email: (value) => {
@@ -139,6 +140,15 @@ function RegisterPage() {
                   required
                   type="number"
                   {...registerForm.getInputProps("dni")}
+                ></TextInput>
+              </Grid.Col>
+              <Grid.Col lg={6}>
+                <TextInput
+                  label="Fecha de nacimiento"
+                  placeholder="Ingrese fecha de nacimiento"
+                  required
+                  type="date"
+                  {...registerForm.getInputProps("birth_date")}
                 ></TextInput>
               </Grid.Col>
               <Grid.Col lg={6}>
