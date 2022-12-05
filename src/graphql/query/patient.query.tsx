@@ -71,3 +71,18 @@ export const GET_PATIENTS_FOR_TABLE = gql`
     }
   }
 `;
+
+export const GET_PATIENT_INFORMATION = gql`
+  query patientInformation(
+    $filter: PatientInformationFilter
+    $orderBy: PatientInformationOrderByInput
+  ) {
+    patientInformation(filter: $filter, orderBy: $orderBy) {
+      id
+      information
+      documentation_id
+      created_by
+      createdBy
+    }
+  }
+`;
