@@ -8,3 +8,14 @@ export const phoneTypes = [
     label: "Celular",
   },
 ];
+
+export const getPhoneTypeName = (phoneTypeId?: number | null) => {
+  if (!phoneTypeId) {
+    return "";
+  }
+
+  return (
+    phoneTypes.find((item) => item.value === phoneTypeId.toString())?.label ||
+    ""
+  );
+};

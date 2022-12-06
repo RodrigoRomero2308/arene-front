@@ -69,6 +69,7 @@ function RegisterPage() {
 
   const handleRegister = registerForm.onSubmit(async (values) => {
     setSubmitButtonLoading(true);
+    const now = new Date();
     const registerInput: RegisterUserDTO = {
       dni: values.dni,
       email: values.email,
@@ -76,7 +77,7 @@ function RegisterPage() {
       lastname: values.lastname,
       password: values.password,
       phone_number: values.phone_number,
-      birth_date: new Date().getTime(),
+      birth_date: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
     };
     try {
       const registerResult = await attemptRegister({

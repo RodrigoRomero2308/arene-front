@@ -17,6 +17,7 @@
     "@mantine/dropzone": "^5.2.5",
     "@mantine/form": "^5.2.5",
     "@mantine/hooks": "^5.2.5",
+    "apollo-upload-client": "^17.0.0",
     "class-validator": "^0.13.2",
     "graphql": "^16.4.0",
     "normalize.css": "^8.0.1",
@@ -26,6 +27,7 @@
     "tabler-icons-react": "^1.52.0"
   },
   "devDependencies": {
+    "@types/apollo-upload-client": "^17.0.1",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "@vitejs/plugin-react": "^1.0.7",

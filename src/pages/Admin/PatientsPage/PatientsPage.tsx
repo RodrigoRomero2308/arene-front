@@ -21,7 +21,16 @@ import {
 import { useForm } from "@mantine/form";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Archive, DotsVertical, Edit, Plus } from "tabler-icons-react";
+import {
+  Accessible,
+  DotsVertical,
+  Edit,
+  HeartRateMonitor,
+  Eye,
+  File,
+  Plus,
+  Archive
+} from "tabler-icons-react";
 
 const PatientsPage = () => {
   const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
@@ -150,6 +159,7 @@ const PatientsPage = () => {
         <ScrollArea
           sx={() => ({
             maxWidth: "100vw",
+            overflow: "visible",
           })}
         >
           <Table striped>
@@ -175,7 +185,7 @@ const PatientsPage = () => {
                   <td>{item.user?.email}</td>
                   <td>{item.user?.phone_number}</td>
                   <td>
-                    <Menu shadow="sm">
+                    <Menu shadow="sm" position="left-start">
                       <Menu.Target>
                         <UnstyledButton>
                           <DotsVertical />
@@ -183,6 +193,20 @@ const PatientsPage = () => {
                       </Menu.Target>
 
                       <Menu.Dropdown>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(`/app/patients/view/${item.user_id}`);
+                          }}
+                          icon={<Eye />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientRead
+                            )
+                          }
+                        >
+                          Ver información del paciente
+                        </Menu.Item>
                         <Menu.Item
                           onClick={() => {
                             navigate(`/app/patients/edit/${item.user_id}`);
@@ -212,6 +236,54 @@ const PatientsPage = () => {
                           }
                         >
                           Información
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(
+                              `/app/patients/patientstatus/${item.user_id}`
+                            );
+                          }}
+                          icon={<Accessible />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientUpdate
+                            )
+                          }
+                        >
+                          Estado del Paciente
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(
+                              `/app/patients/treatments/${item.user_id}`
+                            );
+                          }}
+                          icon={<HeartRateMonitor />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.TreatmentCreate
+                            )
+                          }
+                        >
+                          Asignar tratamiento
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(
+                              `/app/patients/documentation/${item.user_id}`
+                            );
+                          }}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.DocumentationRead
+                            )
+                          }
+                          icon={<File />}
+                        >
+                          Administrar documentación
                         </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

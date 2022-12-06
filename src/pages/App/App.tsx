@@ -17,6 +17,8 @@ import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
 import PatientInformationPage from "../Admin/PatientsPage/PatientInformation/PatientInformationPage";
+import PatientStatusPage from "../PatientStatusPage/PatientStatusPage";
+import DefaultRedirect from "@/components/DefaultRedirect/DefaultRedirect";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -28,8 +30,20 @@ const AppInnerComponent = () => {
   const PatientsPage = lazy(
     () => import("@/pages/Admin/PatientsPage/PatientsPage")
   );
+  const AppointmentsPage = lazy(
+    () => import("@/pages/Admin/AppointmentsPage/AppointmentsPage")
+  );
+  const TreatmentsPage = lazy(
+    () => import("@/pages/Admin/TreatmentsPage/TreatmentsPage")
+  );
   const AdminPatientPage = lazy(
     () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
+  );
+  const PatientDocumentation = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientDocumentation")
+  );
+  const PatientPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientPage")
   );
   const InstitucionalStaffPage = lazy(
     () => import("@/pages/Admin/InstitucionalStaffPage/InstitucionalStaffPage")
@@ -98,8 +112,6 @@ const AppInnerComponent = () => {
 
   const { appLoading } = useContext(AppContext);
 
-  const DefaultRedirect = () => <Navigate to="/app" />;
-
   const mainLayout = useMemo(() => {
     return (
       <LayoutWithNav headerContent={<MainHeader />} navBarContent={<MainNav />}>
@@ -115,6 +127,17 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AreasPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/admin/appointments"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <AppointmentsPage />
                   </WithPermission>
                 }
               ></Route>
@@ -168,12 +191,56 @@ const AppInnerComponent = () => {
               ></Route>
               <Route
                 path="/patients/information/:user_id"
-                element={
+                 element={
                   <WithPermission
                     permissionRequired={PermissionCodes.PatientRead}
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <PatientInformationPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/patientstatus/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientStatusPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/treatments/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <TreatmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/view/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/documentation/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.DocumentationRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientDocumentation />
                   </WithPermission>
                 }
               ></Route>

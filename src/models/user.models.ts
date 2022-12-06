@@ -5,5 +5,5 @@ export interface RegisterUserDTO {
   lastname: string;
   password: string;
   phone_number: string;
-  birth_date: number;
+  birth_date: string;
 }
