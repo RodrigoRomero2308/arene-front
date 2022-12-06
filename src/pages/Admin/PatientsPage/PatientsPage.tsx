@@ -29,6 +29,7 @@ import {
   Eye,
   File,
   Plus,
+  Archive
 } from "tabler-icons-react";
 
 const PatientsPage = () => {
@@ -99,12 +100,26 @@ const PatientsPage = () => {
     <>
       <Title order={2}>Pacientes</Title>
       <Space h="md" />
+      <Title order={5} style={{ marginLeft: 15 }}>
+        Búsqueda por:
+      </Title>
+      <Space h="sm" />
       <form onSubmit={searchForm.onSubmit(handleSearchFormSubmit)}>
-        <Grid>
+        <Grid
+          gutter="xl"
+          sx={(theme) => ({
+            marginLeft: theme.spacing.xs,
+          })}
+        >
           <Grid.Col md={4}>
             <TextInput
               label="Nombre"
               {...searchForm.getInputProps("name")}
+            ></TextInput>
+            <Space h="sm" />
+            <TextInput
+              label="Email"
+              {...searchForm.getInputProps("email")}
             ></TextInput>
           </Grid.Col>
           <Grid.Col md={4}>
@@ -112,36 +127,32 @@ const PatientsPage = () => {
               label="DNI"
               {...searchForm.getInputProps("dni")}
             ></TextInput>
-          </Grid.Col>
-          <Grid.Col md={4}>
-            <TextInput
-              label="Email"
-              {...searchForm.getInputProps("email")}
-            ></TextInput>
+            <Space h="xl" />
+            <Space h="sm" />
+            <Group position="apart">
+              <div>
+                <Button
+                  sx={(theme) => ({
+                    marginRight: theme.spacing.sm,
+                  })}
+                  type="submit"
+                  loading={patientsLoading}
+                >
+                  Buscar
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={searchForm.reset}
+                  loading={patientsLoading}
+                >
+                  Limpiar
+                </Button>
+              </div>
+            </Group>
           </Grid.Col>
         </Grid>
         <Space h="md" />
-        <Group position="apart">
-          <div>
-            <Button
-              sx={(theme) => ({
-                marginRight: theme.spacing.sm,
-              })}
-              type="submit"
-              loading={patientsLoading}
-            >
-              Buscar
-            </Button>
-            <Button
-              variant="outline"
-              onClick={searchForm.reset}
-              loading={patientsLoading}
-            >
-              Limpiar
-            </Button>
-          </div>
-          {newButton}
-        </Group>
+        {newButton}
       </form>
       <Space h="md" />
       <div style={{ position: "relative" }}>
@@ -209,6 +220,22 @@ const PatientsPage = () => {
                           }
                         >
                           Modificar paciente
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => {
+                            navigate(
+                              `/app/patients/information/${item.user_id}`
+                            );
+                          }}
+                          icon={<Archive />}
+                          disabled={
+                            !userHasPermission(
+                              user,
+                              PermissionCodes.PatientRead
+                            )
+                          }
+                        >
+                          Información
                         </Menu.Item>
                         <Menu.Item
                           onClick={() => {

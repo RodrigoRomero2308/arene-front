@@ -131,7 +131,6 @@ export const ProfessionalStaffSearch = ({
           <Grid.Col md={4}></Grid.Col>
         </Grid>
         <Space h="md" />
-        <div></div>
         {newStaffPersonButton}
       </form>
     </>
