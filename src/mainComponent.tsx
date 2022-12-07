@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  createHttpLink,
-  InMemoryCache,
-} from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import {
   LoadingOverlay,
@@ -18,6 +13,8 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const mantineTheme: MantineThemeOverride = {
   fontFamily: "Open Sans, sans-serif",
@@ -77,6 +74,7 @@ function MainComponent() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer />
     </Suspense>
   );
 }

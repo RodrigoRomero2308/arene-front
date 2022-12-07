@@ -8,13 +8,17 @@ export const parseGraphqlErrorMessage = (error: any): string | undefined => {
   let message = "";
 
   for (const graphqlError of error.graphQLErrors) {
-    if (
-      graphqlError.extensions.code &&
-      graphqlError.extensions.code === "BAD_USER_INPUT"
-    ) {
-      const messageToAdd = (
-        (graphqlError.extensions as any)?.response?.message as string[]
-      ).join(", ");
+    if (graphqlError.extensions.code) {
+      let messageToAdd;
+      if (Array.isArray((graphqlError.extensions as any)?.response?.message)) {
+        messageToAdd = (
+          (graphqlError.extensions as any)?.response?.message as string[]
+        ).join(", ");
+      } else if (
+        typeof (graphqlError.extensions as any)?.response?.message === "string"
+      ) {
+        messageToAdd = (graphqlError.extensions as any)?.response?.message;
+      }
 
       if (!message) {
         message = messageToAdd;

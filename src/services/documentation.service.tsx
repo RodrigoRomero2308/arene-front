@@ -4,7 +4,9 @@ import {
 } from "@/graphql/query/documentation.query";
 import { IDocumentation } from "@/interfaces/IDocumentation";
 import { downloadFile } from "@/utils/file.utils";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery } from "@apollo/client";
+import { toast } from "react-toastify";
 
 export const DocumentationService = () => {
   const [fetchDocumentation] = useLazyQuery<{
@@ -17,19 +19,33 @@ export const DocumentationService = () => {
   const getDocumentationList = async (
     patient_id: number
   ): Promise<IDocumentation[]> => {
-    const data = await fetchDocumentation({
-      variables: {
-        filter: {
-          patient_id: [patient_id],
+    try {
+      const data = await fetchDocumentation({
+        variables: {
+          filter: {
+            patient_id: [patient_id],
+          },
+          orderBy: {
+            field: "its",
+            direction: "desc",
+          },
         },
-        orderBy: {
-          field: "its",
-          direction: "desc",
-        },
-      },
-    });
+      });
 
-    return data.data?.getDocumentationList || [];
+      return data.data?.getDocumentationList || [];
+    } catch (error: any) {
+      toast.error(parseGraphqlErrorMessage(error) || error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      throw error;
+    }
   };
 
   const getDocumentation = async (documentId: number) => {
@@ -49,9 +65,19 @@ export const DocumentationService = () => {
       );
     } else {
       console.log(thisDocumentResponse);
-      throw new Error(
-        "Ha ocurrido un error al descargar el archivo, por favor intente nuevamente más tarde"
-      );
+      const message =
+        "Ha ocurrido un error al descargar el archivo, por favor intente nuevamente más tarde";
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      throw new Error(message);
     }
   };
 
