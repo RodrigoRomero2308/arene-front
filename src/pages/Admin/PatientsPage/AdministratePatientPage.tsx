@@ -5,7 +5,6 @@ import {
   UPDATE_PATIENT,
 } from "@/graphql/mutation/patient.mutation";
 import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
-import useNotification from "@/hooks/useNotification";
 import { ICreatePatientFormDto } from "@/interfaces/ICreatePatientDTO";
 import { formatInitialDateForTextInput } from "@/utils/date.utils";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
@@ -27,6 +26,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { PatientFormDataSerializer } from "./PatientFormDataSerializer";
 
 const AdminPatientPage = () => {
@@ -37,8 +37,6 @@ const AdminPatientPage = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
-  const { component, presentNotification, dismissNotification } =
-    useNotification();
 
   const form = useForm<ICreatePatientFormDto>({
     initialValues: {
@@ -132,21 +130,38 @@ const AdminPatientPage = () => {
 
         setFormLoading(false);
 
-        presentNotification({
-          type: NotificationType.SUCCESS,
-          title: `Guardado exitosamente`,
-          message: "",
+        toast.success("Guardado exitosamente", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
         });
 
         navigate("/app/patients");
       } catch (error: any) {
         console.error(error);
         setFormLoading(false);
-        presentNotification({
-          type: NotificationType.ERROR,
-          title: "Ocurrio un error",
-          message: parseGraphqlErrorMessage(error) || error.message,
-        });
+
+        console.log("lanzando toast");
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          }
+        );
       }
     },
     [saveOperation]
@@ -529,7 +544,6 @@ const AdminPatientPage = () => {
           <LoadingOverlay visible={formLoading} />
         </div>
       </form>
-      {component}
     </>
   );
 };

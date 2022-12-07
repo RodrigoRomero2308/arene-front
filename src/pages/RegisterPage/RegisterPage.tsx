@@ -18,6 +18,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterUserDTO } from "@/models/user.models";
 import { LoginRedirectAction } from "../LoginPage/LoginRedirectActions";
+import { toast } from "react-toastify";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 function RegisterPage() {
   const [attemptRegister] = useMutation(REGISTER);
@@ -89,8 +91,17 @@ function RegisterPage() {
       if (!registerResult.errors) {
         handleSuccessfulRegister();
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(parseGraphqlErrorMessage(error) || error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
     setSubmitButtonLoading(false);
   });

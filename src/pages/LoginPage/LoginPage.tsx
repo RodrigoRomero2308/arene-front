@@ -19,6 +19,8 @@ import { LOGIN } from "@/graphql/mutation/auth.mutation";
 import { useState } from "react";
 import LoginLabelByState from "./LoginLabelByState";
 import { LocalStorageKeys } from "@/enums/localStorageKeys";
+import { toast } from "react-toastify";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 function LoginPage() {
   const [attemptLogin] = useMutation(LOGIN);
@@ -75,7 +77,18 @@ function LoginPage() {
         }
         navigate("/app");
       }
-    } catch (error) {}
+    } catch (error: any) {
+      toast.error(parseGraphqlErrorMessage(error) || error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
     setSubmitFormLoading(false);
   });
 

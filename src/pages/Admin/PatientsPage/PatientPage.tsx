@@ -4,10 +4,12 @@ import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { IDocumentation } from "@/interfaces/IDocumentation";
 import { IPatient } from "@/interfaces/IPatient";
 import { DocumentationService } from "@/services/documentation.service";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery } from "@apollo/client";
 import { LoadingOverlay, Space, Tabs, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { File, InfoCircle } from "tabler-icons-react";
 import PatientInformationContent from "./PatientPageTabs/PatientInformationContent";
 
@@ -36,8 +38,17 @@ const PatientPage = () => {
           id: userId,
         },
       });
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(parseGraphqlErrorMessage(error) || error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 

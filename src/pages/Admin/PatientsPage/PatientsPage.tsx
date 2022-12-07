@@ -3,6 +3,7 @@ import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
 import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
 import { IPatient, IPatientFilter } from "@/interfaces/IPatient";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery } from "@apollo/client";
 import {
@@ -21,6 +22,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Accessible,
   DotsVertical,
@@ -29,7 +31,7 @@ import {
   Eye,
   File,
   Plus,
-  Archive
+  Archive,
 } from "tabler-icons-react";
 
 const PatientsPage = () => {
@@ -53,8 +55,17 @@ const PatientsPage = () => {
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(parseGraphqlErrorMessage(error) || error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       })
       .finally(() => {
         setPatientsLoading(false);
