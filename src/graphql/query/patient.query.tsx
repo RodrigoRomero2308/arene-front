@@ -4,6 +4,7 @@ export const GET_PATIENT_BY_ID = gql`
   query getPatientById($id: Int!) {
     getPatientById(id: $id) {
       user_id
+      patient_status_id
       companion_firstname
       companion_lastname
       companion_phone_type_id
