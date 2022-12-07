@@ -1,11 +1,14 @@
 import { phoneTypes } from "@/constants/phoneTypes";
+import { NotificationType } from "@/enums/notificationType";
 import {
   CREATE_PATIENT,
   UPDATE_PATIENT,
 } from "@/graphql/mutation/patient.mutation";
 import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
+import useNotification from "@/hooks/useNotification";
 import { ICreatePatientFormDto } from "@/interfaces/ICreatePatientDTO";
 import { formatInitialDateForTextInput } from "@/utils/date.utils";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -34,6 +37,8 @@ const AdminPatientPage = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
+  const { component, presentNotification, dismissNotification } =
+    useNotification();
 
   const form = useForm<ICreatePatientFormDto>({
     initialValues: {
@@ -89,9 +94,9 @@ const AdminPatientPage = () => {
   }, []);
 
   const saveOperation = useCallback(
-    (input) => {
+    async (input) => {
       if (!isUpdate) {
-        return createPatient({
+        return await createPatient({
           variables: {
             input,
           },
@@ -107,7 +112,7 @@ const AdminPatientPage = () => {
         id: user_id,
       };
 
-      return updatePatient({
+      return await updatePatient({
         variables,
       });
     },
@@ -127,10 +132,21 @@ const AdminPatientPage = () => {
 
         setFormLoading(false);
 
+        presentNotification({
+          type: NotificationType.SUCCESS,
+          title: `Guardado exitosamente`,
+          message: "",
+        });
+
         navigate("/app/patients");
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
         setFormLoading(false);
+        presentNotification({
+          type: NotificationType.ERROR,
+          title: "Ocurrio un error",
+          message: parseGraphqlErrorMessage(error) || error.message,
+        });
       }
     },
     [saveOperation]
@@ -165,7 +181,11 @@ const AdminPatientPage = () => {
               ></TextInput>
             </Grid.Col>
             <Grid.Col md={4}>
-              <TextInput label="DNI" {...form.getInputProps("dni")}></TextInput>
+              <TextInput
+                label="DNI"
+                required
+                {...form.getInputProps("dni")}
+              ></TextInput>
             </Grid.Col>
             <Grid.Col md={4}>
               <PasswordInput
@@ -509,6 +529,7 @@ const AdminPatientPage = () => {
           <LoadingOverlay visible={formLoading} />
         </div>
       </form>
+      {component}
     </>
   );
 };
