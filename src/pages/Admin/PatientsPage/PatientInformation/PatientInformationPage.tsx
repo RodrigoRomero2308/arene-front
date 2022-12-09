@@ -7,7 +7,14 @@ import {
 import { useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Timeline, Text, Group, Title, Space } from "@mantine/core";
+import {
+  Timeline,
+  Text,
+  Group,
+  Title,
+  Space,
+  LoadingOverlay,
+} from "@mantine/core";
 import { Archive, DotsVertical, Edit, Plus } from "tabler-icons-react";
 import { sizes } from "@mantine/core/lib/ActionIcon/ActionIcon.styles";
 
@@ -66,77 +73,6 @@ const PatientInformationPage = () => {
     return "hoy";
   };
 
-  const Information: IPatientInformation[] = [
-    {
-      id: 1,
-      title: "Registro",
-      information: "Se registro al paciente",
-      created_by: 1,
-      Its: new Date("2022/07/05"),
-      createdBy: {
-        id: 1,
-        dni: "42342423",
-        email: "facundito@gmail.com",
-        firstname: "facu",
-        lastname: "acevedo",
-        password: "1234567",
-        birth_date: "1999-11-11",
-        active: true,
-      },
-    },
-    {
-      id: 2,
-      title: "Cambio de estado",
-      information: "Se cambio el estado de paciente de Ingreso a Aceptado",
-      created_by: 1,
-      Its: new Date("2022/12/03"),
-      createdBy: {
-        id: 1,
-        dni: "42342423",
-        email: "facundito@gmail.com",
-        firstname: "facu",
-        lastname: "acevedo",
-        password: "1234567",
-        birth_date: "1999-11-11",
-        active: true,
-      },
-    },
-    {
-      id: 3,
-      title: "Nueva Documentación",
-      information: "Se agrego nueva documentacion llamada: CUD",
-      created_by: 1,
-      Its: new Date("2022/07/15"),
-      createdBy: {
-        id: 1,
-        dni: "42342423",
-        email: "facundito@gmail.com",
-        firstname: "facu",
-        lastname: "acevedo",
-        password: "1234567",
-        birth_date: "1999-11-11",
-        active: true,
-      },
-    },
-    {
-      id: 4,
-      title: "Alta",
-      information: "Se dio de alta al paciente por: descripcion...",
-      created_by: 1,
-      Its: new Date("2022/12/04"),
-      createdBy: {
-        id: 1,
-        dni: "42342423",
-        email: "facundito@gmail.com",
-        firstname: "facu",
-        lastname: "acevedo",
-        password: "1234567",
-        birth_date: "1999-11-11",
-        active: true,
-      },
-    },
-  ];
-
   return (
     <>
       <Title order={2}>Información del Paciente</Title>
@@ -157,19 +93,19 @@ const PatientInformationPage = () => {
         })}
       >
         <Timeline active={-1} bulletSize={24} lineWidth={2}>
-          {Information.map((item) => (
-            <Timeline.Item title={item.title}>
+          {patientInformation.map((item) => (
+            <Timeline.Item title={item.information} key={item.id}>
               <Text color="dimmed" size="sm">
-                {item.information}
+                {`Hecho por: ${item.createdBy?.firstname} ${
+                  item.createdBy?.lastname
+                } el ${new Date(item.its).toLocaleDateString()}`}
               </Text>
               <Text color="dimmed" size="sm">
-                {`Hecho por: ${item.createdBy?.firstname} ${item.createdBy?.lastname}`}
-              </Text>
-              <Text color="dimmed" size="sm">
-                {`Hace: ${countDaysBefore(item.Its)}`}
+                {`Hace: ${countDaysBefore(new Date(item.its))}`}
               </Text>
             </Timeline.Item>
           ))}
+          <LoadingOverlay visible={informationLoading} />
         </Timeline>
       </Group>
     </>

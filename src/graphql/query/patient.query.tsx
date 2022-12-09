@@ -82,8 +82,12 @@ export const GET_PATIENT_INFORMATION = gql`
       id
       information
       documentation_id
+      its
       created_by
-      createdBy
+      createdBy {
+        firstname
+        lastname
+      }
     }
   }
 `;

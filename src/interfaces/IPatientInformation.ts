@@ -5,15 +5,13 @@ import { IUser } from "./IUser";
 export interface IPatientInformation {
   id: number;
 
-  title: string;
-
   information: string;
 
   documentation_id?: number;
 
   created_by: number;
 
-  Its: Date;
+  its: Date;
 
   createdBy?: IUser;
 }
