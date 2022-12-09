@@ -133,6 +133,7 @@ export const NoMedicalsTable = ({
       <ScrollArea
         sx={() => ({
           maxWidth: "100vw",
+          overflow: "visible",
         })}
       >
         <Table striped>
