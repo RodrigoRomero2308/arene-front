@@ -5,6 +5,10 @@ export const parseGraphqlErrorMessage = (error: any): string | undefined => {
     return undefined;
   }
 
+  if (error.message === "Failed to fetch") {
+    return "No se ha podido establecer comunicación con el servidor. Intente mas tarde o pongase en contacto con el administrador del sistema";
+  }
+
   let message = "";
 
   for (const graphqlError of error.graphQLErrors) {

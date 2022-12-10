@@ -48,6 +48,9 @@ const PatientsPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setPatients(
           result.data.getPatients.map((item: any) => {
             delete item.__typename;
