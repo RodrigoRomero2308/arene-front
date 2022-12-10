@@ -55,6 +55,8 @@ export class PatientFormDataSerializer {
       input.patient.cud_companion = false;
     }
 
+    delete input.patient.patient_status_id;
+
     /* Fin Transofrmo datos */
     return input;
   }
