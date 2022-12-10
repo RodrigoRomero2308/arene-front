@@ -4,11 +4,13 @@ import {
 } from "@/graphql/mutation/professional.mutation";
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
 import { validate } from "class-validator";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
 import { NoMedicalStaffForm } from "../Common/StaffForms";
 
@@ -172,9 +174,9 @@ const AdminAdministratorPage = () => {
         });
       }
 
-      const user_id = input.id;
+      const user_id = input.professional.user_id;
 
-      delete input.id;
+      delete input.professional.user_id;
 
       const variables = {
         input,
@@ -201,9 +203,35 @@ const AdminAdministratorPage = () => {
 
         setFormLoading(false);
 
+        toast.success("Guardado exitosamente", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
         navigate("/app/institucionalStaff?tab=administrators");
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          }
+        );
         setFormLoading(false);
       }
     },

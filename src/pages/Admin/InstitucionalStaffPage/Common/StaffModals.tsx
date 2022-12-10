@@ -33,6 +33,8 @@ import {
   GET_AREAS,
   GET_AREAS_BY_PROFESSIONAL_ID,
 } from "@/graphql/query/area.query";
+import { toast } from "react-toastify";
+import { toastOptions } from "@/shared/toastOptions";
 
 export const AssignRoleModal = ({
   visible,

@@ -4,10 +4,13 @@ import {
 } from "@/graphql/mutation/professional.mutation";
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
 import { NoMedicalStaffForm } from "../Common/StaffForms";
 
@@ -85,9 +88,9 @@ const AdminCoordinatorPage = () => {
         });
       }
 
-      const user_id = input.id;
+      const user_id = input.professional.user_id;
 
-      delete input.id;
+      delete input.professional.user_id;
 
       const variables = {
         input,
@@ -114,9 +117,17 @@ const AdminCoordinatorPage = () => {
 
         setFormLoading(false);
 
+        toast.success("Guardado exitosamente", toastOptions);
+
         navigate("/app/institucionalStaff?tab=coordinators");
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          toastOptions
+        );
         setFormLoading(false);
       }
     },

@@ -6,6 +6,7 @@ import {
 } from "@/graphql/mutation/patient.mutation";
 import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { ICreatePatientFormDto } from "@/interfaces/ICreatePatientDTO";
+import { toastOptions } from "@/shared/toastOptions";
 import { formatInitialDateForTextInput } from "@/utils/date.utils";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -130,16 +131,7 @@ const AdminPatientPage = () => {
 
         setFormLoading(false);
 
-        toast.success("Guardado exitosamente", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("Guardado exitosamente", toastOptions);
 
         navigate("/app/patients");
       } catch (error: any) {
@@ -151,16 +143,7 @@ const AdminPatientPage = () => {
           `Ocurrio un error: ${
             parseGraphqlErrorMessage(error) || error.message
           }`,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          }
+          toastOptions
         );
       }
     },
