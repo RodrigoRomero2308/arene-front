@@ -72,17 +72,20 @@ const RolesPage = () => {
   return (
     <>
       <Title order={2}>Roles</Title>
-      <WithPermission permissionRequired={PermissionCodes.RoleCreate}>
-        <>
-          <Space h="md" />
-          <Button
-            onClick={() => setCreateModalVisible(true)}
-            rightIcon={<Plus />}
-          >
-            Nuevo
-          </Button>
-        </>
-      </WithPermission>
+      {/* TODO: por desarrollar */}
+      {import.meta.env.DEV ? (
+        <WithPermission permissionRequired={PermissionCodes.RoleCreate}>
+          <>
+            <Space h="md" />
+            <Button
+              onClick={() => setCreateModalVisible(true)}
+              rightIcon={<Plus />}
+            >
+              Nuevo
+            </Button>
+          </>
+        </WithPermission>
+      ) : null}
       <Space h="md" />
       <div style={{ position: "relative" }}>
         <Table striped>
@@ -90,7 +93,8 @@ const RolesPage = () => {
             <tr>
               <th>Nombre</th>
               <th>Descripción</th>
-              <th></th>
+              {/* TODO: por desarrollar */}
+              {import.meta.env.DEV ? <th></th> : null}
             </tr>
           </thead>
 
@@ -99,38 +103,41 @@ const RolesPage = () => {
               <tr key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.description}</td>
-                <td>
-                  <Menu shadow="sm">
-                    <Menu.Target>
-                      <UnstyledButton>
-                        <DotsVertical />
-                      </UnstyledButton>
-                    </Menu.Target>
+                {/* TODO: por desarrollar */}
+                {import.meta.env.DEV ? (
+                  <td>
+                    <Menu shadow="sm">
+                      <Menu.Target>
+                        <UnstyledButton>
+                          <DotsVertical />
+                        </UnstyledButton>
+                      </Menu.Target>
 
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        onClick={() => {
-                          setRoleToUpdate(item);
-                        }}
-                        icon={<Edit />}
-                        disabled={
-                          !userHasPermission(user, PermissionCodes.RoleUpdate)
-                        }
-                      >
-                        Modificar rol
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => setRoleToDelete(item)}
-                        icon={<Trash />}
-                        disabled={
-                          !userHasPermission(user, PermissionCodes.RoleDelete)
-                        }
-                      >
-                        Eliminar rol
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </td>
+                      <Menu.Dropdown>
+                        <Menu.Item
+                          onClick={() => {
+                            setRoleToUpdate(item);
+                          }}
+                          icon={<Edit />}
+                          disabled={
+                            !userHasPermission(user, PermissionCodes.RoleUpdate)
+                          }
+                        >
+                          Modificar rol
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={() => setRoleToDelete(item)}
+                          icon={<Trash />}
+                          disabled={
+                            !userHasPermission(user, PermissionCodes.RoleDelete)
+                          }
+                        >
+                          Eliminar rol
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>
