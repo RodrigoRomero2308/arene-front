@@ -5,7 +5,6 @@ export const GET_APPOINTMENTS_WITH_FILTER = gql`
     getAppointments(filter: $filter) {
       id
       treatment_id
-      professional_id
       day_of_the_week
       start_hour
       end_hour
