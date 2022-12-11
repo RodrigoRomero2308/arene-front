@@ -191,7 +191,7 @@ const AppInnerComponent = () => {
               ></Route>
               <Route
                 path="/patients/information/:user_id"
-                 element={
+                element={
                   <WithPermission
                     permissionRequired={PermissionCodes.PatientRead}
                     renderWithoutPermission={<DefaultRedirect />}
@@ -391,18 +391,6 @@ const AppInnerComponent = () => {
                     renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AdminCoordinatorPage />
-                  </WithPermission>
-                }
-              ></Route>
-
-              <Route
-                path="/institucionalStaff/directors"
-                element={
-                  <WithPermission
-                    permissionRequired={PermissionCodes.ProfessionalCreate}
-                    renderWithoutPermission={<DefaultRedirect />}
-                  >
-                    <DirectorsPage />
                   </WithPermission>
                 }
               ></Route>
