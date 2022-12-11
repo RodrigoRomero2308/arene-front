@@ -6,7 +6,7 @@ import {
 } from "@/interfaces/IPatientInformation";
 import { useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Timeline,
   Text,
@@ -15,8 +15,8 @@ import {
   Space,
   LoadingOverlay,
 } from "@mantine/core";
-import { Archive, DotsVertical, Edit, Plus } from "tabler-icons-react";
-import { sizes } from "@mantine/core/lib/ActionIcon/ActionIcon.styles";
+import { OrderByDirection } from "@/enums/patientInformationOrderByDirection";
+import { PatientInformationOrderByField } from "@/enums/patientInformationOrderByField";
 
 const PatientInformationPage = () => {
   const [getPatientInformation] = useLazyQuery(GET_PATIENT_INFORMATION);
@@ -24,7 +24,7 @@ const PatientInformationPage = () => {
     IPatientInformation[]
   >([]);
   const [informationLoading, setInformationLoading] = useState(false);
-  const navigate = useNavigate();
+  const params = useParams();
 
   const getPatientInformationFromServer = (variables?: {
     filter: IPatientInformationFilter;
@@ -50,28 +50,62 @@ const PatientInformationPage = () => {
       });
   };
 
+  const patientInformationFilter: IPatientInformationFilter = {
+    patient_id: Number(params.user_id),
+  };
+
+  const orderBy: IPatientInformationOrderByInput = {
+    direction: OrderByDirection.desc,
+    field: PatientInformationOrderByField.its,
+  };
+
   useEffect(() => {
-    getPatientInformationFromServer();
+    getPatientInformationFromServer({
+      filter: patientInformationFilter,
+      orderBy: orderBy,
+    });
   }, []);
 
-  const countDaysBefore = (initialDate: Date) => {
-    const timeInMilisecondsBefore = initialDate.getTime();
+  const dateDone = (initialDate: Date) => {
+    const dateNow = new Date();
 
-    const timeInMilisecondsNow = new Date().getTime();
+    let dayInMiliseconds = 24 * 60 * 60 * 1000;
 
-    const milisecondInADay = 86400000;
+    const dateYestarday = new Date(dateNow.getTime() - dayInMiliseconds);
 
-    const timeInDaysBefore = timeInMilisecondsBefore / milisecondInADay;
+    console.log(dateYestarday);
 
-    const timeInDaysNow = timeInMilisecondsNow / milisecondInADay;
+    const date = initialDate.toLocaleDateString();
 
-    const daysPassed = Math.floor(Math.abs(timeInDaysNow - timeInDaysBefore));
+    const rtf1 = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 
-    if (daysPassed > 0) {
-      return `${daysPassed} dias`;
+    if (date == dateNow.toLocaleDateString()) {
+      return (
+        <Text color="dimmed" size="sm">
+          {`${capitalize(
+            rtf1.format(0, "day")
+          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+        </Text>
+      );
+    } else if (date == dateYestarday.toLocaleDateString()) {
+      return (
+        <Text color="dimmed" size="sm">
+          {`${capitalize(
+            rtf1.format(-1, "day")
+          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+        </Text>
+      );
     }
-    return "hoy";
+    return (
+      <Text>
+        {`El ${initialDate.toLocaleDateString()} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+      </Text>
+    );
   };
+
+  function capitalize(word: string) {
+    return word[0].toUpperCase() + word.slice(1);
+  }
 
   return (
     <>
@@ -93,18 +127,24 @@ const PatientInformationPage = () => {
         })}
       >
         <Timeline active={-1} bulletSize={24} lineWidth={2}>
-          {patientInformation.map((item) => (
-            <Timeline.Item title={item.information} key={item.id}>
-              <Text color="dimmed" size="sm">
-                {`Hecho por: ${item.createdBy?.firstname} ${
-                  item.createdBy?.lastname
-                } el ${new Date(item.its).toLocaleDateString()}`}
-              </Text>
-              <Text color="dimmed" size="sm">
-                {`Hace: ${countDaysBefore(new Date(item.its))}`}
-              </Text>
-            </Timeline.Item>
-          ))}
+          {patientInformation.map((item) => {
+            const date = new Date(item.its);
+
+            return (
+              <Timeline.Item
+                title={item.patientInformationType.name}
+                key={item.id}
+              >
+                <Text color="dimmed" size="sm">
+                  {item.information}
+                </Text>
+                <Text color="dimmed" size="sm">
+                  {`Hecho por ${item.createdBy?.firstname} ${item.createdBy?.lastname} `}
+                  {dateDone(date)}
+                </Text>
+              </Timeline.Item>
+            );
+          })}
           <LoadingOverlay visible={informationLoading} />
         </Timeline>
       </Group>

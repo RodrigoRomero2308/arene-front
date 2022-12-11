@@ -1,5 +1,6 @@
 import { OrderByDirection } from "@/enums/patientInformationOrderByDirection";
 import { PatientInformationOrderByField } from "@/enums/patientInformationOrderByField";
+import { IPatientInformationType } from "./IPatientInformationType";
 import { IUser } from "./IUser";
 
 export interface IPatientInformation {
@@ -14,6 +15,8 @@ export interface IPatientInformation {
   its: Date;
 
   createdBy?: IUser;
+
+  patientInformationType: IPatientInformationType;
 }
 
 export interface IPatientInformationFilter {
@@ -27,7 +30,7 @@ export interface IPatientInformationFilter {
 }
 
 export interface IPatientInformationOrderByInput {
-  field: PatientInformationOrderByField;
+  field?: PatientInformationOrderByField;
 
-  direction: OrderByDirection;
+  direction?: OrderByDirection;
 }

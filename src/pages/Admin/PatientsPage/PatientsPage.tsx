@@ -3,6 +3,7 @@ import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
 import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
 import { IPatient, IPatientFilter } from "@/interfaces/IPatient";
+import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery } from "@apollo/client";
@@ -59,16 +60,10 @@ const PatientsPage = () => {
         );
       })
       .catch((error: any) => {
-        toast.error(parseGraphqlErrorMessage(error) || error.message, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setPatientsLoading(false);
@@ -249,7 +244,7 @@ const PatientsPage = () => {
                             )
                           }
                         >
-                          Información
+                          Ver historial
                         </Menu.Item>
                         <Menu.Item
                           onClick={() => {
