@@ -1,5 +1,5 @@
 import { phoneTypes } from "@/constants/phoneTypes";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { UseFormReturnType } from "@mantine/form";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
 import {
   Divider,
@@ -59,6 +59,7 @@ const CommonUserDataForm = ({ isUpdate, staffName, form }: UserProps) => {
     <>
       <Title order={4}>Datos del {staffName}:</Title>
       <Space h="sm" />
+      <Divider my="xs" label="Datos personales" />
       <Grid
         sx={(theme) => ({
           marginLeft: theme.spacing.xs,
@@ -86,7 +87,11 @@ const CommonUserDataForm = ({ isUpdate, staffName, form }: UserProps) => {
           ></TextInput>
         </Grid.Col>
         <Grid.Col md={4}>
-          <TextInput label="DNI" {...form.getInputProps("dni")}></TextInput>
+          <TextInput
+            label="DNI"
+            required
+            {...form.getInputProps("dni")}
+          ></TextInput>
         </Grid.Col>
         <Grid.Col md={4}>
           <PasswordInput
@@ -138,7 +143,7 @@ const CommonUserDataForm = ({ isUpdate, staffName, form }: UserProps) => {
 const ProfessionalDataForm = ({ form, isFisiatra }: ProfessionalProps) => {
   return (
     <>
-      <Divider my="xs" label="Datos como profesional" />
+      <Divider my="xs" label="Datos profesionales" />
       <Grid
         sx={(theme) => ({
           marginLeft: theme.spacing.xs,
@@ -231,7 +236,7 @@ const AddressDataForm = ({ staffName, form }: AddressProps) => {
   );
 };
 
-export const NoMedicalStaffForm = ({
+export const StaffForm = ({
   handleSubmit,
   isUpdate,
   staffName,
@@ -243,38 +248,41 @@ export const NoMedicalStaffForm = ({
   return (
     <>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Title order={2}>
-          {isUpdate ? `Actualizar ${staffName}` : `Registrar ${staffName}`}
-        </Title>
-        <Space h="sm" />
-        <CommonUserDataForm
-          form={form}
-          isUpdate={isUpdate}
-          staffName={staffName}
-        />
-        {staffName == "Profesional" || staffName == "Fisiatra" ? (
-          <>
-            <ProfessionalDataForm form={form} isFisiatra={isFisiatra} />
-            <Space h="lg" />
-            <Divider></Divider>
-            <Space h="sm" />
-          </>
-        ) : (
-          <>
-            <Space h="lg" />
-            <Divider></Divider>
-            <Space h="sm" />
-          </>
-        )}
-        <AddressDataForm form={form} staffName={staffName} />
-        <Space h="lg" />
-        <Space h="sm" />
-        <Group position="center">
-          <Button type="submit" loading={formLoading}>
-            {isUpdate ? "Actualizar" : "Guardar"}
-          </Button>
-        </Group>
-        <LoadingOverlay visible={formLoading} />
+        <div style={{ position: "relative" }}>
+          <Title order={2}>
+            {isUpdate ? `Actualizar ${staffName}` : `Registrar ${staffName}`}
+          </Title>
+          <Space h="sm" />
+          <CommonUserDataForm
+            form={form}
+            isUpdate={isUpdate}
+            staffName={staffName}
+          />
+          <Space h="sm" />
+          {staffName == "Profesional" || staffName == "Fisiatra" ? (
+            <>
+              <ProfessionalDataForm form={form} isFisiatra={isFisiatra} />
+              <Space h="lg" />
+              <Divider></Divider>
+              <Space h="sm" />
+            </>
+          ) : (
+            <>
+              <Space h="lg" />
+              <Divider></Divider>
+              <Space h="sm" />
+            </>
+          )}
+          <AddressDataForm form={form} staffName={staffName} />
+          <Space h="lg" />
+          <Space h="sm" />
+          <Group position="center">
+            <Button type="submit" loading={formLoading}>
+              {isUpdate ? "Actualizar" : "Guardar"}
+            </Button>
+          </Group>
+          <LoadingOverlay visible={formLoading} />
+        </div>
       </form>
     </>
   );

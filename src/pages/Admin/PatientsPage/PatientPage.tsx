@@ -4,6 +4,7 @@ import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 import { IDocumentation } from "@/interfaces/IDocumentation";
 import { IPatient } from "@/interfaces/IPatient";
 import { DocumentationService } from "@/services/documentation.service";
+import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery } from "@apollo/client";
 import { LoadingOverlay, Space, Tabs, Text, Title } from "@mantine/core";
@@ -39,16 +40,7 @@ const PatientPage = () => {
         },
       });
     } catch (error: any) {
-      toast.error(parseGraphqlErrorMessage(error) || error.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.error(parseGraphqlErrorMessage(error) || error.message, toastOptions);
     }
   };
 

@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
-import { NoMedicalStaffForm } from "../Common/StaffForms";
+import { StaffForm } from "../Common/StaffForms";
 
 const AdminDirectorPage = () => {
   const [createDirector] = useMutation(CREATE_DIRECTOR);
@@ -135,13 +135,13 @@ const AdminDirectorPage = () => {
   );
 
   return (
-    <NoMedicalStaffForm
+    <StaffForm
       handleSubmit={handleSubmit}
       isUpdate={isUpdate}
       staffName="Director"
       form={form}
       formLoading={formLoading}
-    ></NoMedicalStaffForm>
+    ></StaffForm>
   );
 };
 

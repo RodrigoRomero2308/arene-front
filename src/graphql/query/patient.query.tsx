@@ -88,6 +88,9 @@ export const GET_PATIENT_INFORMATION = gql`
         firstname
         lastname
       }
+      patientInformationType {
+        name
+      }
     }
   }
 `;

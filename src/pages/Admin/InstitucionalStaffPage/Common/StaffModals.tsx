@@ -333,7 +333,7 @@ export const AssignAreaModal = ({
 
   return (
     <>
-      <Modal title="Roles" opened={visible || false} onClose={onClose}>
+      <Modal title="Areas" opened={visible || false} onClose={onClose}>
         <Group position="center">
           <NativeSelect
             sx={{ width: 275 }}
@@ -341,8 +341,8 @@ export const AssignAreaModal = ({
               (item) =>
                 !areasById.find((role) => role.id === Number(item.value))
             )}
-            label="Asignar Role"
-            placeholder="Seleccione un rol"
+            label="Asignar Area"
+            placeholder="Seleccione un area"
             ref={selectRef}
           />
           <Button
@@ -362,7 +362,7 @@ export const AssignAreaModal = ({
           </Button>
         </Group>
         <Space h="lg"></Space>
-        <Text>Roles asignados</Text>
+        <Text>Areas asignadas</Text>
         <Space h="lg"></Space>
         <Table>
           <thead>
@@ -397,7 +397,7 @@ export const AssignAreaModal = ({
         title={
           <Group>
             <AlertCircle />
-            <Text>Eliminar Role</Text>
+            <Text>Eliminar Area</Text>
           </Group>
         }
         opened={!!areaToDelete}
