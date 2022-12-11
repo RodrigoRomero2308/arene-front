@@ -8,14 +8,6 @@ export const CREATE_TREATMENT = gql`
   }
 `;
 
-export const UPDATE_TREATMENT = gql`
-  mutation updateTreatment($id: Int!, $input: UpdateTreatmentInput!) {
-    updateTreatment(id: $id, input: $input) {
-      id
-    }
-  }
-`;
-
 export const DELETE_TREATMENT = gql`
   mutation deleteTreatment($id: Int!) {
     deleteTreatment(id: $id) {

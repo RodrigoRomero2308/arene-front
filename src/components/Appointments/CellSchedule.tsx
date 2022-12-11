@@ -107,7 +107,6 @@ const CellSchedule = ({
       if (treatment) {
         const input = {
           treatment_id: treatment.id,
-          professional_id: 8, //luego se le pasa el id del profesional desde el ProfessionalArea
           day_of_the_week: dayOfTheWeek,
           start_hour: startHour,
           end_hour: endHour,

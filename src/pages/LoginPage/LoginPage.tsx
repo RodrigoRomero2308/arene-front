@@ -130,23 +130,33 @@ function LoginPage() {
               })}
             />
             <Space h="sm"></Space>
-            <Center>
-              <Link to="/">
-                <Text size="xs">¿Olvidó su contraseña?</Text>
-              </Link>
-            </Center>
-            <Space h="sm"></Space>
+            {/* TODO: por desarrollar */}
+            {import.meta.env.DEV ? (
+              <>
+                <Center>
+                  <Link to="/">
+                    <Text size="xs">¿Olvidó su contraseña?</Text>
+                  </Link>
+                </Center>
+                <Space h="sm"></Space>
+              </>
+            ) : null}
             <Button loading={submitFormLoading} fullWidth type="submit">
               Iniciar sesión
             </Button>
           </form>
-          <Space h="sm"></Space>
-          <Center>
-            <Text size="xs">
-              Si es la primera vez que ingresa{" "}
-              <Link to="/register">¡REGÍSTRESE!</Link>
-            </Text>
-          </Center>
+          {/* TODO: por desarrollar */}
+          {import.meta.env.DEV ? (
+            <>
+              <Space h="sm"></Space>
+              <Center>
+                <Text size="xs">
+                  Si es la primera vez que ingresa{" "}
+                  <Link to="/register">¡REGÍSTRESE!</Link>
+                </Text>
+              </Center>
+            </>
+          ) : null}
         </Card>
       </Center>
     </PublicLayout>
