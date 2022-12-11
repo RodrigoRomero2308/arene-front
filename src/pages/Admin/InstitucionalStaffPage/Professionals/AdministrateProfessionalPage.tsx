@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
-import { NoMedicalStaffForm } from "../Common/StaffForms";
+import { StaffForm } from "../Common/StaffForms";
 
 const AdminProfessionalPage = () => {
   const [createProfessional] = useMutation(CREATE_PROFESSIONAL);
@@ -135,7 +135,7 @@ const AdminProfessionalPage = () => {
   );
 
   return (
-    <NoMedicalStaffForm
+    <StaffForm
       form={form}
       formLoading={formLoading}
       handleSubmit={handleSubmit}

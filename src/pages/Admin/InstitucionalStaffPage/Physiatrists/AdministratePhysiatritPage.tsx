@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { StaffFormDataSerializer } from "../Common/StaffFormDataSerializer";
-import { NoMedicalStaffForm } from "../Common/StaffForms";
+import { StaffForm } from "../Common/StaffForms";
 
 const AdminPhysiatristPage = () => {
   const [createPhysiatrist] = useMutation(CREATE_PHYSIATRIST);
@@ -135,7 +135,7 @@ const AdminPhysiatristPage = () => {
   );
 
   return (
-    <NoMedicalStaffForm
+    <StaffForm
       form={form}
       formLoading={formLoading}
       handleSubmit={handleSubmit}
