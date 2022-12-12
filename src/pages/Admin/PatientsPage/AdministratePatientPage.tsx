@@ -71,13 +71,20 @@ const AdminPatientPage = () => {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       const formData = new PatientFormDataSerializer().patientDataToFormData(
         data.data.getPatientById
       );
 
       form.setValues(formData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     } finally {
       setFormLoading(false);
     }

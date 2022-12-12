@@ -13,7 +13,9 @@ import { IDocumentation } from "@/interfaces/IDocumentation";
 import { IDocumentationType } from "@/interfaces/IDocumentationType";
 import { IPatient } from "@/interfaces/IPatient";
 import { DocumentationService } from "@/services/documentation.service";
+import { toastOptions } from "@/shared/toastOptions";
 import { downloadFile } from "@/utils/file.utils";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
@@ -32,6 +34,7 @@ import { Dropzone, FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DotsVertical, Download, Plus } from "tabler-icons-react";
 
 const PatientData = ({ patient }: { patient?: IPatient }) => {
@@ -122,8 +125,14 @@ const NewDocumentModal = ({
       .then(() => {
         saveDocumentationForm.reset();
         onClose();
+        toast.success("Documentación subida exitosamente", toastOptions);
       })
-      .catch((error) => console.log(error))
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
+      })
       .finally(() => {
         setSubmitButtonLoading(false);
       });
@@ -224,9 +233,16 @@ function PatientDocumentation() {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       setPatientData(data.data.getPatientById);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     }
   };
 
@@ -260,8 +276,13 @@ function PatientDocumentation() {
   const downloadDocumentation = useCallback(async (documentId: number) => {
     try {
       await getDocumentation(documentId);
-    } catch (error) {
-      console.error(error);
+
+      toast.success("Documentación descargada exitosamente", toastOptions);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
       return;
     }
   }, []);

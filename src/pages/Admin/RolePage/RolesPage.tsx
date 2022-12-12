@@ -4,6 +4,8 @@ import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_ROLE } from "@/graphql/mutation/role.mutation";
 import { GET_ROLES } from "@/graphql/query/role.query";
 import { IRole } from "@/interfaces/IRole";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
@@ -19,6 +21,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   AlertCircle,
   DotsVertical,
@@ -45,6 +48,9 @@ const RolesPage = () => {
     setRolesLoading(true);
     getRoles()
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setRoles(
           result.data.getRoles.map((item: any) => {
             delete item.__typename;
@@ -52,8 +58,11 @@ const RolesPage = () => {
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setRolesLoading(false);

@@ -47,92 +47,6 @@ const AdminAdministratorPage = () => {
         street: "",
       },
     },
-    // validate: {
-    //   birth_date: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar una fecha de nacimiento";
-    //     }
-    //   },
-    //   dni: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un DNI";
-    //     }
-    //   },
-    //   email: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un email";
-    //     }
-    //   },
-    //   firstname: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un nombre";
-    //     }
-    //   },
-    //   lastname: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un apellido";
-    //     }
-    //   },
-    //   password: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar una contraseña";
-    //     }
-    //   },
-    //   phone_number: (value: any) => {
-    //     if (!value) {
-    //       return "Debe ingresar un numero de telefono/celular";
-    //     }
-    //   },
-    //   phone_type_id: (value: any) => {
-    //     if (!value) {
-    //       return "Debe seleccionar tipo de telefono";
-    //     }
-    //   },
-    //   professional: {
-    //     medical_license_number: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar un CUD";
-    //       }
-    //     },
-    //     profession: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una profesión";
-    //       }
-    //     },
-    //     speciality: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una specialidad";
-    //       }
-    //     },
-    //   },
-    //   address: {
-    //     city: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una ciudad";
-    //       }
-    //     },
-    //     department: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar un departamento";
-    //       }
-    //     },
-    //     height: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar la altura";
-    //       }
-    //     },
-    //     province: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una provincia";
-    //       }
-    //     },
-    //     street: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una calle";
-    //       }
-    //     },
-    //   },
-    // },
   });
 
   const getAdministratorFromServer = async (userId: number) => {
@@ -144,13 +58,20 @@ const AdminAdministratorPage = () => {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       const formData = new StaffFormDataSerializer().staffDataToFormData(
         data.data.getProfessionalById
       );
 
       form.setValues(formData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     } finally {
       setFormLoading(false);
     }

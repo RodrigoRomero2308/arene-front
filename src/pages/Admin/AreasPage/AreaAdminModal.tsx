@@ -1,9 +1,11 @@
 import { CREATE_AREA, UPDATE_AREA } from "@/graphql/mutation/area.mutation";
 import { IArea } from "@/interfaces/IArea";
+import { toastOptions } from "@/shared/toastOptions";
 import { useMutation } from "@apollo/client";
 import { Button, Modal, Space, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
 export const AreaAdminModal = ({
   visible,
@@ -80,7 +82,12 @@ export const AreaAdminModal = ({
         onSubmit={form.onSubmit((values) => {
           setLoading(true);
           executeOperation(values)
-            .then(() => afterCreate())
+            .then(() => {
+              afterCreate();
+              values.id
+                ? toast.success("Area actualizada exitosamente", toastOptions)
+                : toast.success("Area creada exitosamente", toastOptions);
+            })
             .catch((err) => console.log(err))
             .finally(() => setLoading(false));
         })}
