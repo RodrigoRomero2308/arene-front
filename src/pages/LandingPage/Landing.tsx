@@ -25,95 +25,36 @@ import {
 } from "@mantine/core";
 import PublicLayout from "@/layouts/PublicLayout/PublicLayout";
 import { HeartHandshake } from "tabler-icons-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "@mantine/form";
-import { isEmail } from "class-validator";
-import { SendingRedirectActions } from "./SendingRedirectActions";
-import { ConsultaDTO } from "@/models/consulta.models";
-import { useMutation } from "@apollo/client";
-import { CONSULTA } from "@/graphql/mutation/consulta.mutation";
+
 function Landing() {
-  const [attemptSendConsulta] = useMutation(CONSULTA);
-  const [submitButtonLoading, setSubmitButtonLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const consultaForm = useForm({
-    initialValues: {
-      nombre: "",
-      email: "",
-      telefono: "",
-      consulta: "",
-    },
-    validate: {
-      email: (value) => {
-        if (isEmail(value)) {
-          return null;
-        }
-        return "Debe ingresar un email válido";
-      },
-    },
-  });
-
-  const handleSuccessfulSent = () => {
-    navigate("/", {
-      state: {
-        redirectAction: SendingRedirectActions.SENDING_SUCCESSFULLY,
-      },
-    });
-  };
-
-  const handleSending = consultaForm.onSubmit(async (values) => {
-    setSubmitButtonLoading(true);
-    const ConsultaInput: ConsultaDTO = {
-      nombre: values.nombre,
-      email: values.email,
-      telefono: values.telefono,
-      consulta: values.consulta,
-    };
-    try {
-      const sendingResult = await attemptSendConsulta({
-        variables: {
-          input: ConsultaInput,
-        },
-      });
-      if (!sendingResult.errors) {
-        handleSuccessfulSent();
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    setSubmitButtonLoading(false);
-  });
-
   const therapies = [
     {
       label: "Terapia Fisiokinesica",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Elaboración de un plan de tratamiento fisiokinésico donde se apliquen las técnicas para optimizar las capacidades del paciente, fundamentando las indicaciones y contraindicaciones.",
     },
     {
       label: "Terapia Ocupacional",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Desarrollo del uso terapéutico de las actividades como el cuidado, trabajo y juego para lograr incrementar la independencia funcional, aumentar el desarrollo personal y prevenir posibles afecciones. Además, puede incluir la adaptación de tareas o del entorno para alcanzar la máxima independencia y para mejorar la calidad de vida.",
     },
     {
       label: "Trabajo Social",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Actividad esencialmente educativa que se desarrolla con carácter preventivo y asistencial en el ámbito de la Institución. Se brinda una atención integral e interdisciplinaria a toda persona en situaciones de carencia o con dificultades sociofamiliares, y/o aquellas personas que requieran el asesoramiento o estimulación para detectar posibles problemáticas emergentes.",
     },
     {
       label: "Fonoaudiología",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Área en la cual el profesional se ocupa de la evaluación, prevención, tratamiento y rehabilitación de los trastornos de la comunicación de las personas. Estos pueden comprender alteraciones en la voz, el habla, el lenguaje y en el aprendizaje. Abarca tanto la población infantil como a la adulta.",
     },
     {
       label: "Psicología",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Establece el estudio de la conducta y comportamiento de los procesos mentales del paciente, aplicando terapias desarrolladas para cada una de las necesidades que se presentan.",
     },
     {
       label: "Enfermería",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Es parte integral del sistema de atención de salud. Abarca la promoción de la salud, la prevención de la enfermedad y los cuidados que se prestan a quienes padecen enfermedades físicas, enfermedades mentales, y a las personas discapacitadas de todas las edades.",
     },
     {
       label: "Nutrición",
-      text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga saepe tenetur doloribus exercitationem alias nobis deserunt odio nemo labore, quibusdam, obcaecati placeat possimus, velit aliquam illum blanditiis quidem vitae consequuntur.",
+      text: "Terapias que ayudan a los pacientes a mantener un estado saludable, conservar las fuerzas y energías, para prevenir o disminuir efectos que ocasionan sus problemas de salud.",
     },
   ];
 
@@ -223,47 +164,39 @@ function Landing() {
               className="contacto-contenido"
             >
               <Container className="contacto-form">
-                <form onSubmit={handleSending}>
-                  <TextInput
-                    label="Nombre"
-                    placeholder="Ingrese su nombre completo"
-                    required
-                    {...consultaForm.getInputProps("nombre")}
-                  ></TextInput>
-                  <Space h="sm"></Space>
-                  <Grid columns={2}>
-                    <Grid.Col span={1}>
-                      <TextInput
-                        label="Correo electrónico"
-                        placeholder="Ingrese su correo electrónico"
-                        required
-                        {...consultaForm.getInputProps("email")}
-                      ></TextInput>
-                    </Grid.Col>
-                    <Grid.Col span={1}>
-                      <TextInput
-                        label="Número de teléfono"
-                        placeholder="Ingrese su número de teléfono"
-                        required
-                        {...consultaForm.getInputProps("telefono")}
-                      ></TextInput>
-                    </Grid.Col>
-                  </Grid>
-                  <Space h="sm"></Space>
-                  <Textarea
-                    placeholder="Ingrese su consulta"
-                    label="Consulta"
-                    autosize
-                    required
-                    {...consultaForm.getInputProps("consulta")}
-                  />
-                  <Space h="sm"></Space>
-                  <Center>
-                    <Button loading={submitButtonLoading} type="submit">
-                      Enviar consulta
-                    </Button>
-                  </Center>
-                </form>
+                <TextInput
+                  label="Nombre"
+                  placeholder="Ingrese su nombre completo"
+                  required
+                ></TextInput>
+                <Space h="sm"></Space>
+                <Grid columns={2}>
+                  <Grid.Col span={1}>
+                    <TextInput
+                      label="Correo electrónico"
+                      placeholder="Ingrese su correo electrónico"
+                      required
+                    ></TextInput>
+                  </Grid.Col>
+                  <Grid.Col span={1}>
+                    <TextInput
+                      label="Número de teléfono"
+                      placeholder="Ingrese su número de teléfono"
+                      required
+                    ></TextInput>
+                  </Grid.Col>
+                </Grid>
+                <Space h="sm"></Space>
+                <Textarea
+                  placeholder="Ingrese su consulta"
+                  label="Consulta"
+                  autosize
+                  required
+                />
+                <Space h="sm"></Space>
+                <Center>
+                  <Button type="submit">Enviar consulta</Button>
+                </Center>
               </Container>
               <Container className="contacto-ubicacion">
                 <iframe
