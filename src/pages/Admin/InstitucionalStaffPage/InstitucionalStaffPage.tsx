@@ -12,7 +12,7 @@ import { GET_ADMINISTRATORS_FOR_TABLE } from "@/graphql/query/professional.query
 import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const InstitucionalStaffPage = () => {
   const [getProfessionals] = useLazyQuery(GET_PROFESSIONALS_FOR_TABLE);

@@ -119,7 +119,7 @@ const AdminPhysiatristPage = () => {
 
         toast.success("Guardado exitosamente", toastOptions);
 
-        navigate("/app/institucionalStaff/physiatrists");
+        navigate("/app/institucionalStaff?tab=physiatrists");
       } catch (error: any) {
         console.error(error);
         toast.error(

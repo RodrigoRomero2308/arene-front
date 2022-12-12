@@ -34,9 +34,6 @@ export class StaffFormDataSerializer {
 
     if (input.address.height) input.address.height = +input.address.height;
 
-    if (input.birth_date)
-      input.birth_date = dateToTextInputFormat(new Date(input.birth_date));
-
     delete input.__typename;
     delete input.address.__typename;
     delete input.professional.__typename;
