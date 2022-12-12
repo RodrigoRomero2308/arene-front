@@ -32,7 +32,7 @@ const PatientStatusPage = () => {
   const [getAllPatientStatus] = useLazyQuery(GET_ALL_PATIENT_STATUS);
   const [getPatientStatus] = useLazyQuery(GET_PATIENT_STATUS_BY_ID);
   const [changeStatus] = useMutation(CHANGE_STATUS);
-  const [value, setValue] = useState<string | undefined>("2");
+  const [value, setValue] = useState<string | undefined>();
   const [modalOpened, setModalOpened] = useState(false);
 
   const getPatientFromServer = async (userId: number) => {
@@ -43,7 +43,11 @@ const PatientStatusPage = () => {
           id: userId,
         },
       }).then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setPatientData(result.data.getPatientById);
+        setValue(result.data.getPatientById?.patient_status_id.toString());
       });
     } catch (error) {
       console.error(error);
@@ -121,14 +125,14 @@ const PatientStatusPage = () => {
       <Title order={4}>DNI: {patientData?.user?.dni}</Title>
       <Space h="md"></Space>
       <Radio.Group
-        value={patientData?.patient_status_id.toString()}
+        value={value}
         onChange={setValue}
         label="Situación"
         description="Situación actual del paciente"
         withAsterisk
       >
         {statusData.map((item: IPatientStatus) => (
-          <Radio value={item.id} label={item.name} key={item.id} />
+          <Radio value={item.id.toString()} label={item.name} key={item.id} />
         ))}
         <LoadingOverlay visible={statusLoading} />
       </Radio.Group>
