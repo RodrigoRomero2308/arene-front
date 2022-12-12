@@ -1,78 +1,52 @@
 import { IPatient } from "@/interfaces/IPatient";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {
-  ActionIcon,
-  Avatar,
-  Badge,
-  LoadingOverlay,
-  Modal,
-  Table,
-  Title,
-} from "@mantine/core";
-import { useEffect, useState } from "react";
+import { ActionIcon, Avatar, Badge, LoadingOverlay } from "@mantine/core";
+import { lazy, useEffect, useState } from "react";
 import { Plus, X } from "tabler-icons-react";
-import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
 import { GET_APPOINTMENTS_WITH_FILTER } from "@/graphql/query/appointment.query";
 import { IArea } from "@/interfaces/IArea";
 import { IAppointment, IAppointmentFilter } from "@/interfaces/IAppointment";
-import { ITreatment, ITreatmentFilter } from "@/interfaces/ITreatment";
-import { GET_TREATMENTS_WITH_FILTER } from "@/graphql/query/treatment.query";
+import { ITreatment } from "@/interfaces/ITreatment";
 import {
   CREATE_APPOINTMENT,
   DELETE_APPOINTMENT,
 } from "@/graphql/mutation/appointment.mutation";
+import { toast } from "react-toastify";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
+import { GET_PATIENT_BY_ID } from "@/graphql/query/patient.query";
 
 const CellSchedule = ({
   dayOfTheWeek,
   area,
   startHour,
   endHour,
+  treatments,
 }: {
-  dayOfTheWeek: string;
+  dayOfTheWeek: string | "monday";
   area: IArea;
   startHour: string;
   endHour: string;
+  treatments: ITreatment[];
 }) => {
-  const [patients, setPatients] = useState<IPatient[]>([]);
   const [selectedPatients, setSelectedPatients] = useState<IPatient[]>([]);
+  const [patientsBadges, setPatientsBadges] = useState<JSX.Element[]>([]);
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
-  const [treatments, setTreatments] = useState<ITreatment[]>([]);
-  const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
   const [modalVisible, setModalVisible] = useState(false);
+  const [getPatientById] = useLazyQuery(GET_PATIENT_BY_ID);
   const [getAppointments] = useLazyQuery(GET_APPOINTMENTS_WITH_FILTER);
-  const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
   const [createAppointment] = useMutation(CREATE_APPOINTMENT);
   const [deleteAppointment] = useMutation(DELETE_APPOINTMENT);
-  const [patientsLoading, setPatientsLoading] = useState(false);
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
-  const [treatmentsLoading, setTreatmentsLoading] = useState(false);
-  const [isCreatingAppointment, setIsCreatingAppointment] = useState(false);
 
-  const getPatientsFromServer = async () => {
-    setPatientsLoading(true);
-    await getPatients().then((result) => {
-      setPatients(result.data.getPatients);
-      setPatientsLoading(false);
-    });
-  };
-
-  const getTreatmentsFromServer = async (variables?: {
-    filter: ITreatmentFilter;
-  }) => {
-    setTreatmentsLoading(true);
-    await getTreatments({ variables })
-      .then((result) => {
-        setTreatments(result.data.getTreatments);
-        setTreatmentsLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const PatientsTable = lazy(
+    () => import("@/components/Appointments/PatientsTable")
+  );
 
   const getAppointmentsFromServer = async (variables?: {
     filter: IAppointmentFilter;
   }) => {
+    if (treatments.length === 0) return;
     setAppointmentsLoading(true);
     await getAppointments({
       variables,
@@ -93,7 +67,6 @@ const CellSchedule = ({
   };
 
   const addPatient = (selectedPatient: IPatient) => {
-    setIsCreatingAppointment(true);
     var repeat = selectedPatients.some(
       (patient) => patient.user_id === selectedPatient.user_id
     );
@@ -116,12 +89,17 @@ const CellSchedule = ({
             input,
           },
         })
-          .catch((err) => {
-            console.error(err);
+          .catch((error) => {
+            toast.error(
+              `Ocurrio un error: ${
+                parseGraphqlErrorMessage(error) || error.message
+              }`,
+              toastOptions
+            );
           })
           .finally(() => {
-            setModalVisible(false);
-            setIsCreatingAppointment(false);
+            handleCloseModal();
+            toast.success("Se ha creado el turno correctamente", toastOptions);
           });
       }
     }
@@ -139,7 +117,6 @@ const CellSchedule = ({
     );
     if (treatment) {
       console.log("El tratamiento es" + treatment.id);
-      console.log(appointments);
       const appointment = appointments.find(
         (appointment) =>
           appointment.treatment_id === treatment.id &&
@@ -149,17 +126,25 @@ const CellSchedule = ({
       );
       console.log(appointment);
       if (appointment) {
-        console.log("El appointment es" + appointment);
         deleteAppointment({
           variables: {
             id: appointment.id,
           },
         })
+          .then(() => {
+            const patientToDelete = selectedPatients.find(
+              (patient) => patient.user_id === selectedPatient.user_id
+            );
+            setSelectedPatients(
+              selectedPatients.filter((patient) => patient !== patientToDelete)
+            );
+          })
           .catch((err) => {
             console.error(err);
           })
           .finally(() => {
-            setModalVisible(false);
+            handleCloseModal();
+            toast.info("Se ha eliminado el turno correctamente", toastOptions);
           });
       }
     }
@@ -206,96 +191,64 @@ const CellSchedule = ({
   );
 
   useEffect(() => {
-    getPatientsFromServer();
-    getTreatmentsFromServer({
-      filter: {
-        area_id: area.id,
-      },
-    });
+    if (treatments.length > 0) {
+      treatments.forEach((treatment) => {
+        getAppointmentsFromServer({
+          filter: {
+            treatment_id: treatment.id,
+            day_of_the_week: dayOfTheWeek,
+            start_hour: startHour,
+            end_hour: endHour,
+          },
+        });
+      });
+    }
   }, []);
 
   useEffect(() => {
-    treatments.forEach((treatment) => {
-      getAppointmentsFromServer({
-        filter: {
-          treatment_id: treatment.id,
-          day_of_the_week: dayOfTheWeek,
-          start_hour: startHour,
-          end_hour: endHour,
-        },
+    if (appointments.length > 0) {
+      appointments.forEach((appointment) => {
+        getPatientById({
+          variables: {
+            id: appointment.treatment?.patient_id,
+          },
+        }).then((data) => {
+          setSelectedPatients([...selectedPatients, data.data.getPatientById]);
+        });
       });
-    });
-  }, [treatments]);
+    }
+  }, [appointments]);
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
 
   useEffect(() => {
-    appointments.forEach((appointment) => {
-      const patient = patients.find(
-        (patient) => patient.user_id === appointment.treatment?.patient_id
-      );
-      if (patient) {
-        setSelectedPatients([...selectedPatients, patient]);
-      }
+    selectedPatients.map((selectedPatient) => {
+      setPatientsBadges([...patientsBadges, badge(selectedPatient)]);
     });
-  }, [appointments]);
+  }, [selectedPatients]);
 
   return (
     <>
       <div>
-        {selectedPatients.map((selectedPatient) => badge(selectedPatient))}
         <div style={{ position: "relative", backgroundColor: "transparent" }}>
           <>
+            {patientsBadges}
             <LoadingOverlay
-              visible={treatmentsLoading || appointmentsLoading}
+              visible={appointmentsLoading}
               overlayColor="transparent"
               overlayBlur={2}
             />
             {addButton}
           </>
         </div>
-        <Modal
-          title={
-            isCreatingAppointment ? "Cargando.." : "Seleccione un paciente"
-          }
-          opened={modalVisible || false}
-          onClose={() => setModalVisible(false)}
-        >
-          {isCreatingAppointment ? (
-            <Title order={4}>El turno está siendo asignado...</Title>
-          ) : (
-            <Table>
-              <thead>
-                <tr>
-                  <th>DNI</th>
-                  <th>Nombre</th>
-                  <th>Independencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patients.map((patient) => (
-                  <tr key={patient.user_id} onClick={() => addPatient(patient)}>
-                    <td key={patient.user?.dni}>{patient.user?.dni}</td>
-                    <td
-                      key={
-                        patient.user?.firstname + "" + patient.user?.lastname
-                      }
-                    >
-                      {patient.user?.firstname} {patient.user?.lastname}
-                    </td>
-                    <td
-                      key={
-                        patient.companion_firstname +
-                        " " +
-                        patient.companion_lastname
-                      }
-                    >
-                      {patient.needs_transfer ? "No" : "Si"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          )}
-        </Modal>
+        <PatientsTable
+          visible={modalVisible}
+          areaFilter={area.id}
+          onSelect={addPatient}
+          handleCloseModal={handleCloseModal}
+        />
       </div>
     </>
   );
