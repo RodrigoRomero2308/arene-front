@@ -4,6 +4,7 @@ import {
 } from "@/graphql/mutation/professional.mutation";
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
+import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
@@ -203,16 +204,7 @@ const AdminAdministratorPage = () => {
 
         setFormLoading(false);
 
-        toast.success("Guardado exitosamente", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("Guardado exitosamente", toastOptions);
 
         navigate("/app/institucionalStaff?tab=administrators");
       } catch (error: any) {
@@ -221,16 +213,7 @@ const AdminAdministratorPage = () => {
           `Ocurrio un error: ${
             parseGraphqlErrorMessage(error) || error.message
           }`,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          }
+          toastOptions
         );
         setFormLoading(false);
       }

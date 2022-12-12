@@ -154,6 +154,7 @@ const ProfessionalDataForm = ({ form, isFisiatra }: ProfessionalProps) => {
             <Grid.Col md={4}>
               <TextInput
                 label="Profesión"
+                required
                 {...form.getInputProps("professional.profession")}
               ></TextInput>
             </Grid.Col>
@@ -165,12 +166,14 @@ const ProfessionalDataForm = ({ form, isFisiatra }: ProfessionalProps) => {
         <Grid.Col md={4}>
           <TextInput
             label="Especialidad"
+            required
             {...form.getInputProps("professional.speciality")}
           ></TextInput>
         </Grid.Col>
         <Grid.Col md={4}>
           <TextInput
             label="Matricula"
+            required
             {...form.getInputProps("professional.medical_license_number")}
           ></TextInput>
         </Grid.Col>
