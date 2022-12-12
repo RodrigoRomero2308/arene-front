@@ -12,6 +12,7 @@ import { ITreatment, ITreatmentFilter } from "@/interfaces/ITreatment";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
+  Loader,
   LoadingOverlay,
   Modal,
   MultiSelect,
@@ -20,6 +21,10 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ArrowBigLeft, CircleCheck } from "tabler-icons-react";
+import { toast } from "react-toastify";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 const TreatmentsPage = () => {
   const [createTreatment] = useMutation(CREATE_TREATMENT);
@@ -29,16 +34,14 @@ const TreatmentsPage = () => {
   const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
   const [dataLoading, setDataLoading] = useState(false);
   const [areas, setAreas] = useState<IArea[]>([]);
-  const [actualTreatments, setActualTreatments] = useState<ITreatment[]>([]);
+  const [treatments, setTreatments] = useState<ITreatment[]>([]);
   const [patientData, setPatientData] = useState<IPatient>();
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
-  const [modalOpened, setModalOpened] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
   const getPatientFromServer = async (userId: number) => {
     try {
-      setDataLoading(true);
       const data = await getPatientData({
         variables: {
           id: userId,
@@ -53,11 +56,15 @@ const TreatmentsPage = () => {
   const getAreasFromServer = () => {
     getAreas()
       .then((result) => {
-        setDataLoading(true);
         setAreas(result.data.getAreas);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          toastOptions
+        );
       });
   };
 
@@ -68,38 +75,72 @@ const TreatmentsPage = () => {
       variables,
     })
       .then((result) => {
-        setDataLoading(true);
         const data = result.data.getTreatments;
-        setActualTreatments(data);
+        setTreatments(data);
         const selectedAreas = data.map((item: any) => item.area_id.toString());
         setSelectedAreas(selectedAreas);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          toastOptions
+        );
       });
   };
 
   useEffect(() => {
+    setDataLoading(true);
     if (params.user_id && Number.isInteger(+params.user_id)) {
-      getPatientFromServer(Number(params.user_id));
-      getAreasFromServer();
-      getTreatmentsFromServer({
-        filter: {
-          patient_id: Number(params.user_id),
-        },
-      });
-      setDataLoading(false);
+      Promise.all([
+        getPatientFromServer(Number(params.user_id)),
+        getAreasFromServer(),
+        getTreatmentsFromServer({
+          filter: {
+            patient_id: Number(params.user_id),
+          },
+        }),
+      ]).then(() => {setDataLoading(false)});
     } else {
       navigate("app/patients");
     }
   }, []);
 
-  const handleSubmit = () => {
-    selectedAreas.forEach((areaId) => {
-      const existingTreatment = actualTreatments.find(
-        (treatment) => treatment.area_id === Number(areaId)
-      );
-      if (!existingTreatment) {
+  const handleChangeInput = async (values: string[]) => {
+    selectedAreas.forEach(async (areaId) => {
+      if (!values.includes(areaId)) {
+        setSelectedAreas(values);
+        const treatmentToDelete = treatments.find(
+          (treatment) =>
+            treatment.area_id === Number(areaId) &&
+            treatment.patient_id === Number(params.user_id)
+        );
+        deleteTreatment({
+          variables: {
+            id: Number(treatmentToDelete?.id),
+          },
+        })
+          .catch((error) => {
+            console.error(error);
+            toast.error(
+              `Ocurrio un error: ${
+                parseGraphqlErrorMessage(error) || error.message
+              }`,
+              toastOptions
+            );
+          })
+          .then(() => {
+            const areaName = areas.find(
+              (area) => area.id === Number(areaId)
+            )?.name;
+            toast.info(`${areaName} eliminada correctamente`, toastOptions);
+          });
+      }
+    });
+    values.forEach((areaId) => {
+      if (!selectedAreas.includes(areaId)) {
+        setSelectedAreas(values);
         const input: ICreateTreatmentDTO = {
           area_id: Number(areaId),
           patient_id: Number(params.user_id),
@@ -110,43 +151,43 @@ const TreatmentsPage = () => {
             input,
           },
         })
-          .catch((err) => {
-            console.error(err);
+          .catch((error) => {
+            console.error(error);
+            toast.error(
+              `Ocurrio un error: ${
+                parseGraphqlErrorMessage(error) || error.message
+              }`,
+              toastOptions
+            );
           })
-          .finally(() => {
-            setModalOpened(true);
-          });
-      }
-    });
-    actualTreatments.forEach((treatment) => {
-      if (!selectedAreas.includes(treatment.area_id.toString())) {
-        deleteTreatment({
-          variables: {
-            id: treatment.id,
-          },
-        })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            setModalOpened(true);
+          .then(() => {
+            const areaName = areas.find(
+              (area) => area.id === Number(areaId)
+            )?.name;
+            toast.success(`${areaName} asignada correctamente`, toastOptions);
           });
       }
     });
   };
 
-  const handleCloseModal = () => {
-    setModalOpened(false);
-    navigate("/app/patients");
+  const BackButton = () => {
+    return (
+      <Button
+        size="xs"
+        variant="subtle"
+        color="dark"
+        compact
+        onClick={() => navigate(-1)}
+      >
+        <ArrowBigLeft />
+      </Button>
+    );
   };
 
   return (
     <>
-      <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
-        <Title order={4}>Tratamiento guardado exitosamente</Title>
-        <Space h={"xl"} />
-        <Button onClick={handleCloseModal}>Cerrar</Button>
-      </Modal>
+      <BackButton />
+      <Space h="md" />
       <Title order={2}>
         Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}{" "}
       </Title>
@@ -162,15 +203,12 @@ const TreatmentsPage = () => {
         }))}
         defaultValue={selectedAreas}
         value={selectedAreas}
-        onChange={(value) => setSelectedAreas(value)}
+        onChange={(values) => handleChangeInput(values)}
         withAsterisk
         clearable
       />
       <Space h="md" />
-      <Button type="submit" onClick={handleSubmit} loading={!dataLoading}>
-        Asignar
-      </Button>
-      <LoadingOverlay visible={!dataLoading} />
+      <LoadingOverlay visible={dataLoading} />
     </>
   );
 };
