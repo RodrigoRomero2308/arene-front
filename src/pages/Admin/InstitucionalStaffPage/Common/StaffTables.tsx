@@ -25,6 +25,7 @@ export const ProfessionalsTable = ({
       <ScrollArea
         sx={() => ({
           maxWidth: "100vw",
+          overflow: "visible",
         })}
       >
         <Table striped>
@@ -79,6 +80,7 @@ export const PhysiatristsTable = ({
       <ScrollArea
         sx={() => ({
           maxWidth: "100vw",
+          overflow: "visible",
         })}
       >
         <Table striped>
