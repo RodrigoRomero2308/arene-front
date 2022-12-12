@@ -25,6 +25,8 @@ import {
 } from "@mantine/core";
 import PublicLayout from "@/layouts/PublicLayout/PublicLayout";
 import { HeartHandshake } from "tabler-icons-react";
+import { useForm } from "@mantine/form";
+import { redirectToContactPageMail } from "@/utils/file.utils";
 
 function Landing() {
   const therapies = [
@@ -57,6 +59,24 @@ function Landing() {
       text: "Terapias que ayudan a los pacientes a mantener un estado saludable, conservar las fuerzas y energías, para prevenir o disminuir efectos que ocasionan sus problemas de salud.",
     },
   ];
+
+  const contactForm = useForm({
+    initialValues: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      body: "",
+    },
+  });
+
+  const handleContactFormSubmit = (values: any) => {
+    redirectToContactPageMail(
+      values.body,
+      values.name,
+      values.email,
+      values.phoneNumber
+    );
+  };
 
   return (
     <MantineProvider
@@ -164,39 +184,46 @@ function Landing() {
               className="contacto-contenido"
             >
               <Container className="contacto-form">
-                <TextInput
-                  label="Nombre"
-                  placeholder="Ingrese su nombre completo"
-                  required
-                ></TextInput>
-                <Space h="sm"></Space>
-                <Grid columns={2}>
-                  <Grid.Col span={1}>
-                    <TextInput
-                      label="Correo electrónico"
-                      placeholder="Ingrese su correo electrónico"
-                      required
-                    ></TextInput>
-                  </Grid.Col>
-                  <Grid.Col span={1}>
-                    <TextInput
-                      label="Número de teléfono"
-                      placeholder="Ingrese su número de teléfono"
-                      required
-                    ></TextInput>
-                  </Grid.Col>
-                </Grid>
-                <Space h="sm"></Space>
-                <Textarea
-                  placeholder="Ingrese su consulta"
-                  label="Consulta"
-                  autosize
-                  required
-                />
-                <Space h="sm"></Space>
-                <Center>
-                  <Button type="submit">Enviar consulta</Button>
-                </Center>
+                <form onSubmit={contactForm.onSubmit(handleContactFormSubmit)}>
+                  <TextInput
+                    label="Nombre"
+                    placeholder="Ingrese su nombre completo"
+                    required
+                    {...contactForm.getInputProps("name")}
+                  ></TextInput>
+                  <Space h="sm"></Space>
+                  <Grid columns={2}>
+                    <Grid.Col span={1}>
+                      <TextInput
+                        label="Correo electrónico"
+                        placeholder="Ingrese su correo electrónico"
+                        required
+                        type="email"
+                        {...contactForm.getInputProps("email")}
+                      ></TextInput>
+                    </Grid.Col>
+                    <Grid.Col span={1}>
+                      <TextInput
+                        label="Número de teléfono"
+                        placeholder="Ingrese su número de teléfono"
+                        required
+                        {...contactForm.getInputProps("phoneNumber")}
+                      ></TextInput>
+                    </Grid.Col>
+                  </Grid>
+                  <Space h="sm"></Space>
+                  <Textarea
+                    placeholder="Ingrese su consulta"
+                    label="Consulta"
+                    autosize
+                    required
+                    {...contactForm.getInputProps("body")}
+                  />
+                  <Space h="sm"></Space>
+                  <Center>
+                    <Button type="submit">Enviar consulta</Button>
+                  </Center>
+                </form>
               </Container>
               <Container className="contacto-ubicacion">
                 <iframe
