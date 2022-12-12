@@ -17,6 +17,9 @@ import {
 } from "@mantine/core";
 import { OrderByDirection } from "@/enums/patientInformationOrderByDirection";
 import { PatientInformationOrderByField } from "@/enums/patientInformationOrderByField";
+import { toast } from "react-toastify";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 const PatientInformationPage = () => {
   const [getPatientInformation] = useLazyQuery(GET_PATIENT_INFORMATION);
@@ -35,6 +38,9 @@ const PatientInformationPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setPatientInformation(
           result.data.patientInformation.map((item: any) => {
             delete item.__typename;
@@ -42,8 +48,11 @@ const PatientInformationPage = () => {
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setInformationLoading(false);

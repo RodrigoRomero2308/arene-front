@@ -4,6 +4,8 @@ import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_AREA } from "@/graphql/mutation/area.mutation";
 import { GET_AREAS } from "@/graphql/query/area.query";
 import { IArea } from "@/interfaces/IArea";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
@@ -19,6 +21,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   AlertCircle,
   DotsVertical,
@@ -45,6 +48,9 @@ const AreasPage = () => {
     setAreasLoading(true);
     getAreas()
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setAreas(
           result.data.getAreas.map((item: any) => {
             delete item.__typename;
@@ -52,8 +58,11 @@ const AreasPage = () => {
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setAreasLoading(false);
@@ -175,6 +184,7 @@ const AreasPage = () => {
               .then(() => {
                 setAreaToDelete(undefined);
                 getAreasFromServer();
+                toast.success("Area eliminada exitosamente", toastOptions);
               })
               .finally(() => {
                 setDeleteModalButtonLoading(false);

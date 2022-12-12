@@ -13,6 +13,9 @@ import { IProfessional, IProfessionalFilter } from "@/interfaces/IProfessional";
 import { useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
+import { toastOptions } from "@/shared/toastOptions";
 
 const InstitucionalStaffPage = () => {
   const [getProfessionals] = useLazyQuery(GET_PROFESSIONALS_FOR_TABLE);
@@ -37,6 +40,9 @@ const InstitucionalStaffPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setProfessionals(
           result.data.getProfessionals.map((item: any) => {
             delete item.__typename;
@@ -44,8 +50,11 @@ const InstitucionalStaffPage = () => {
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setTablesLoading(false);
@@ -60,6 +69,9 @@ const InstitucionalStaffPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setPhysiatrists(
           result.data.getPhysiatrists.map((item: any) => {
             delete item.__typename;
@@ -83,6 +95,9 @@ const InstitucionalStaffPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         console.log(result);
         setDirectors(
           result.data.getDirectors.map((item: any) => {
@@ -107,6 +122,9 @@ const InstitucionalStaffPage = () => {
       variables,
     })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setAdministrators(
           result.data.getAdministrators.map((item: any) => {
             delete item.__typename;
@@ -146,11 +164,18 @@ const InstitucionalStaffPage = () => {
   };
 
   const executeOperation = () => {
-    getProfessionalsFromServer();
-    getPhysiatristsFromServer();
-    getDirectorsFromServer();
-    getAdministratorsFromServer();
-    getCoordinatorsFromServer();
+    Promise.all([
+      getProfessionalsFromServer(),
+      getPhysiatristsFromServer(),
+      getDirectorsFromServer(),
+      getAdministratorsFromServer(),
+      getCoordinatorsFromServer(),
+    ]).catch((error) => {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
+    });
   };
 
   useEffect(() => {
@@ -177,10 +202,6 @@ const InstitucionalStaffPage = () => {
 
   const handleSearchFormSubmitCoordinators = (values: IProfessionalFilter) => {
     getCoordinatorsFromServer({ filter: values });
-  };
-
-  const onReload = () => {
-    executeOperation();
   };
 
   const tabs = {
@@ -223,7 +244,7 @@ const InstitucionalStaffPage = () => {
             staff={professionals}
             staffLoading={tablesLoading}
             handleSearchFormSubmit={handleSearchFormSubmitProfessionals}
-            onReload={onReload}
+            onReload={executeOperation}
           ></ProfessionalPage>
         </Tabs.Panel>
 
@@ -232,7 +253,7 @@ const InstitucionalStaffPage = () => {
             staff={administrators}
             staffLoading={tablesLoading}
             handleSearchFormSubmit={handleSearchFormSubmitAdministrators}
-            onReload={onReload}
+            onReload={executeOperation}
           ></AdministratorsPage>
         </Tabs.Panel>
 
@@ -241,7 +262,7 @@ const InstitucionalStaffPage = () => {
             staff={physiatrists}
             staffLoading={tablesLoading}
             handleSearchFormSubmit={handleSearchFormSubmitPhysiatrists}
-            onReload={onReload}
+            onReload={executeOperation}
           ></PhysiatristsPage>
         </Tabs.Panel>
 
@@ -250,7 +271,7 @@ const InstitucionalStaffPage = () => {
             staff={coordinators}
             staffLoading={tablesLoading}
             handleSearchFormSubmit={handleSearchFormSubmitCoordinators}
-            onReload={onReload}
+            onReload={executeOperation}
           ></CoordinatorPage>
         </Tabs.Panel>
 
@@ -259,7 +280,7 @@ const InstitucionalStaffPage = () => {
             staff={directors}
             staffLoading={tablesLoading}
             handleSearchFormSubmit={handleSearchFormSubmitDirectors}
-            onReload={onReload}
+            onReload={executeOperation}
           ></DirectorsPage>
         </Tabs.Panel>
       </Tabs>
