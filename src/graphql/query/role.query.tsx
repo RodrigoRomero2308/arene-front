@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_ROLES = gql`
-  query getRoles {
-    getRoles {
+  query getRoles($filter: RoleFilter) {
+    getRoles(filter: $filter) {
       id
       name
       description
