@@ -19,7 +19,7 @@ import {
   DELETE_ROLEUSER,
 } from "@/graphql/mutation/roleUser.mutation";
 import { IProfessional } from "@/interfaces/IProfessional";
-import { IRole } from "@/interfaces/IRole";
+import { IRole, IRoleFilter } from "@/interfaces/IRole";
 import { AlertCircle, Trash } from "tabler-icons-react";
 import { userHasPermission } from "@/utils/permission.utils";
 import userContext from "@/context/UserContext/UserContext";
@@ -67,9 +67,11 @@ export const AssignRoleModal = ({
 
   const { user } = useContext(userContext);
 
-  const getRolesFromServer = () => {
+  const getRolesFromServer = (variables?: { filter: IRoleFilter }) => {
     setRolesLoading(true);
-    getRoles()
+    getRoles({
+      variables,
+    })
       .then((result) => {
         if (result.error) {
           throw result.error;
@@ -113,9 +115,13 @@ export const AssignRoleModal = ({
     }
   };
 
+  const professionalFilter: IRoleFilter = {
+    isProfessionalRole: true,
+  };
+
   useEffect(() => {
     getRolesByUserIdFromServer(initialData.user_id);
-    getRolesFromServer();
+    getRolesFromServer({ filter: professionalFilter });
   }, [visible]);
 
   const executeOperation = () => {

@@ -3,7 +3,7 @@ import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_ROLE } from "@/graphql/mutation/role.mutation";
 import { GET_ROLES } from "@/graphql/query/role.query";
-import { IRole } from "@/interfaces/IRole";
+import { IRole, IRoleFilter } from "@/interfaces/IRole";
 import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
@@ -44,9 +44,11 @@ const RolesPage = () => {
 
   const { user } = useContext(userContext);
 
-  const getRolesFromServer = () => {
+  const getRolesFromServer = (variables?: { filter: IRoleFilter }) => {
     setRolesLoading(true);
-    getRoles()
+    getRoles({
+      variables,
+    })
       .then((result) => {
         if (result.error) {
           throw result.error;
