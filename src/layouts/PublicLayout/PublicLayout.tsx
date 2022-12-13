@@ -157,7 +157,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
               {/* top-right */}
               <div style={{ display: "flex", flexDirection: "column", textAlign: "end" }}>
                 <Text size="md">
-                  Horario de Atención de Lun. a Vier. 09 a 17 hs.
+                  Horario de Atención de Lun. a Vier. 08 a 12 hs.
                 </Text>
                 <Text size="md">
                   Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor
