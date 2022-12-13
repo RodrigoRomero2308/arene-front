@@ -70,4 +70,6 @@ export interface IPatientFilter {
   name?: string;
 
   email?: string;
+
+  area_id?: number;
 }
