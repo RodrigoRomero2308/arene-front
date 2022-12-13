@@ -1,14 +1,14 @@
 import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
 import { IPatient, IPatientFilter } from "@/interfaces/IPatient";
 import { useLazyQuery } from "@apollo/client";
-import { Modal, Table } from "@mantine/core";
+import { LoadingOverlay, Modal, Table } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 const PatientsTable = ({
   visible,
   areaFilter,
   onSelect,
-  handleCloseModal
+  handleCloseModal,
 }: {
   visible: boolean;
   areaFilter: number;
@@ -22,7 +22,6 @@ const PatientsTable = ({
   const getPatientsFromServer = async (variables?: {
     filter: IPatientFilter;
   }) => {
-    if(areaFilter === 0) return;
     setPatientsLoading(true);
     getPatients({
       variables,
@@ -55,21 +54,35 @@ const PatientsTable = ({
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient) => (
-            <tr key={patient.user_id} onClick={() => onSelect(patient)}>
-              <td key={patient.user?.dni}>{patient.user?.dni}</td>
-              <td key={patient.user?.firstname + "" + patient.user?.lastname}>
-                {patient.user?.firstname} {patient.user?.lastname}
-              </td>
-              <td
-                key={
-                  patient.companion_firstname + " " + patient.companion_lastname
-                }
+          <LoadingOverlay visible={patientsLoading} />
+          {patients.length > 0 ? (
+            patients.map((patient) => (
+              <tr
+                key={patient.user_id}
+                onClick={() => {
+                  onSelect(patient);
+                }}
               >
-                {patient.needs_transfer ? "No" : "Si"}
-              </td>
+                <td key={patient.user?.dni}>{patient.user?.dni}</td>
+                <td key={patient.user?.firstname + "" + patient.user?.lastname}>
+                  {patient.user?.firstname} {patient.user?.lastname}
+                </td>
+                <td
+                  key={
+                    patient.companion_firstname +
+                    " " +
+                    patient.companion_lastname
+                  }
+                >
+                  {patient.needs_transfer ? "No" : "Si"}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={3}>No hay pacientes para esta área</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
     </Modal>
