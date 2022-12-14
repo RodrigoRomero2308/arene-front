@@ -6,6 +6,8 @@ import {
 } from "@/graphql/query/patientStatus.query";
 import { IPatient } from "@/interfaces/IPatient";
 import { IPatientStatus } from "@/interfaces/IPatientStatus";
+import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -13,27 +15,23 @@ import {
   Modal,
   Radio,
   Space,
-  Textarea,
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Id } from "tabler-icons-react";
+import { toast } from "react-toastify";
 
 const PatientStatusPage = () => {
   const [patientData, setPatientData] = useState<IPatient>();
   const [statusData, setStatusData] = useState<IPatientStatus[]>([]);
-  const [patientStatusData, setPatientStatusData] = useState<IPatientStatus>();
   const [dataLoading, setDataLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
   const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
   const [getAllPatientStatus] = useLazyQuery(GET_ALL_PATIENT_STATUS);
-  const [getPatientStatus] = useLazyQuery(GET_PATIENT_STATUS_BY_ID);
   const [changeStatus] = useMutation(CHANGE_STATUS);
-  const [value, setValue] = useState<string | undefined>("2");
-  const [modalOpened, setModalOpened] = useState(false);
+  const [value, setValue] = useState<string | undefined>();
 
   const getPatientFromServer = async (userId: number) => {
     setDataLoading(true);
@@ -43,10 +41,14 @@ const PatientStatusPage = () => {
           id: userId,
         },
       }).then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setPatientData(result.data.getPatientById);
+        setValue(result.data.getPatientById?.patient_status_id.toString());
       });
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.log(error);
     }
   };
 
@@ -54,6 +56,9 @@ const PatientStatusPage = () => {
     setStatusLoading(true);
     getAllPatientStatus()
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setStatusData(
           result.data.getAllPatientStatus.map((item: any) => {
             delete item.__typename;
@@ -61,25 +66,14 @@ const PatientStatusPage = () => {
           })
         );
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setStatusLoading(false);
-      });
-  };
-
-  const getPatientStatusByIdFromServer = async (id?: number) => {
-    getPatientStatus({
-      variables: {
-        id: id,
-      },
-    })
-      .then((result) => {
-        setPatientStatusData(result.data.getStatusById);
-      })
-      .catch((error) => {
-        console.error(error);
       });
   };
 
@@ -93,52 +87,57 @@ const PatientStatusPage = () => {
 
   const handleSubmit = () => {
     if (patientData && value) {
+      setDataLoading(true);
       changeStatus({
         variables: {
           id: patientData.user_id,
           statusId: parseInt(value),
         },
-      }).then(() => {
-        setModalOpened(true);
-      });
+      })
+        .then(() => {
+          navigate("/app/patients");
+          toast.success("Estado actualizado exitosamente", toastOptions);
+        })
+        .catch((error: any) => {
+          toast.error(
+            parseGraphqlErrorMessage(error) || error.message,
+            toastOptions
+          );
+        })
+        .finally(() => {
+          setDataLoading(false);
+        });
     }
   };
 
-  const handleCloseModal = () => {
-    setModalOpened(false);
-    navigate("/app/patients");
-  };
   return (
     <>
-      <Modal opened={modalOpened} onClose={() => setModalOpened(false)}>
-        <Title order={4}>Estado asignado exitosamente</Title>
-        <Space h={"xl"} />
-        <Button onClick={handleCloseModal}>Cerrar</Button>
-      </Modal>
-      <Title order={2}>
-        Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}
-      </Title>
-      <Title order={4}>DNI: {patientData?.user?.dni}</Title>
-      <Space h="md"></Space>
-      <Radio.Group
-        value={patientData?.patient_status_id.toString()}
-        onChange={setValue}
-        label="Situación"
-        description="Situación actual del paciente"
-        withAsterisk
-      >
-        {statusData.map((item: IPatientStatus) => (
-          <Radio value={item.id} label={item.name} key={item.id} />
-        ))}
-        <LoadingOverlay visible={statusLoading} />
-      </Radio.Group>
+      <div style={{ position: "relative" }}>
+        <Title order={2}>
+          Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}
+        </Title>
+        <Title order={4}>DNI: {patientData?.user?.dni}</Title>
+        <Space h="md"></Space>
+        <Radio.Group
+          value={value}
+          onChange={setValue}
+          label="Situación"
+          description="Situación actual del paciente"
+          withAsterisk
+        >
+          {statusData.map((item: IPatientStatus) => (
+            <Radio value={item.id.toString()} label={item.name} key={item.id} />
+          ))}
+          <LoadingOverlay visible={statusLoading} />
+        </Radio.Group>
 
-      <Space h="md"></Space>
+        <Space h="md"></Space>
 
-      <Button type="submit" onClick={handleSubmit} loading={dataLoading}>
-        Asignar
-      </Button>
-      <LoadingOverlay visible={dataLoading} />
+        <Button type="submit" onClick={handleSubmit} loading={dataLoading}>
+          Asignar
+        </Button>
+        <LoadingOverlay visible={dataLoading} />
+      </div>
     </>
   );
 };

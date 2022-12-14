@@ -19,7 +19,7 @@ import {
   DELETE_ROLEUSER,
 } from "@/graphql/mutation/roleUser.mutation";
 import { IProfessional } from "@/interfaces/IProfessional";
-import { IRole } from "@/interfaces/IRole";
+import { IRole, IRoleFilter } from "@/interfaces/IRole";
 import { AlertCircle, Trash } from "tabler-icons-react";
 import { userHasPermission } from "@/utils/permission.utils";
 import userContext from "@/context/UserContext/UserContext";
@@ -35,6 +35,7 @@ import {
 } from "@/graphql/query/area.query";
 import { toast } from "react-toastify";
 import { toastOptions } from "@/shared/toastOptions";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 export const AssignRoleModal = ({
   visible,
@@ -66,18 +67,26 @@ export const AssignRoleModal = ({
 
   const { user } = useContext(userContext);
 
-  const getAreasFromServer = () => {
+  const getRolesFromServer = (variables?: { filter: IRoleFilter }) => {
     setRolesLoading(true);
-    getRoles()
+    getRoles({
+      variables,
+    })
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setRolesOptions(
           result.data.getRoles.map((item: IRole) => {
             return { value: item.id, label: item.name };
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setRolesLoading(false);
@@ -106,9 +115,13 @@ export const AssignRoleModal = ({
     }
   };
 
+  const professionalFilter: IRoleFilter = {
+    isProfessionalRole: true,
+  };
+
   useEffect(() => {
     getRolesByUserIdFromServer(initialData.user_id);
-    getAreasFromServer();
+    getRolesFromServer({ filter: professionalFilter });
   }, [visible]);
 
   const executeOperation = () => {
@@ -135,7 +148,7 @@ export const AssignRoleModal = ({
       <Modal title="Roles" opened={visible || false} onClose={onClose}>
         <Group position="center">
           <NativeSelect
-            sx={{ width: 275 }}
+            sx={{ width: 175 }}
             data={rolesOptions.filter(
               (item) =>
                 !rolesById.find((role) => role.id === Number(item.value))
@@ -149,6 +162,9 @@ export const AssignRoleModal = ({
             onClick={() => {
               setLoadingButton(true);
               executeOperation()
+                .then(() =>
+                  toast.success("Rol asignado exitosamente", toastOptions)
+                )
                 .catch((err) => console.log(err))
                 .finally(() => {
                   setLoadingButton(false);
@@ -222,6 +238,7 @@ export const AssignRoleModal = ({
               .then(() => {
                 setRoleToDelete(undefined);
                 getRolesByUserIdFromServer(initialData.user_id);
+                toast.success("Rol eliminado exitosamente", toastOptions);
               })
               .finally(() => {
                 setDeleteModalButtonLoading(false);
@@ -271,14 +288,20 @@ export const AssignAreaModal = ({
     setAreasLoading(true);
     getAreas()
       .then((result) => {
+        if (result.error) {
+          throw result.error;
+        }
         setAreasOptions(
           result.data.getAreas.map((item: IArea) => {
             return { value: item.id, label: item.name };
           })
         );
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error: any) => {
+        toast.error(
+          parseGraphqlErrorMessage(error) || error.message,
+          toastOptions
+        );
       })
       .finally(() => {
         setAreasLoading(false);
@@ -336,7 +359,7 @@ export const AssignAreaModal = ({
       <Modal title="Areas" opened={visible || false} onClose={onClose}>
         <Group position="center">
           <NativeSelect
-            sx={{ width: 275 }}
+            sx={{ width: 175 }}
             data={areasOptions.filter(
               (item) =>
                 !areasById.find((role) => role.id === Number(item.value))
@@ -350,6 +373,9 @@ export const AssignAreaModal = ({
             onClick={() => {
               setLoadingButton(true);
               executeOperation()
+                .then(() =>
+                  toast.success("Area asignada exitosamente", toastOptions)
+                )
                 .catch((err) => console.log(err))
                 .finally(() => {
                   setLoadingButton(false);
@@ -423,6 +449,7 @@ export const AssignAreaModal = ({
               .then(() => {
                 setAreaToDelete(undefined);
                 getAreasByProfessionalIdFromServer(initialData.user_id);
+                toast.success("Area eliminada exitosamente", toastOptions);
               })
               .finally(() => {
                 setDeleteModalButtonLoading(false);

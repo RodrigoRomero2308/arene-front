@@ -31,8 +31,6 @@ const AdminProfessionalPage = () => {
       firstname: "",
       lastname: "",
       password: "",
-      phone_number: "",
-      phone_type_id: "",
       professional: {
         medical_license_number: "",
         profession: "",
@@ -57,13 +55,20 @@ const AdminProfessionalPage = () => {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       const formData = new StaffFormDataSerializer().staffDataToFormData(
         data.data.getProfessionalById
       );
 
       form.setValues(formData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     } finally {
       setFormLoading(false);
     }

@@ -4,6 +4,7 @@ import {
 } from "@/graphql/mutation/professional.mutation";
 import { GET_PROFESSIONAL_BY_ID_TO_UPDATE } from "@/graphql/query/professional.query";
 import { ICreateProfessionalFormDto } from "@/interfaces/ICreateProfessionalDTO";
+import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
@@ -46,92 +47,6 @@ const AdminAdministratorPage = () => {
         street: "",
       },
     },
-    // validate: {
-    //   birth_date: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar una fecha de nacimiento";
-    //     }
-    //   },
-    //   dni: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un DNI";
-    //     }
-    //   },
-    //   email: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un email";
-    //     }
-    //   },
-    //   firstname: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un nombre";
-    //     }
-    //   },
-    //   lastname: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar un apellido";
-    //     }
-    //   },
-    //   password: (value) => {
-    //     if (!value) {
-    //       return "Debe ingresar una contraseña";
-    //     }
-    //   },
-    //   phone_number: (value: any) => {
-    //     if (!value) {
-    //       return "Debe ingresar un numero de telefono/celular";
-    //     }
-    //   },
-    //   phone_type_id: (value: any) => {
-    //     if (!value) {
-    //       return "Debe seleccionar tipo de telefono";
-    //     }
-    //   },
-    //   professional: {
-    //     medical_license_number: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar un CUD";
-    //       }
-    //     },
-    //     profession: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una profesión";
-    //       }
-    //     },
-    //     speciality: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una specialidad";
-    //       }
-    //     },
-    //   },
-    //   address: {
-    //     city: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una ciudad";
-    //       }
-    //     },
-    //     department: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar un departamento";
-    //       }
-    //     },
-    //     height: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar la altura";
-    //       }
-    //     },
-    //     province: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una provincia";
-    //       }
-    //     },
-    //     street: (value) => {
-    //       if (!value) {
-    //         return "Debe ingresar una calle";
-    //       }
-    //     },
-    //   },
-    // },
   });
 
   const getAdministratorFromServer = async (userId: number) => {
@@ -143,13 +58,20 @@ const AdminAdministratorPage = () => {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       const formData = new StaffFormDataSerializer().staffDataToFormData(
         data.data.getProfessionalById
       );
 
       form.setValues(formData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     } finally {
       setFormLoading(false);
     }
@@ -203,16 +125,7 @@ const AdminAdministratorPage = () => {
 
         setFormLoading(false);
 
-        toast.success("Guardado exitosamente", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("Guardado exitosamente", toastOptions);
 
         navigate("/app/institucionalStaff?tab=administrators");
       } catch (error: any) {
@@ -221,16 +134,7 @@ const AdminAdministratorPage = () => {
           `Ocurrio un error: ${
             parseGraphqlErrorMessage(error) || error.message
           }`,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          }
+          toastOptions
         );
         setFormLoading(false);
       }

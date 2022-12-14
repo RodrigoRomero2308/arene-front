@@ -57,13 +57,20 @@ const AdminPhysiatristPage = () => {
         },
       });
 
+      if (data.error) {
+        throw data.error;
+      }
+
       const formData = new StaffFormDataSerializer().staffDataToFormData(
         data.data.getProfessionalById
       );
 
       form.setValues(formData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     } finally {
       setFormLoading(false);
     }
@@ -119,7 +126,7 @@ const AdminPhysiatristPage = () => {
 
         toast.success("Guardado exitosamente", toastOptions);
 
-        navigate("/app/institucionalStaff/physiatrists");
+        navigate("/app/institucionalStaff?tab=physiatrists");
       } catch (error: any) {
         console.error(error);
         toast.error(

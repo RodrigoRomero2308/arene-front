@@ -6,10 +6,18 @@ export interface IAppointment {
   start_hour: string;
   end_hour: string;
   treatment: {
-    id: number
-    area_id: number
-    patient_id: number
-  }
+    id: number;
+    area_id: number;
+    patient_id: number;
+    patient: {
+      user: {
+        id: number;
+        firstname: string;
+        lastname: string;
+        email: string;
+      };
+    };
+  };
 }
 
 export interface IAppointmentFilter {

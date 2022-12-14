@@ -40,7 +40,10 @@ const PatientPage = () => {
         },
       });
     } catch (error: any) {
-      toast.error(parseGraphqlErrorMessage(error) || error.message, toastOptions);
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     }
   };
 
@@ -48,8 +51,11 @@ const PatientPage = () => {
     try {
       const documentationData = await getDocumentationList(patientId);
       setDocumentationList(documentationData);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
     }
   };
 
@@ -59,9 +65,16 @@ const PatientPage = () => {
       Promise.all([
         getPatientFromServer(Number(params.user_id)),
         getDocumentationFromServer(Number(params.user_id)),
-      ]).then(() => {
-        setLoading(false);
-      });
+      ])
+        .then(() => {
+          setLoading(false);
+        })
+        .catch((error: any) => {
+          toast.error(
+            parseGraphqlErrorMessage(error) || error.message,
+            toastOptions
+          );
+        });
     }
 
     return () => {};
