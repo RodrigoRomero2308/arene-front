@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import "dayjs/locale/es";
 import { LoadingOverlay, Space, Tabs, Title } from "@mantine/core";
 import { useLazyQuery } from "@apollo/client";
@@ -30,12 +30,17 @@ const AppointmentsPage = () => {
     { id: 5, label: "Viernes", value: "friday" },
   ];
 
-  const getAreasFromServer = () => {
+  useEffect(() => {
+    let ignoreResult = false;
+
+    /* Obtengo areas */
     setAreasLoading(true);
     getAreas()
       .then((result) => {
-        setAreas(result.data.getAreas);
-        setAreasLoading(false);
+        if (!ignoreResult) {
+          setAreas(result.data.getAreas);
+          setAreasLoading(false);
+        }
       })
       .catch((error) => {
         toast.error(
@@ -45,22 +50,20 @@ const AppointmentsPage = () => {
           toastOptions
         );
       });
-  };
 
-  const getTreatmentsFromServer = () => {
+    /* Obtengo tratamientos */
     setTreatmentsLoading(true);
     getTreatments()
       .then((result) => {
-        setTreatments(result.data.getTreatments);
+        if (!ignoreResult) setTreatments(result.data.getTreatments);
       })
       .catch((error) => {
         console.log(error);
       });
-  };
 
-  useEffect(() => {
-    getAreasFromServer();
-    getTreatmentsFromServer();
+    return () => {
+      ignoreResult = true;
+    };
   }, []);
 
   return (
@@ -75,15 +78,17 @@ const AppointmentsPage = () => {
             </Tabs.Tab>
           ))}
         </Tabs.List>
-        <div style={{ position: "relative" }}>
-          <LoadingOverlay visible={areasLoading && treatmentsLoading} />
+      </Tabs>
+      <div style={{ position: "relative" }}>
+        <LoadingOverlay visible={areasLoading && treatmentsLoading} />
+        <Suspense fallback={null}>
           <AppointmentsSchedule
             dayOfTheWeek={activeTab || "monday"}
             areas={areas}
             treatments={treatments}
           />
-        </div>
-      </Tabs>
+        </Suspense>
+      </div>
     </>
   );
 };

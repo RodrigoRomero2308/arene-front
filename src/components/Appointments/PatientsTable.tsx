@@ -1,5 +1,5 @@
 import { GET_PATIENTS_FOR_TABLE } from "@/graphql/query/patient.query";
-import { IPatient, IPatientFilter } from "@/interfaces/IPatient";
+import { IPatient, IPatientData, IPatientFilter } from "@/interfaces/IPatient";
 import { useLazyQuery } from "@apollo/client";
 import { LoadingOverlay, Modal, Table } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -12,11 +12,12 @@ const PatientsTable = ({
 }: {
   visible: boolean;
   areaFilter: number;
-  onSelect: (patient: IPatient) => void;
+  onSelect: (patient: IPatientData) => Promise<void>;
   handleCloseModal: () => void;
 }) => {
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [patientsLoading, setPatientsLoading] = useState(false);
+  const [selecting, setSelecting] = useState(false);
   const [getPatients] = useLazyQuery(GET_PATIENTS_FOR_TABLE);
 
   const getPatientsFromServer = async (variables?: {
@@ -45,46 +46,43 @@ const PatientsTable = ({
       opened={visible}
       onClose={handleCloseModal}
     >
-      <Table>
-        <thead>
-          <tr>
-            <th>DNI</th>
-            <th>Nombre</th>
-            <th>Independencia</th>
-          </tr>
-        </thead>
-        <tbody>
-          <LoadingOverlay visible={patientsLoading} />
-          {patients.length > 0 ? (
-            patients.map((patient) => (
-              <tr
-                key={patient.user_id}
-                onClick={() => {
-                  onSelect(patient);
-                }}
-              >
-                <td key={patient.user?.dni}>{patient.user?.dni}</td>
-                <td key={patient.user?.firstname + "" + patient.user?.lastname}>
-                  {patient.user?.firstname} {patient.user?.lastname}
-                </td>
-                <td
-                  key={
-                    patient.companion_firstname +
-                    " " +
-                    patient.companion_lastname
-                  }
-                >
-                  {patient.needs_transfer ? "No" : "Si"}
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div style={{ position: "relative" }}>
+        <LoadingOverlay visible={patientsLoading || selecting} />
+        <Table>
+          <thead>
             <tr>
-              <td colSpan={3}>No hay pacientes para esta área</td>
+              <th>DNI</th>
+              <th>Nombre</th>
+              <th>Independencia</th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {patients.length > 0 ? (
+              patients.map((patient) => (
+                <tr
+                  style={{ cursor: "pointer" }}
+                  key={patient.user_id}
+                  onClick={async () => {
+                    setSelecting(true);
+                    await onSelect(patient);
+                    setSelecting(false);
+                  }}
+                >
+                  <td>{patient.user?.dni}</td>
+                  <td>
+                    {patient.user?.firstname} {patient.user?.lastname}
+                  </td>
+                  <td>{patient.needs_transfer ? "No" : "Si"}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3}>No hay pacientes para esta área</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
     </Modal>
   );
 };

@@ -12,6 +12,14 @@ export const GET_APPOINTMENTS_WITH_FILTER = gql`
         id
         area_id
         patient_id
+        patient {
+          user {
+            id
+            firstname
+            lastname
+            email
+          }
+        }
       }
     }
   }

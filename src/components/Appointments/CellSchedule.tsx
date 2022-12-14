@@ -1,7 +1,7 @@
-import { IPatient } from "@/interfaces/IPatient";
+import { ICellPatient, IPatient, IPatientData } from "@/interfaces/IPatient";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { ActionIcon, Avatar, Badge, LoadingOverlay } from "@mantine/core";
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useMemo, useRef, useState } from "react";
 import { Plus, X } from "tabler-icons-react";
 import { GET_APPOINTMENTS_WITH_FILTER } from "@/graphql/query/appointment.query";
 import { IArea } from "@/interfaces/IArea";
@@ -14,6 +14,7 @@ import {
 import { toast } from "react-toastify";
 import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
+import AppointmentBadge from "./AppointmentBadge";
 
 const CellSchedule = ({
   dayOfTheWeek,
@@ -30,74 +31,55 @@ const CellSchedule = ({
   treatments: ITreatment[];
   appointments: IAppointment[];
 }) => {
-  const [selectedPatients, setSelectedPatients] = useState<IPatient[]>([]);
-  const [patientsBadges, setPatientsBadges] = useState<JSX.Element[]>([]);
+  const [selectedPatients, setSelectedPatients] = useState<ICellPatient[]>(
+    appointments.map((appointment) => {
+      return {
+        appointmentId: appointment.id,
+        user: appointment.treatment.patient.user,
+      };
+    })
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [createAppointment] = useMutation(CREATE_APPOINTMENT);
   const [deleteAppointment] = useMutation(DELETE_APPOINTMENT);
+  const treatmentsRef = useRef(treatments);
+
+  useEffect(() => {
+    treatmentsRef.current = treatments;
+  }, [treatments]);
 
   const PatientsTable = lazy(
     () => import("@/components/Appointments/PatientsTable")
   );
 
-  const BadgeAvatar = () => {
-    return (
-      <Avatar alt="Avatar for badge" size={24} mr={5} src={null} /> //luego se le pasa la imagen desde el backend, aún no estan los servicios
-    );
-  };
-
-  const addAppointment = (selectedPatient: IPatient) => {
-    const treatment = treatments.find(
-      (treatment) => treatment.patient_id === selectedPatient.user_id
+  const addAppointment = async (selectedPatient: IPatientData) => {
+    const treatment = treatmentsRef.current.find(
+      (treatment) => treatment.patient_id === selectedPatient.user.id
     );
     if (treatment) {
-      setSelectedPatients([...selectedPatients, selectedPatient]);
       const input = {
         treatment_id: treatment.id,
         day_of_the_week: dayOfTheWeek,
         start_hour: startHour,
         end_hour: endHour,
       };
-      createAppointment({
+      await createAppointment({
         variables: {
           input,
         },
       })
-        .catch((error) => {
-          toast.error(
-            `Ocurrio un error: ${
-              parseGraphqlErrorMessage(error) || error.message
-            }`,
-            toastOptions
-          );
-        })
-        .finally(() => {
-          handleCloseModal();
+        .then((result) => {
           toast.success("Se ha creado el turno correctamente", toastOptions);
-        });
-    }
-  };
-
-  const removeAppointment = (selectedPatient: IPatient) => {
-    const appointmentToDelete = appointments.find(
-      (appointment) =>
-        appointment.treatment.patient_id === selectedPatient.user_id &&
-        appointment.day_of_the_week === dayOfTheWeek &&
-        appointment.start_hour === startHour &&
-        appointment.end_hour === endHour
-    );
-    console.log(appointmentToDelete);
-    if (appointmentToDelete) {
-      deleteAppointment({
-        variables: {
-          id: appointmentToDelete.id,
-        },
-      })
-        .then(() => {
-          const newSelectedPatients = selectedPatients.filter(
-            (patient) => patient.user_id !== selectedPatient.user_id
-          );
-          setSelectedPatients(newSelectedPatients);
+          if (result.errors) {
+            throw result.errors;
+          }
+          setSelectedPatients([
+            ...selectedPatients,
+            {
+              ...selectedPatient,
+              appointmentId: result.data.createAppointment.id,
+            },
+          ]);
         })
         .catch((error) => {
           toast.error(
@@ -109,23 +91,40 @@ const CellSchedule = ({
         })
         .finally(() => {
           handleCloseModal();
-          toast.info("Se ha eliminado el turno correctamente", toastOptions);
         });
     }
   };
 
-  const RemoveButton = ({ selectedPatient }: { selectedPatient: IPatient }) => {
-    return (
-      <ActionIcon
-        size="lg"
-        color="teal"
-        radius="xl"
-        variant="transparent"
-        onClick={() => removeAppointment(selectedPatient)}
-      >
-        <X size={10} />
-      </ActionIcon>
-    );
+  const removeAppointment = async (selectedPatient: ICellPatient) => {
+    await deleteAppointment({
+      variables: {
+        id: selectedPatient.appointmentId,
+      },
+    })
+      .then(() => {
+        setSelectedPatients((oldSelectedPatients) => {
+          console.log(oldSelectedPatients);
+          const newSelectedPatients = oldSelectedPatients.filter(
+            (patient) => patient.user.id !== selectedPatient.user.id
+          );
+
+          console.log(newSelectedPatients);
+
+          return newSelectedPatients;
+        });
+      })
+      .catch((error) => {
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          toastOptions
+        );
+      })
+      .finally(() => {
+        handleCloseModal();
+        toast.info("Se ha eliminado el turno correctamente", toastOptions);
+      });
   };
 
   const addButton = (
@@ -140,37 +139,21 @@ const CellSchedule = ({
     </ActionIcon>
   );
 
-  const badge = (patient: IPatient) => (
-    <Badge
-      sx={{ paddingLeft: 0 }}
-      size="lg"
-      radius="xl"
-      color="teal"
-      leftSection={<BadgeAvatar />}
-      rightSection={<RemoveButton selectedPatient={patient} />}
-      key={patient.user?.firstname + " " + patient.user?.lastname}
-    >
-      {patient.user?.firstname} {patient.user?.lastname}
-    </Badge>
-  );
+  const patientsBadges = selectedPatients.map((selectedPatient) => {
+    return (
+      <AppointmentBadge
+        key={selectedPatient.appointmentId}
+        patient={selectedPatient}
+        onRemove={removeAppointment}
+      />
+    );
+  });
 
   const handleCloseModal = () => {
     setModalVisible(false);
   };
 
-  useEffect(() => {
-    selectedPatients.map((selectedPatient) => {
-      setPatientsBadges([...patientsBadges, badge(selectedPatient)]);
-    });
-  }, [selectedPatients]);
-
-  useEffect(() => {
-    selectedPatients.map((selectedPatient) => {
-      setPatientsBadges([...patientsBadges, badge(selectedPatient)]);
-    });
-  }, []);
-  
-  const renderPatientsTable = () => {
+  const renderPatientsTable = useMemo(() => {
     return (
       <PatientsTable
         visible={modalVisible}
@@ -179,7 +162,7 @@ const CellSchedule = ({
         handleCloseModal={handleCloseModal}
       />
     );
-  };
+  }, [modalVisible]);
 
   return (
     <>
@@ -190,7 +173,7 @@ const CellSchedule = ({
             {addButton}
           </>
         </div>
-        {modalVisible ? renderPatientsTable() : null}
+        {renderPatientsTable}
       </div>
     </>
   );

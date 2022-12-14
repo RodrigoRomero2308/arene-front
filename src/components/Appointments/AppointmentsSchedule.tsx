@@ -4,7 +4,7 @@ import { IArea } from "@/interfaces/IArea";
 import { ITreatment } from "@/interfaces/ITreatment";
 import { useLazyQuery } from "@apollo/client";
 import { LoadingOverlay, Table } from "@mantine/core";
-import { lazy, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 const AppointmentsSchedule = ({
   dayOfTheWeek,
@@ -28,24 +28,23 @@ const AppointmentsSchedule = ({
     { id: 4, startHour: "11:00", endHour: "12:00" },
   ];
 
-  const getAppointmentsFromServer = async (variables?: {
-    filter: IAppointmentFilter;
-  }) => {
+  useEffect(() => {
+    let ignore = false;
     setAppointmentsLoading(true);
-    await getAppointments({
-      variables,
-    })
+    getAppointments()
       .then((result) => {
-        setAppointments(result.data.getAppointments);
-        setAppointmentsLoading(false);
+        if (!ignore) {
+          setAppointments(result.data.getAppointments);
+          setAppointmentsLoading(false);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-  };
 
-  useEffect(() => {
-    getAppointmentsFromServer();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
@@ -87,15 +86,17 @@ const AppointmentsSchedule = ({
                   <td key={area.id}>
                     <div style={{ position: "relative" }}>
                       <LoadingOverlay visible={appointmentsLoading} />
-                      <CellSchedule
-                        dayOfTheWeek={dayOfTheWeek}
-                        area={area}
-                        startHour={time.startHour}
-                        endHour={time.endHour}
-                        key={dayOfTheWeek + time.id + area.id}
-                        treatments={selectedTreatments}
-                        appointments={selectedAppointments}
-                      />
+                      <Suspense fallback={null}>
+                        <CellSchedule
+                          dayOfTheWeek={dayOfTheWeek}
+                          area={area}
+                          startHour={time.startHour}
+                          endHour={time.endHour}
+                          key={dayOfTheWeek + time.id + area.id}
+                          treatments={selectedTreatments}
+                          appointments={selectedAppointments}
+                        />
+                      </Suspense>
                     </div>
                   </td>
                 );
