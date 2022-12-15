@@ -44,8 +44,7 @@ const TreatmentsPage = () => {
   const [createTreatment] = useMutation(CREATE_TREATMENT);
   const [deleteTreatment] = useMutation(DELETE_TREATMENT);
 
-  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
-  const [saving, setSaving] = useState(false);
+  const [disabledItems, setDisabledItems] = useState<string[]>([]);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -105,11 +104,6 @@ const TreatmentsPage = () => {
           if (!ignoreResult) {
             setTreatments(result.data.getTreatments);
             setTreatmentsLoading(false);
-            setSelectedAreas(
-              result.data.getTreatments.map((treatment: ITreatment) => {
-                return treatment.area_id.toString();
-              })
-            );
           }
         })
         .catch((error) => {
@@ -130,20 +124,28 @@ const TreatmentsPage = () => {
   }, []);
 
   const handleChangeInput = async (values: string[]) => {
-    if (values.length > selectedAreas.length) {
-      const areasId = values.filter((value) => !selectedAreas.includes(value));
+    if (values.length > treatments.length) {
+      const areasId = values.filter(
+        (value) =>
+          !treatments.map((item) => item.area_id.toString()).includes(value)
+      );
       areasId.forEach(async (areaId) => {
-        setSelectedAreas([...selectedAreas, areaId]);
+        setDisabledItems((oldDisabledItems) => {
+          const newDisabledItems = new Set(oldDisabledItems);
+          newDisabledItems.add(areaId);
+          return Array.from(newDisabledItems);
+        });
         await createNewTreatment(areaId);
       });
     } else {
-      const areasId = selectedAreas.filter((value) => !values.includes(value));
+      const areasId = treatments
+        .map((item) => item.area_id.toString())
+        .filter((value) => !values.includes(value));
       areasId.forEach(async (areaId) => {
-        setSelectedAreas((oldSelectedAreas) => {
-          const newSelectedAreas = oldSelectedAreas.filter(
-            (area) => area !== areaId
-          );
-          return newSelectedAreas;
+        setDisabledItems((oldDisabledItems) => {
+          const newDisabledItems = new Set(oldDisabledItems);
+          newDisabledItems.add(areaId);
+          return Array.from(newDisabledItems);
         });
         await deleteATreatment(areaId);
       });
@@ -162,7 +164,24 @@ const TreatmentsPage = () => {
       },
     })
       .then((result) => {
-        setSelectedAreas([...selectedAreas, result.data.createTreatment]);
+        if (result.errors) {
+          throw result.errors;
+        }
+        setTreatments((oldTreatments) => {
+          return [...oldTreatments, result.data.createTreatment];
+        });
+        setDisabledItems((oldDisabledItems) => {
+          const newDisabledItems = new Set(oldDisabledItems);
+          newDisabledItems.delete(areaId);
+          return Array.from(newDisabledItems);
+        });
+        toast.success(
+          `${result.data.createTreatment.area.name} asignada correctamente`,
+          {
+            ...toastOptions,
+            autoClose: 1000,
+          }
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -175,36 +194,40 @@ const TreatmentsPage = () => {
             autoClose: 1000,
           }
         );
-      })
-      .finally(() => {
-        const areaName = areas.find((area) => area.id === Number(areaId))?.name;
-        toast.success(`${areaName} asignada correctamente`, {
-          ...toastOptions,
-          autoClose: 1000,
-        });
       });
   };
 
   const deleteATreatment = async (areaId: string) => {
+    console.log(treatments);
     const treatmentToDelete = treatments.find(
       (treatment) =>
         treatment.area_id === Number(areaId) &&
         treatment.patient_id === Number(params.user_id)
     );
+    if (!treatmentToDelete) {
+      throw new Error("tratamiento no encontrado");
+    }
     await deleteTreatment({
       variables: {
-        id: Number(treatmentToDelete?.id),
+        id: treatmentToDelete.id,
       },
     })
       .then(() => {
         setTreatments((oldTreatments) => {
           const newTreatments = oldTreatments.filter(
-            (treatment) =>
-              treatment.area_id !== Number(areaId) &&
-              treatment.patient_id !== Number(params.user_id)
+            (treatment) => treatment.id !== treatmentToDelete.id
           );
           return newTreatments;
         });
+        setDisabledItems((oldDisabledItems) => {
+          const newDisabledItems = new Set(oldDisabledItems);
+          newDisabledItems.delete(areaId);
+          return Array.from(newDisabledItems);
+        });
+        toast.success(
+          `${treatmentToDelete.area.name} eliminada correctamente`,
+          toastOptions
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -214,10 +237,6 @@ const TreatmentsPage = () => {
           }`,
           toastOptions
         );
-      })
-      .finally(() => {
-        const areaName = areas.find((area) => area.id === Number(areaId))?.name;
-        toast.info(`${areaName} eliminada correctamente`, toastOptions);
       });
   };
 
@@ -257,18 +276,16 @@ const TreatmentsPage = () => {
         data={areas.map((area) => ({
           label: area.name,
           value: area.id.toString(),
+          disabled: disabledItems.includes(area.id.toString()),
         }))}
-        defaultValue={selectedAreas}
-        value={selectedAreas}
+        value={treatments.map((item) => item.area_id.toString())}
         onChange={async (values) => {
-          setSaving(true);
           await handleChangeInput(values);
-          setSaving(false);
         }}
         icon={
           treatmentsLoading ? (
             <Loader size="sm" />
-          ) : saving ? (
+          ) : disabledItems.length ? (
             <Loader size="sm" />
           ) : (
             <CircleCheck color="#4DABF7" />
