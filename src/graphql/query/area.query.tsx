@@ -31,3 +31,9 @@ export const GET_AREA_BY_AREA_NAME = gql`
     }
   }
 `;
+
+export const GET_AREA_ACTIVE_RELATIONS = gql`
+  query getAreaActiveRelations($id: Int!) {
+    getAreaActiveRelations(id: $id)
+  }
+`;
