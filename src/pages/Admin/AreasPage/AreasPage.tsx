@@ -1,12 +1,17 @@
 import { WithPermission } from "@/components/WithPermission/WithPermission";
+import { areaRelations } from "@/constants/areaRelations";
 import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_AREA } from "@/graphql/mutation/area.mutation";
-import { GET_AREAS } from "@/graphql/query/area.query";
+import {
+  GET_AREAS,
+  GET_AREA_ACTIVE_RELATIONS,
+} from "@/graphql/query/area.query";
 import { IArea } from "@/interfaces/IArea";
 import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
+import { getStringsFormatted } from "@/utils/string.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -33,9 +38,15 @@ import { AreaAdminModal } from "./AreaAdminModal";
 
 const AreasPage = () => {
   const [getAreas] = useLazyQuery(GET_AREAS);
+  const [getAreasActiveRelations] = useLazyQuery<{
+    getAreaActiveRelations: string[];
+  }>(GET_AREA_ACTIVE_RELATIONS);
   const [deleteArea] = useMutation(DELETE_AREA);
   const [areas, setAreas] = useState<IArea[]>([]);
   const [areaToDelete, setAreaToDelete] = useState<IArea | undefined>();
+  const [relationsOfAreaToDelete, setRelationsOfAreaToDelete] = useState<
+    string[]
+  >([]);
   const [areasLoading, setAreasLoading] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [areaToUpdate, setAreaToUpdate] = useState<IArea | undefined>();
@@ -76,6 +87,48 @@ const AreasPage = () => {
   const closeAreaAdminModal = () => {
     setCreateModalVisible(false);
     setAreaToUpdate(undefined);
+  };
+
+  const handleAreaDelete = async (area: IArea) => {
+    setAreasLoading(true);
+    try {
+      /* Llamamos servicio nuevo */
+      const result = await getAreasActiveRelations({
+        variables: {
+          id: area.id,
+        },
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      if (!result.data) {
+        throw new Error(
+          "No se pudo recuperar la información del area a eliminar"
+        );
+      }
+
+      const relationLabels: string[] = [];
+
+      result.data.getAreaActiveRelations.map((item) => {
+        const label = areaRelations.find(
+          (relation) => relation.code === item
+        )?.label;
+
+        if (label) relationLabels.push(label);
+      });
+
+      setRelationsOfAreaToDelete(relationLabels);
+      setAreaToDelete(area);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
+    } finally {
+      setAreasLoading(false);
+    }
   };
 
   return (
@@ -129,7 +182,9 @@ const AreasPage = () => {
                         Modificar área
                       </Menu.Item>
                       <Menu.Item
-                        onClick={() => setAreaToDelete(item)}
+                        onClick={() => {
+                          handleAreaDelete(item);
+                        }}
                         icon={<Trash />}
                         disabled={
                           !userHasPermission(user, PermissionCodes.AreaDelete)
@@ -170,6 +225,15 @@ const AreasPage = () => {
         <Text>
           ¿Estás seguro que desesas eliminar el área {areaToDelete?.name}?
         </Text>
+        {relationsOfAreaToDelete.length ? (
+          <>
+            <Space h="xs" />
+            <Text color="red">
+              El area tiene {getStringsFormatted(relationsOfAreaToDelete)}{" "}
+              activos.
+            </Text>
+          </>
+        ) : null}
         <Space h="lg" />
         <Button
           color="red"
