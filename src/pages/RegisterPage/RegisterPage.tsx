@@ -18,6 +18,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterUserDTO } from "@/models/user.models";
 import { LoginRedirectAction } from "../LoginPage/LoginRedirectActions";
+import { toast } from "react-toastify";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 function RegisterPage() {
   const [attemptRegister] = useMutation(REGISTER);
@@ -29,10 +31,11 @@ function RegisterPage() {
       firstname: "",
       lastname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
       confirmPasword: "",
       dni: "",
+      birth_date: "",
     },
     validate: {
       email: (value) => {
@@ -69,13 +72,15 @@ function RegisterPage() {
 
   const handleRegister = registerForm.onSubmit(async (values) => {
     setSubmitButtonLoading(true);
+    const now = new Date();
     const registerInput: RegisterUserDTO = {
       dni: values.dni,
       email: values.email,
       firstname: values.firstname,
       lastname: values.lastname,
       password: values.password,
-      phone: values.phone,
+      phone_number: values.phone_number,
+      birth_date: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
     };
     try {
       const registerResult = await attemptRegister({
@@ -86,8 +91,17 @@ function RegisterPage() {
       if (!registerResult.errors) {
         handleSuccessfulRegister();
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(parseGraphqlErrorMessage(error) || error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
     setSubmitButtonLoading(false);
   });
@@ -141,6 +155,15 @@ function RegisterPage() {
               </Grid.Col>
               <Grid.Col lg={6}>
                 <TextInput
+                  label="Fecha de nacimiento"
+                  placeholder="Ingrese fecha de nacimiento"
+                  required
+                  type="date"
+                  {...registerForm.getInputProps("birth_date")}
+                ></TextInput>
+              </Grid.Col>
+              <Grid.Col lg={6}>
+                <TextInput
                   label="Email"
                   placeholder="Ingrese email"
                   required
@@ -152,7 +175,7 @@ function RegisterPage() {
                   label="Número de teléfono"
                   placeholder="Ingrese número de teléfono"
                   required
-                  {...registerForm.getInputProps("phone")}
+                  {...registerForm.getInputProps("phone_number")}
                 ></TextInput>
               </Grid.Col>
               <Grid.Col lg={6}>

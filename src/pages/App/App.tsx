@@ -16,6 +16,9 @@ import { AUTHENTICATE } from "@/graphql/query/user.query";
 import { LoadingOverlay } from "@mantine/core";
 import { WithPermission } from "@/components/WithPermission/WithPermission";
 import { PermissionCodes } from "@/enums/permissions";
+import PatientInformationPage from "../Admin/PatientsPage/PatientInformation/PatientInformationPage";
+import PatientStatusPage from "../PatientStatusPage/PatientStatusPage";
+import DefaultRedirect from "@/components/DefaultRedirect/DefaultRedirect";
 
 const AppInnerComponent = () => {
   const HomePage = lazy(() => import("./Home/Home"));
@@ -23,6 +26,90 @@ const AppInnerComponent = () => {
   const MainHeader = lazy(() => import("@/components/MainHeader/MainHeader"));
   const MainNav = lazy(() => import("@/components/MainNav/MainNav"));
   const AreasPage = lazy(() => import("@/pages/Admin/AreasPage/AreasPage"));
+  const RolesPage = lazy(() => import("@/pages/Admin/RolePage/RolesPage"));
+  const PatientsPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientsPage")
+  );
+  const AppointmentsPage = lazy(
+    () => import("@/pages/Admin/AppointmentsPage/AppointmentsPage")
+  );
+  const TreatmentsPage = lazy(
+    () => import("@/pages/Admin/TreatmentsPage/TreatmentsPage")
+  );
+  const AdminPatientPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/AdministratePatientPage")
+  );
+  const PatientDocumentation = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientDocumentation")
+  );
+  const PatientPage = lazy(
+    () => import("@/pages/Admin/PatientsPage/PatientPage")
+  );
+  const InstitucionalStaffPage = lazy(
+    () => import("@/pages/Admin/InstitucionalStaffPage/InstitucionalStaffPage")
+  );
+  const ProfessionalsPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Professionals/ProfessionalsPage"
+      )
+  );
+  const AdminProfessionalPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Professionals/AdministrateProfessionalPage"
+      )
+  );
+  const AdministratorsPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Administrators/AdministratorsPage"
+      )
+  );
+  const AdminAdministratorPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Administrators/AdministrateAdministratorPage"
+      )
+  );
+  const PhysiatristsPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Physiatrists/PhysiatristsPage"
+      )
+  );
+  const AdminPhysiatristPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Physiatrists/AdministratePhysiatritPage"
+      )
+  );
+
+  const CoordinatorsPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Coordinators/CoordinatorsPage"
+      )
+  );
+
+  const AdminCoordinatorPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Coordinators/AdministrateCoordinatorPage"
+      )
+  );
+
+  const DirectorsPage = lazy(
+    () => import("@/pages/Admin/InstitucionalStaffPage/Directors/DirectorsPage")
+  );
+
+  const AdminDirectorPage = lazy(
+    () =>
+      import(
+        "@/pages/Admin/InstitucionalStaffPage/Directors/AdministrateDirectorPage"
+      )
+  );
+
   const { appLoading } = useContext(AppContext);
 
   const mainLayout = useMemo(() => {
@@ -37,9 +124,307 @@ const AppInnerComponent = () => {
                 element={
                   <WithPermission
                     permissionRequired={PermissionCodes.AdminArea}
-                    renderWithoutPermission={<Navigate to="/app" />}
+                    renderWithoutPermission={<DefaultRedirect />}
                   >
                     <AreasPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/admin/appointments"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <AppointmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
+            </Route>
+            <Route path="/admin">
+              <Route
+                path="/admin/role"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.AdminRole}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <RolesPage />
+                  </WithPermission>
+                }
+              ></Route>
+            </Route>
+            <Route path="/patients">
+              <Route
+                index
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientsPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/information/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientInformationPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/patientstatus/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientStatusPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/treatments/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.Admin}
+                    renderWithoutPermission={<Navigate to="/app" />}
+                  >
+                    <TreatmentsPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/view/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.PatientRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/patients/documentation/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.DocumentationRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <PatientDocumentation />
+                  </WithPermission>
+                }
+              ></Route>
+            </Route>
+            <Route path="/institucionalStaff">
+              <Route
+                index
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalRead}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <InstitucionalStaffPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/professionals/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminProfessionalPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/professionals/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminProfessionalPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/professionals/roles/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.RoleUserCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminProfessionalPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/administrators/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminAdministratorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/administrators/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminAdministratorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/administrators/roles/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.RoleUserCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminAdministratorPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/physiatrists/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPhysiatristPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/physiatrists/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPhysiatristPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/physiatrists/roles/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.RoleUserCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminPhysiatristPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/coordinators/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminCoordinatorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/coordinators/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminCoordinatorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/coordinators/roles/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.RoleUserCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminCoordinatorPage />
+                  </WithPermission>
+                }
+              ></Route>
+
+              <Route
+                path="/institucionalStaff/directors/new"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminDirectorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/directors/edit/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.ProfessionalUpdate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminDirectorPage />
+                  </WithPermission>
+                }
+              ></Route>
+              <Route
+                path="/institucionalStaff/directors/roles/:user_id"
+                element={
+                  <WithPermission
+                    permissionRequired={PermissionCodes.RoleUserCreate}
+                    renderWithoutPermission={<DefaultRedirect />}
+                  >
+                    <AdminDirectorPage />
                   </WithPermission>
                 }
               ></Route>
@@ -91,7 +476,7 @@ const App = () => {
           setAppLoading,
         }}
       >
-        <AppInnerComponent />
+        {user ? <AppInnerComponent /> : null}
       </AppContext.Provider>
     </UserContext.Provider>
   );

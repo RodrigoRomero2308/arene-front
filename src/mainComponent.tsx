@@ -1,9 +1,5 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  createHttpLink,
-  InMemoryCache,
-} from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { createUploadLink } from "apollo-upload-client";
 import {
   LoadingOverlay,
   MantineProvider,
@@ -17,6 +13,8 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const mantineTheme: MantineThemeOverride = {
   fontFamily: "Open Sans, sans-serif",
@@ -25,13 +23,13 @@ const mantineTheme: MantineThemeOverride = {
   },
 };
 
-const httpLink = createHttpLink({
+const uploadLink = createUploadLink({
   credentials: "include",
   uri: import.meta.env.VITE_BACKEND_URL,
 });
 
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link: uploadLink,
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
@@ -76,6 +74,7 @@ function MainComponent() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer />
     </Suspense>
   );
 }

@@ -13,7 +13,7 @@ import { ReactNode } from "react";
 import { Link, Outlet, Route, Routes, useMatch } from "react-router-dom";
 import logoArene from "@/assets/images/logo-arene-name.svg";
 import phoneSrc from "@/assets/images/phone.svg";
-import { FileX, PhoneCall } from "tabler-icons-react";
+import { FileX, Mail, PhoneCall } from "tabler-icons-react";
 import Landing from "@/pages/LandingPage/Landing";
 
 function PublicLayout({ children }: { children: ReactNode }) {
@@ -121,28 +121,60 @@ function PublicLayout({ children }: { children: ReactNode }) {
           <Footer
             height={"80"}
             style={{
-              padding: "1rem",
+              padding: "1rem 1rem 0.5rem 1rem",
               display: "flex",
+              flexDirection: "column",
               justifyContent: "space-between",
-              alignItems: "flex-end",
+              alignItems: "center",
             }}
           >
-            <div className="footer-left">
-              <div
-                className="footer-phone"
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <PhoneCall size={20} />
-                <span> (03442) - 15519170</span>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignContent: "center",
+                width: "100%",
+              }}
+            >
+              {/* top-left */}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <PhoneCall size={20} />
+                  <Text size="md" style={{ marginLeft: "0.5rem" }}>
+                    +54 9 3442 562300
+                  </Text>
+                </div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <Mail />
+                  <a href="mailto: institutoarene@gmail.com">
+                    <Text size="md" style={{ marginLeft: "0.5rem" }}>
+                      institutoarene@gmail.com
+                    </Text>
+                  </a>
+                </div>
               </div>
-              <div>Horario de Atención de Lun. a Vier. 09 a 17 hs.</div>
+              {/* top-right */}
+              <div style={{ display: "flex", flexDirection: "column", textAlign: "end" }}>
+                <Text size="md">
+                  Horario de Atención de Lun. a Vier. 08 a 12 hs.
+                </Text>
+                <Text size="md">
+                  Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor
+                </Text>
+              </div>
             </div>
-            <div className="footer-right" style={{ textAlign: "right" }}>
-              <div>Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor</div>
-              <div>
+            <div
+              style={{
+                textAlign: "center",
+                width: "100%",
+                paddingTop: "0.5rem",
+              }}
+            >
+              <Text size="md">
                 &copy; 2022 - Políticas de Privacidad - Términos y Condiciones -
                 Desarrollado por Alumnos P.H.P. UTN
-              </div>
+              </Text>
             </div>
           </Footer>
         ) : (

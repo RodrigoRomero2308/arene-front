@@ -1,6 +1,13 @@
 import { PermissionCodes } from "@/enums/permissions";
 import { ReactNode } from "react";
-import { AdjustmentsAlt, Home, UserCircle } from "tabler-icons-react";
+import {
+  AdjustmentsAlt,
+  BuildingCommunity,
+  Heartbeat,
+  Calendar,
+  Home,
+  UserCircle,
+} from "tabler-icons-react";
 
 export interface INavRoute {
   icon: ReactNode;
@@ -17,17 +24,46 @@ export const navRoutes: INavRoute[] = [
     route: "",
     iconColor: "green",
   },
+  // TODO: por desarrollar
+  // {
+  //   icon: <UserCircle />,
+  //   label: "Ver perfil",
+  //   route: "/profile",
+  //   iconColor: "blue",
+  // },
   {
-    icon: <UserCircle />,
-    label: "Ver perfil",
-    route: "/profile",
-    iconColor: "blue",
+    icon: <Heartbeat />,
+    label: "Pacientes",
+    permissionRequired: PermissionCodes.PatientRead,
+    route: "/patients",
+    iconColor: "green",
+  },
+  {
+    icon: <BuildingCommunity />,
+    label: "Personal Institucional",
+    permissionRequired: PermissionCodes.ProfessionalRead,
+    route: "/institucionalStaff",
+    iconColor: "violet",
   },
   {
     icon: <AdjustmentsAlt />,
-    label: "Administración de áreas",
+    label: "Áreas",
     permissionRequired: PermissionCodes.AdminArea,
     route: "/admin/area",
     iconColor: "red",
+  },
+  {
+    icon: <AdjustmentsAlt />,
+    label: "Roles",
+    permissionRequired: PermissionCodes.AdminRole,
+    route: "/admin/role",
+    iconColor: "green",
+  },
+  {
+    icon: <Calendar />,
+    label: "Turnos",
+    permissionRequired: PermissionCodes.Admin,
+    route: "/admin/appointments",
+    iconColor: "pink",
   },
 ];

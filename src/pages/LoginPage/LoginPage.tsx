@@ -19,6 +19,9 @@ import { LOGIN } from "@/graphql/mutation/auth.mutation";
 import { useState } from "react";
 import LoginLabelByState from "./LoginLabelByState";
 import { LocalStorageKeys } from "@/enums/localStorageKeys";
+import { toast } from "react-toastify";
+import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
+import { toastOptions } from "@/shared/toastOptions";
 
 function LoginPage() {
   const [attemptLogin] = useMutation(LOGIN);
@@ -75,7 +78,12 @@ function LoginPage() {
         }
         navigate("/app");
       }
-    } catch (error) {}
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
+    }
     setSubmitFormLoading(false);
   });
 
@@ -122,23 +130,33 @@ function LoginPage() {
               })}
             />
             <Space h="sm"></Space>
-            <Center>
-              <Link to="/">
-                <Text size="xs">¿Olvidó su contraseña?</Text>
-              </Link>
-            </Center>
-            <Space h="sm"></Space>
+            {/* TODO: por desarrollar */}
+            {import.meta.env.DEV ? (
+              <>
+                <Center>
+                  <Link to="/">
+                    <Text size="xs">¿Olvidó su contraseña?</Text>
+                  </Link>
+                </Center>
+                <Space h="sm"></Space>
+              </>
+            ) : null}
             <Button loading={submitFormLoading} fullWidth type="submit">
               Iniciar sesión
             </Button>
           </form>
-          <Space h="sm"></Space>
-          <Center>
-            <Text size="xs">
-              Si es la primera vez que ingresa{" "}
-              <Link to="/register">¡REGÍSTRESE!</Link>
-            </Text>
-          </Center>
+          {/* TODO: por desarrollar */}
+          {import.meta.env.DEV ? (
+            <>
+              <Space h="sm"></Space>
+              <Center>
+                <Text size="xs">
+                  Si es la primera vez que ingresa{" "}
+                  <Link to="/register">¡REGÍSTRESE!</Link>
+                </Text>
+              </Center>
+            </>
+          ) : null}
         </Card>
       </Center>
     </PublicLayout>
