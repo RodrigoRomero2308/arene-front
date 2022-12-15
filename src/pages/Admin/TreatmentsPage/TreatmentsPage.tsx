@@ -27,147 +27,198 @@ import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 
 const TreatmentsPage = () => {
+  /* PatientData */
+  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
+  const [patientData, setPatientData] = useState<IPatient>();
+  const [patientDataLoading, setPatientDataLoading] = useState(false);
+
+  /* Areas */
+  const [getAreas] = useLazyQuery(GET_AREAS);
+  const [areas, setAreas] = useState<IArea[]>([]);
+  const [areasLoading, setAreasLoading] = useState(false);
+
+  /* Treatments */
+  const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
+  const [treatments, setTreatments] = useState<ITreatment[]>([]);
+  const [treatmentsLoading, setTreatmentsLoading] = useState(false);
   const [createTreatment] = useMutation(CREATE_TREATMENT);
   const [deleteTreatment] = useMutation(DELETE_TREATMENT);
-  const [getPatientData] = useLazyQuery(GET_PATIENT_BY_ID);
-  const [getAreas] = useLazyQuery(GET_AREAS);
-  const [getTreatments] = useLazyQuery(GET_TREATMENTS_WITH_FILTER);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [areas, setAreas] = useState<IArea[]>([]);
-  const [treatments, setTreatments] = useState<ITreatment[]>([]);
-  const [patientData, setPatientData] = useState<IPatient>();
+
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
-  const getPatientFromServer = async (userId: number) => {
-    try {
-      const data = await getPatientData({
-        variables: {
-          id: userId,
-        },
-      });
-      setPatientData(data.data.getPatientById);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getAreasFromServer = () => {
-    getAreas()
-      .then((result) => {
-        setAreas(result.data.getAreas);
-      })
-      .catch((error) => {
-        toast.error(
-          `Ocurrio un error: ${
-            parseGraphqlErrorMessage(error) || error.message
-          }`,
-          toastOptions
-        );
-      });
-  };
-
-  const getTreatmentsFromServer = (variables?: {
-    filter: ITreatmentFilter;
-  }) => {
-    getTreatments({
-      variables,
-    })
-      .then((result) => {
-        const data = result.data.getTreatments;
-        setTreatments(data);
-        const selectedAreas = data.map((item: any) => item.area_id.toString());
-        setSelectedAreas(selectedAreas);
-      })
-      .catch((error) => {
-        toast.error(
-          `Ocurrio un error: ${
-            parseGraphqlErrorMessage(error) || error.message
-          }`,
-          toastOptions
-        );
-      });
-  };
-
   useEffect(() => {
-    setDataLoading(true);
+    let ignoreResult = false;
     if (params.user_id && Number.isInteger(+params.user_id)) {
-      Promise.all([
-        getPatientFromServer(Number(params.user_id)),
-        getAreasFromServer(),
-        getTreatmentsFromServer({
+      /* PatientData */
+      setPatientDataLoading(true);
+      getPatientData({
+        variables: {
+          id: Number(params.user_id),
+        },
+      })
+        .then((result) => {
+          if (!ignoreResult) {
+            setPatientData(result.data.getPatientById);
+            setPatientDataLoading(false);
+          }
+        })
+        .catch((error) => {
+          toast.error(
+            `Ocurrio un error: ${
+              parseGraphqlErrorMessage(error) || error.message
+            }`,
+            toastOptions
+          );
+        });
+
+      /* Areas */
+      setAreasLoading(true);
+      getAreas()
+        .then((result) => {
+          if (!ignoreResult) {
+            setAreas(result.data.getAreas);
+            setAreasLoading(false);
+          }
+        })
+        .catch((error) => {
+          toast.error(
+            `Ocurrio un error: ${
+              parseGraphqlErrorMessage(error) || error.message
+            }`,
+            toastOptions
+          );
+        });
+
+      /* Treatments */
+      setTreatmentsLoading(true);
+      getTreatments({
+        variables: {
           filter: {
             patient_id: Number(params.user_id),
           },
-        }),
-      ]).then(() => {setDataLoading(false)});
+        },
+      })
+        .then((result) => {
+          if (!ignoreResult) {
+            setTreatments(result.data.getTreatments);
+            setTreatmentsLoading(false);
+            setSelectedAreas(
+              result.data.getTreatments.map((treatment: ITreatment) => {
+                return treatment.area_id.toString();
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          toast.error(
+            `Ocurrio un error: ${
+              parseGraphqlErrorMessage(error) || error.message
+            }`,
+            toastOptions
+          );
+        });
     } else {
       navigate("app/patients");
     }
+
+    return () => {
+      ignoreResult = true;
+    };
   }, []);
 
   const handleChangeInput = async (values: string[]) => {
-    selectedAreas.forEach(async (areaId) => {
-      if (!values.includes(areaId)) {
-        setSelectedAreas(values);
-        const treatmentToDelete = treatments.find(
-          (treatment) =>
-            treatment.area_id === Number(areaId) &&
-            treatment.patient_id === Number(params.user_id)
+    if (values.length > selectedAreas.length) {
+      const areasId = values.filter((value) => !selectedAreas.includes(value));
+      areasId.forEach(async (areaId) => {
+        setSelectedAreas([...selectedAreas, areaId]);
+        await createNewTreatment(areaId);
+      });
+    } else {
+      const areasId = selectedAreas.filter((value) => !values.includes(value));
+      areasId.forEach(async (areaId) => {
+        setSelectedAreas((oldSelectedAreas) => {
+          const newSelectedAreas = oldSelectedAreas.filter(
+            (area) => area !== areaId
+          );
+          return newSelectedAreas;
+        });
+        await deleteATreatment(areaId);
+      });
+    }
+  };
+
+  const createNewTreatment = async (areaId: string) => {
+    const input: ICreateTreatmentDTO = {
+      area_id: Number(areaId),
+      patient_id: Number(params.user_id),
+      quantity: 0,
+    };
+    await createTreatment({
+      variables: {
+        input,
+      },
+    })
+      .then((result) => {
+        setSelectedAreas([...selectedAreas, result.data.createTreatment]);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          {
+            ...toastOptions,
+            autoClose: 1000,
+          }
         );
-        deleteTreatment({
-          variables: {
-            id: Number(treatmentToDelete?.id),
-          },
-        })
-          .catch((error) => {
-            console.error(error);
-            toast.error(
-              `Ocurrio un error: ${
-                parseGraphqlErrorMessage(error) || error.message
-              }`,
-              toastOptions
-            );
-          })
-          .then(() => {
-            const areaName = areas.find(
-              (area) => area.id === Number(areaId)
-            )?.name;
-            toast.info(`${areaName} eliminada correctamente`, toastOptions);
-          });
-      }
-    });
-    values.forEach((areaId) => {
-      if (!selectedAreas.includes(areaId)) {
-        setSelectedAreas(values);
-        const input: ICreateTreatmentDTO = {
-          area_id: Number(areaId),
-          patient_id: Number(params.user_id),
-          quantity: 0,
-        };
-        createTreatment({
-          variables: {
-            input,
-          },
-        })
-          .catch((error) => {
-            console.error(error);
-            toast.error(
-              `Ocurrio un error: ${
-                parseGraphqlErrorMessage(error) || error.message
-              }`,
-              toastOptions
-            );
-          })
-          .then(() => {
-            const areaName = areas.find(
-              (area) => area.id === Number(areaId)
-            )?.name;
-            toast.success(`${areaName} asignada correctamente`, toastOptions);
-          });
-      }
-    });
+      })
+      .finally(() => {
+        const areaName = areas.find((area) => area.id === Number(areaId))?.name;
+        toast.success(`${areaName} asignada correctamente`, {
+          ...toastOptions,
+          autoClose: 1000,
+        });
+      });
+  };
+
+  const deleteATreatment = async (areaId: string) => {
+    const treatmentToDelete = treatments.find(
+      (treatment) =>
+        treatment.area_id === Number(areaId) &&
+        treatment.patient_id === Number(params.user_id)
+    );
+    await deleteTreatment({
+      variables: {
+        id: Number(treatmentToDelete?.id),
+      },
+    })
+      .then(() => {
+        setTreatments((oldTreatments) => {
+          const newTreatments = oldTreatments.filter(
+            (treatment) =>
+              treatment.area_id !== Number(areaId) &&
+              treatment.patient_id !== Number(params.user_id)
+          );
+          return newTreatments;
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(
+          `Ocurrio un error: ${
+            parseGraphqlErrorMessage(error) || error.message
+          }`,
+          toastOptions
+        );
+      })
+      .finally(() => {
+        const areaName = areas.find((area) => area.id === Number(areaId))?.name;
+        toast.info(`${areaName} eliminada correctamente`, toastOptions);
+      });
   };
 
   const BackButton = () => {
@@ -188,10 +239,16 @@ const TreatmentsPage = () => {
     <>
       <BackButton />
       <Space h="md" />
-      <Title order={2}>
-        Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}{" "}
-      </Title>
-      <Title order={4}>DNI: {patientData?.user?.dni}</Title>
+      <div style={{ position: "relative" }}>
+        <LoadingOverlay
+          visible={patientDataLoading}
+          overlayColor="transparent"
+        />
+        <Title order={2}>
+          Paciente: {patientData?.user?.firstname} {patientData?.user?.lastname}{" "}
+        </Title>
+        <Title order={4}>DNI: {patientData?.user?.dni}</Title>
+      </div>
       <Space h="md" />
       <MultiSelect
         label="Terapias"
@@ -203,12 +260,24 @@ const TreatmentsPage = () => {
         }))}
         defaultValue={selectedAreas}
         value={selectedAreas}
-        onChange={(values) => handleChangeInput(values)}
+        onChange={async (values) => {
+          setSaving(true);
+          await handleChangeInput(values);
+          setSaving(false);
+        }}
+        icon={
+          treatmentsLoading ? (
+            <Loader size="sm" />
+          ) : saving ? (
+            <Loader size="sm" />
+          ) : (
+            <CircleCheck color="#4DABF7" />
+          )
+        }
+        disabled={treatmentsLoading}
         withAsterisk
         clearable
       />
-      <Space h="md" />
-      <LoadingOverlay visible={dataLoading} />
     </>
   );
 };
