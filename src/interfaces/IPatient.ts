@@ -61,7 +61,7 @@ export interface IPatient {
 
   social_work_valid_to?: string | null;
 
-  user?: IUser | null;
+  user: IUser;
 }
 
 export interface IPatientFilter {
@@ -70,4 +70,19 @@ export interface IPatientFilter {
   name?: string;
 
   email?: string;
+
+  area_id?: number;
 }
+
+export type IPatientData = {
+  user: {
+    id: number;
+    email: string;
+    firstname: string;
+    lastname: string;
+  };
+};
+
+export type ICellPatient = IPatientData & {
+  appointmentId: number;
+};

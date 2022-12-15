@@ -7,6 +7,11 @@ export const GET_TREATMENTS_WITH_FILTER = gql`
       area_id
       patient_id
       quantity
+      area {
+        id
+        name
+        description
+      }
     }
   }
 `;

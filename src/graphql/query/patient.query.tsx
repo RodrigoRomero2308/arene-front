@@ -63,6 +63,7 @@ export const GET_PATIENTS_FOR_TABLE = gql`
       user_id
       patient_status_id
       user {
+        id
         dni
         email
         firstname
