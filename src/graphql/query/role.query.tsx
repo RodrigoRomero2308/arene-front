@@ -31,3 +31,9 @@ export const GET_ROLE_BY_ROLE_NAME = gql`
     }
   }
 `;
+
+export const GET_ROLE_ACTIVE_RELATIONS = gql`
+  query getRoleActiveRelations($id: Int!) {
+    getRoleActiveRelations(id: $id)
+  }
+`;

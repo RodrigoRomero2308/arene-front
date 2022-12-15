@@ -1,12 +1,17 @@
 import { WithPermission } from "@/components/WithPermission/WithPermission";
+import { roleRelations } from "@/constants/roleRelations";
 import userContext from "@/context/UserContext/UserContext";
 import { PermissionCodes } from "@/enums/permissions";
 import { DELETE_ROLE } from "@/graphql/mutation/role.mutation";
-import { GET_ROLES } from "@/graphql/query/role.query";
+import {
+  GET_ROLES,
+  GET_ROLE_ACTIVE_RELATIONS,
+} from "@/graphql/query/role.query";
 import { IRole, IRoleFilter } from "@/interfaces/IRole";
 import { toastOptions } from "@/shared/toastOptions";
 import { parseGraphqlErrorMessage } from "@/utils/parseGraphqlError";
 import { userHasPermission } from "@/utils/permission.utils";
+import { getStringsFormatted } from "@/utils/string.utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
@@ -33,9 +38,15 @@ import { RoleAdminModal } from "./RoleAdminModal";
 
 const RolesPage = () => {
   const [getRoles] = useLazyQuery(GET_ROLES);
+  const [getRolesActiveRelations] = useLazyQuery<{
+    getRoleActiveRelations: string[];
+  }>(GET_ROLE_ACTIVE_RELATIONS);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [roles, setRoles] = useState<IRole[]>([]);
   const [roleToDelete, setRoleToDelete] = useState<IRole | undefined>();
+  const [relationsOfRoleToDelete, setRelationsOfRoleToDelete] = useState<
+    string[]
+  >([]);
   const [rolesLoading, setRolesLoading] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [roleToUpdate, setRoleToUpdate] = useState<IRole | undefined>();
@@ -78,6 +89,48 @@ const RolesPage = () => {
   const closeRoleAdminModal = () => {
     setCreateModalVisible(false);
     setRoleToUpdate(undefined);
+  };
+
+  const handleRoleDelete = async (role: IRole) => {
+    setRolesLoading(true);
+    try {
+      /* Llamamos servicio nuevo */
+      const result = await getRolesActiveRelations({
+        variables: {
+          id: role.id,
+        },
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      if (!result.data) {
+        throw new Error(
+          "No se pudo recuperar la información del rol a eliminar"
+        );
+      }
+
+      const relationLabels: string[] = [];
+
+      result.data.getRoleActiveRelations.map((item) => {
+        const label = roleRelations.find(
+          (relation) => relation.code === item
+        )?.label;
+
+        if (label) relationLabels.push(label);
+      });
+
+      setRelationsOfRoleToDelete(relationLabels);
+      setRoleToDelete(role);
+    } catch (error: any) {
+      toast.error(
+        parseGraphqlErrorMessage(error) || error.message,
+        toastOptions
+      );
+    } finally {
+      setRolesLoading(false);
+    }
   };
 
   return (
@@ -137,7 +190,7 @@ const RolesPage = () => {
                           Modificar rol
                         </Menu.Item>
                         <Menu.Item
-                          onClick={() => setRoleToDelete(item)}
+                          onClick={() => handleRoleDelete(item)}
                           icon={<Trash />}
                           disabled={
                             !userHasPermission(user, PermissionCodes.RoleDelete)
@@ -179,6 +232,15 @@ const RolesPage = () => {
         <Text>
           ¿Estás seguro que deseas eliminar el rol {roleToDelete?.name}?
         </Text>
+        {relationsOfRoleToDelete.length ? (
+          <>
+            <Space h="xs" />
+            <Text color="red">
+              El rol tiene {getStringsFormatted(relationsOfRoleToDelete)}{" "}
+              activos.
+            </Text>
+          </>
+        ) : null}
         <Space h="lg" />
         <Button
           color="red"
