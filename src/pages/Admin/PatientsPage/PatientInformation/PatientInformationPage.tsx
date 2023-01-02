@@ -86,6 +86,27 @@ const PatientInformationPage = () => {
 
     const date = initialDate.toLocaleDateString();
 
+    const actualHoursWithoutCorrection = initialDate.getHours().toString();
+
+    const actualMinutesWithoutCorrection = initialDate.getMinutes().toString();
+
+    const actualSecondsWithoutCorrection = initialDate.getSeconds().toString();
+
+    const actualHours =
+      actualHoursWithoutCorrection.length == 1
+        ? "0" + actualHoursWithoutCorrection
+        : actualHoursWithoutCorrection;
+
+    const actualMinutes =
+      actualMinutesWithoutCorrection.length == 1
+        ? "0" + actualMinutesWithoutCorrection
+        : actualMinutesWithoutCorrection;
+
+    const actualSeconds =
+      actualSecondsWithoutCorrection.length == 1
+        ? "0" + actualSecondsWithoutCorrection
+        : actualSecondsWithoutCorrection;
+
     const rtf1 = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 
     if (date == dateNow.toLocaleDateString()) {
@@ -93,7 +114,7 @@ const PatientInformationPage = () => {
         <Text color="dimmed" size="sm">
           {`${capitalize(
             rtf1.format(0, "day")
-          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+          )} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
         </Text>
       );
     } else if (date == dateYestarday.toLocaleDateString()) {
@@ -101,13 +122,13 @@ const PatientInformationPage = () => {
         <Text color="dimmed" size="sm">
           {`${capitalize(
             rtf1.format(-1, "day")
-          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+          )} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
         </Text>
       );
     }
     return (
       <Text>
-        {`El ${initialDate.toLocaleDateString()} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+        {`El ${initialDate.toLocaleDateString()} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
       </Text>
     );
   };
