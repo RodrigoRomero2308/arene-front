@@ -122,18 +122,21 @@ const PatientsPage = () => {
         >
           <Grid.Col md={4}>
             <TextInput
-              label="Nombre"
+              label="Nombre y Apellido"
+              placeholder="Ingrese Nombre y Apellido"
               {...searchForm.getInputProps("name")}
             ></TextInput>
             <Space h="sm" />
             <TextInput
               label="Email"
+              placeholder="Ingrese Email"
               {...searchForm.getInputProps("email")}
             ></TextInput>
           </Grid.Col>
           <Grid.Col md={4}>
             <TextInput
               label="DNI"
+              placeholder="Ingrese DNI"
               {...searchForm.getInputProps("dni")}
             ></TextInput>
             <Space h="xl" />

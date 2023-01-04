@@ -62,6 +62,7 @@ export const GET_PATIENTS_FOR_TABLE = gql`
     getPatients(filter: $filter) {
       user_id
       patient_status_id
+      needs_transfer
       user {
         id
         dni
