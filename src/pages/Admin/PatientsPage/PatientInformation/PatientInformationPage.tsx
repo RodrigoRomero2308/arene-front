@@ -82,9 +82,13 @@ const PatientInformationPage = () => {
 
     const dateYestarday = new Date(dateNow.getTime() - dayInMiliseconds);
 
-    console.log(dateYestarday);
-
     const date = initialDate.toLocaleDateString();
+
+    const actualHours = initialDate.getHours().toString().padStart(2, "0");
+
+    const actualMinutes = initialDate.getMinutes().toString().padStart(2, "0");
+
+    const actualSeconds = initialDate.getSeconds().toString().padStart(2, "0");
 
     const rtf1 = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 
@@ -93,7 +97,7 @@ const PatientInformationPage = () => {
         <Text color="dimmed" size="sm">
           {`${capitalize(
             rtf1.format(0, "day")
-          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+          )} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
         </Text>
       );
     } else if (date == dateYestarday.toLocaleDateString()) {
@@ -101,13 +105,13 @@ const PatientInformationPage = () => {
         <Text color="dimmed" size="sm">
           {`${capitalize(
             rtf1.format(-1, "day")
-          )} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+          )} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
         </Text>
       );
     }
     return (
       <Text>
-        {`El ${initialDate.toLocaleDateString()} a las ${initialDate.getHours()}:${initialDate.getMinutes()}:${initialDate.getSeconds()}`}
+        {`El ${initialDate.toLocaleDateString()} a las ${actualHours}:${actualMinutes}:${actualSeconds}`}
       </Text>
     );
   };
