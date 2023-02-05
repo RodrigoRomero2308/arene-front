@@ -82,30 +82,13 @@ const PatientInformationPage = () => {
 
     const dateYestarday = new Date(dateNow.getTime() - dayInMiliseconds);
 
-    console.log(dateYestarday);
-
     const date = initialDate.toLocaleDateString();
 
-    const actualHoursWithoutCorrection = initialDate.getHours().toString();
+    const actualHours = initialDate.getHours().toString().padStart(2, "0");
 
-    const actualMinutesWithoutCorrection = initialDate.getMinutes().toString();
+    const actualMinutes = initialDate.getMinutes().toString().padStart(2, "0");
 
-    const actualSecondsWithoutCorrection = initialDate.getSeconds().toString();
-
-    const actualHours =
-      actualHoursWithoutCorrection.length == 1
-        ? "0" + actualHoursWithoutCorrection
-        : actualHoursWithoutCorrection;
-
-    const actualMinutes =
-      actualMinutesWithoutCorrection.length == 1
-        ? "0" + actualMinutesWithoutCorrection
-        : actualMinutesWithoutCorrection;
-
-    const actualSeconds =
-      actualSecondsWithoutCorrection.length == 1
-        ? "0" + actualSecondsWithoutCorrection
-        : actualSecondsWithoutCorrection;
+    const actualSeconds = initialDate.getSeconds().toString().padStart(2, "0");
 
     const rtf1 = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 
