@@ -235,28 +235,42 @@ const AreasPage = () => {
           </>
         ) : null}
         <Space h="lg" />
-        <Button
-          color="red"
-          loading={deleteModalButtonLoading}
-          onClick={() => {
-            setDeleteModalButtonLoading(true);
-            deleteArea({
-              variables: {
-                id: areaToDelete?.id,
-              },
-            })
-              .then(() => {
-                setAreaToDelete(undefined);
-                getAreasFromServer();
-                toast.success("Area eliminada exitosamente", toastOptions);
-              })
-              .finally(() => {
-                setDeleteModalButtonLoading(false);
-              });
+        <div
+          style={{
+            display: "flex",
+            gap: "4px",
           }}
         >
-          Eliminar
-        </Button>
+          <Button
+            color="red"
+            loading={deleteModalButtonLoading}
+            onClick={() => {
+              setDeleteModalButtonLoading(true);
+              deleteArea({
+                variables: {
+                  id: areaToDelete?.id,
+                },
+              })
+                .then(() => {
+                  setAreaToDelete(undefined);
+                  getAreasFromServer();
+                  toast.success("Area eliminada exitosamente", toastOptions);
+                })
+                .finally(() => {
+                  setDeleteModalButtonLoading(false);
+                });
+            }}
+          >
+            Eliminar
+          </Button>
+          <Button
+            onClick={() => {
+              setAreaToDelete(undefined);
+            }}
+          >
+            Cancelar
+          </Button>
+        </div>
       </Modal>
     </>
   );

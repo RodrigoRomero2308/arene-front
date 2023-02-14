@@ -67,7 +67,6 @@ body {
 }
 
 .contacto {
-  height: 90vh;
   width: 100%;
   padding-top: 20px;
   background-color: white;
@@ -81,13 +80,17 @@ body {
 
 .contacto-form {
   margin: auto;
-  height: 40vh;
-  width: 40vw;
 }
 
 .contacto-ubicacion > iframe {
   border: 1px solid #228be6;
   border-radius: 2%;
-  height: 40vh;
-  width: 40vw;
+  height: 100%;
+  width: 100%;
+}
+
+@media screen and (max-width: 900px) {
+  .terapias-accordion {
+    width: 85vw;
+  }
 }

@@ -1,0 +1,35 @@
+.public-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.public-layout-header .public-layout-header-logo {
+  width: 33vw;
+  text-align: left;
+  display: flex;
+}
+
+.public-layout-header .public-layout-header-description {
+  width: 33vw;
+  text-align: center;
+}
+
+.public-layout-header .public-layout-header-buttons {
+  width: 33vw;
+}
+
+@media screen and (max-width: 900px) {
+  .public-layout-header .public-layout-header-description {
+    display: none;
+  }
+
+  .public-layout-header .public-layout-header-logo {
+    width: 20vw
+  }
+
+  .public-layout-header-buttons {
+    width: 80vw;
+  }
+}

@@ -6,19 +6,34 @@ import {
   Header,
   Image,
   Text,
-  ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
-import { ReactNode } from "react";
-import { Link, Outlet, Route, Routes, useMatch } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react";
+import { Link, Outlet, useMatch } from "react-router-dom";
 import logoArene from "@/assets/images/logo-arene-name.svg";
-import phoneSrc from "@/assets/images/phone.svg";
-import { FileX, Mail, PhoneCall } from "tabler-icons-react";
-import Landing from "@/pages/LandingPage/Landing";
+import { Mail, PhoneCall } from "tabler-icons-react";
+import "./PublicLayout.css";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const isLanding = useMatch("/");
+  const [footerSpacing, setFooterSpacing] = useState(112);
+
+  const handlerResizeFooterSpacing = (event: UIEvent) => {
+    const footer = document.getElementById("public-layout-footer");
+
+    if (!footer) return;
+
+    console.log(footer.getBoundingClientRect().height);
+    setFooterSpacing(footer.getBoundingClientRect().height + 16);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handlerResizeFooterSpacing);
+    return () =>
+      window.removeEventListener("resize", handlerResizeFooterSpacing);
+  }, []);
+
   return (
     <AppShell
       styles={{
@@ -33,15 +48,8 @@ function PublicLayout({ children }: { children: ReactNode }) {
       fixed
       header={
         <Header height={80} p="md">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <div style={{ width: "33vw", textAlign: "left", display: "flex" }}>
+          <div className="public-layout-header">
+            <div className="public-layout-header-logo">
               <a href="/#bienvenida">
                 <Image
                   src={logoArene}
@@ -52,12 +60,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 />
               </a>
             </div>
-            <div style={{ width: "33vw", textAlign: "center" }}>
+            <div className="public-layout-header-description">
               <Text size="xs">Asociacion de Rehabilitación Neurológica</Text>
               <Text size="xs">"Alfredo F. Thompson"</Text>
               <Text size="xs">Reg. Pub. Com. 257/06</Text>
             </div>
-            <div style={{ width: "33vw" }}>
+            <div className="public-layout-header-buttons">
               <Center style={{ justifyContent: "end" }}>
                 <a
                   style={{
@@ -68,8 +76,9 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 >
                   <Text
                     sx={(theme) => ({
-                      marginRight: theme.spacing.md,
+                      marginRight: theme.spacing.sm,
                     })}
+                    size="xs"
                   >
                     Institución
                   </Text>
@@ -82,8 +91,9 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   href="/#terapias"
                 >
                   <Text
+                    size="xs"
                     sx={(theme) => ({
-                      marginRight: theme.spacing.md,
+                      marginRight: theme.spacing.sm,
                     })}
                   >
                     Terapias
@@ -97,8 +107,9 @@ function PublicLayout({ children }: { children: ReactNode }) {
                   href="/#contacto"
                 >
                   <Text
+                    size="xs"
                     sx={(theme) => ({
-                      marginRight: theme.spacing.md,
+                      marginRight: theme.spacing.sm,
                     })}
                   >
                     Contacto
@@ -106,7 +117,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 </a>
                 {isLanding ? (
                   <Link to={"/login"}>
-                    <Button size="sm">Ingresar</Button>
+                    <Button size="xs">Ingresar</Button>
                   </Link>
                 ) : (
                   <></>
@@ -119,7 +130,8 @@ function PublicLayout({ children }: { children: ReactNode }) {
       footer={
         isLanding ? (
           <Footer
-            height={"80"}
+            id="public-layout-footer"
+            height={"96"}
             style={{
               padding: "1rem 1rem 0.5rem 1rem",
               display: "flex",
@@ -141,25 +153,31 @@ function PublicLayout({ children }: { children: ReactNode }) {
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <PhoneCall size={20} />
-                  <Text size="md" style={{ marginLeft: "0.5rem" }}>
+                  <Text size="xs" style={{ marginLeft: "0.5rem" }}>
                     +54 9 3442 562300
                   </Text>
                 </div>
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <Mail />
                   <a href="mailto: institutoarene@gmail.com">
-                    <Text size="md" style={{ marginLeft: "0.5rem" }}>
+                    <Text size="xs" style={{ marginLeft: "0.5rem" }}>
                       institutoarene@gmail.com
                     </Text>
                   </a>
                 </div>
               </div>
               {/* top-right */}
-              <div style={{ display: "flex", flexDirection: "column", textAlign: "end" }}>
-                <Text size="md">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "end",
+                }}
+              >
+                <Text size="xs">
                   Horario de Atención de Lun. a Vier. 08 a 12 hs.
                 </Text>
-                <Text size="md">
+                <Text size="xs">
                   Acc. Luis Rodriguez Artuzi N° 2430, Esq. Villa Flor
                 </Text>
               </div>
@@ -171,7 +189,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
                 paddingTop: "0.5rem",
               }}
             >
-              <Text size="md">
+              <Text size="xs">
                 &copy; 2022 - Políticas de Privacidad - Términos y Condiciones -
                 Desarrollado por Alumnos P.H.P. UTN
               </Text>
@@ -184,6 +202,12 @@ function PublicLayout({ children }: { children: ReactNode }) {
     >
       <Outlet />
       {children}
+      <div
+        style={{
+          paddingBottom: footerSpacing,
+          backgroundColor: "white",
+        }}
+      ></div>
     </AppShell>
   );
 }
