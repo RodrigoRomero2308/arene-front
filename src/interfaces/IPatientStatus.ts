@@ -1,5 +1,7 @@
 export interface IPatientStatus {
-  id: string;
+  id: number;
 
   name: string;
+
+  color: string;
 }
