@@ -5,6 +5,7 @@ export const GET_ALL_PATIENT_STATUS = gql`
     getAllPatientStatus {
       id
       name
+      color
     }
   }
 `;

@@ -39,7 +39,7 @@ function MainNav() {
                 navigate(`/app${route.route}`);
               }}
             >
-              <Group>
+              <Group noWrap>
                 <ThemeIcon
                   sx={(theme) => ({
                     borderRadius: theme.defaultRadius,
@@ -49,7 +49,7 @@ function MainNav() {
                 >
                   {route.icon}
                 </ThemeIcon>
-                <Text>{route.label}</Text>
+                <Text sx={(theme) => ({})}>{route.label}</Text>
               </Group>
             </UnstyledButton>
             <Space h="md" />
