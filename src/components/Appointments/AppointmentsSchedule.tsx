@@ -49,7 +49,7 @@ const AppointmentsSchedule = ({
 
   return (
     <>
-      <Table>
+      <Table highlightOnHover>
         <thead>
           <tr>
             <th>Horario</th>

@@ -11,6 +11,18 @@ export const parseGraphqlErrorMessage = (error: any): string | undefined => {
 
   let message = "";
 
+  const anyOfErrorsIsDatabaseError = error.graphQLErrors.some(
+    (graphqlError) => {
+      if ((graphqlError.extensions as any)?.exception?.clientVersion) {
+        /* Error de prisma */
+        return true;
+      }
+    }
+  );
+
+  if (anyOfErrorsIsDatabaseError)
+    return "Error interno, por favor comuniquese con un administrador del sistema";
+
   for (const graphqlError of error.graphQLErrors) {
     if (graphqlError.extensions.code) {
       let messageToAdd;

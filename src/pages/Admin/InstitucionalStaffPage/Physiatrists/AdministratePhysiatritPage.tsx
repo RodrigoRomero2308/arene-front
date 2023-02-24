@@ -31,8 +31,6 @@ const AdminPhysiatristPage = () => {
       firstname: "",
       lastname: "",
       password: "",
-      phone_number: "",
-      phone_type_id: "",
       professional: {
         medical_license_number: "",
         profession: "",

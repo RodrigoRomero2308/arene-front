@@ -12,9 +12,9 @@ import { ITreatment, ITreatmentFilter } from "@/interfaces/ITreatment";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
+  Group,
   Loader,
   LoadingOverlay,
-  Modal,
   MultiSelect,
   Space,
   Title,
@@ -242,21 +242,18 @@ const TreatmentsPage = () => {
 
   const BackButton = () => {
     return (
-      <Button
-        size="xs"
-        variant="subtle"
-        color="dark"
-        compact
-        onClick={() => navigate(-1)}
-      >
+      <Button onClick={() => navigate(-1)}>
         <ArrowBigLeft />
+        Volver
       </Button>
     );
   };
 
   return (
     <>
-      <BackButton />
+      <Group position="right">
+        <BackButton />
+      </Group>
       <Space h="md" />
       <div style={{ position: "relative" }}>
         <LoadingOverlay

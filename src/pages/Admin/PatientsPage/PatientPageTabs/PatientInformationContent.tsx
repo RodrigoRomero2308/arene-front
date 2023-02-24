@@ -63,6 +63,7 @@ const PatientInformationContent = ({
       />
       <PatientInfoItem label="Teléfono" info={patientData.user?.phone_number} />
       <PatientContentTitle title="Datos residenciales" />
+      <PatientInfoItem label="Calle" info={patientData.user.address?.street} />
       <PatientInfoItem
         label="Altura"
         info={patientData.user?.address?.height}

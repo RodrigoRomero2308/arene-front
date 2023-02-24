@@ -1,12 +1,12 @@
 import { PermissionCodes } from "@/enums/permissions";
 import { ReactNode } from "react";
 import {
-  AdjustmentsAlt,
   BuildingCommunity,
   Heartbeat,
   Calendar,
   Home,
-  UserCircle,
+  Location,
+  Award,
 } from "tabler-icons-react";
 
 export interface INavRoute {
@@ -46,14 +46,14 @@ export const navRoutes: INavRoute[] = [
     iconColor: "violet",
   },
   {
-    icon: <AdjustmentsAlt />,
+    icon: <Location />,
     label: "Áreas",
     permissionRequired: PermissionCodes.AdminArea,
     route: "/admin/area",
     iconColor: "red",
   },
   {
-    icon: <AdjustmentsAlt />,
+    icon: <Award />,
     label: "Roles",
     permissionRequired: PermissionCodes.AdminRole,
     route: "/admin/role",

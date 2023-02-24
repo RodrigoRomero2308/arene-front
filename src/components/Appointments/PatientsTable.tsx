@@ -48,7 +48,7 @@ const PatientsTable = ({
     >
       <div style={{ position: "relative" }}>
         <LoadingOverlay visible={patientsLoading || selecting} />
-        <Table>
+        <Table highlightOnHover>
           <thead>
             <tr>
               <th>DNI</th>
